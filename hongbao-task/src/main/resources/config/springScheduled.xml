@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd 
+       http://www.springframework.org/schema/task 
+       http://www.springframework.org/schema/task/spring-task.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+ <!--   <bean id="demoTask" class="com.yanbao.task.DemoTask"/>
+    <task:scheduled-tasks>
+        <task:scheduled ref="demoTask" method="doTask" cron="5 0 8-20 * * ?"/>
+    </task:scheduled-tasks>-->
+
+    <task:annotation-driven/>
+    <!-- 每月15日触发 -->
+<!--    <bean id="incomeStaticsTask" class="com.yanbao.task.IncomeStaticsTask"></bean>
+    <task:scheduled-tasks>
+        <task:scheduled ref="incomeStaticsTask" method="doTask" cron="0/10 0 0 15 * ?"/>
+    </task:scheduled-tasks>-->
+
+    <!-- 区域代理业绩结算 每天晚上凌晨12：10 -->
+    <bean id="inAgentStaticsTask" class="com.yanbao.task.InAgentStaticsTask"></bean>
+    <task:scheduled-tasks>
+        <task:scheduled ref="inAgentStaticsTask" method="doTask" cron="0 10 0 * * ?"/>
+        <!--<task:scheduled ref="inAgentStaticsTask" method="doTask" cron="0/4 * * * * ?"/>-->
+    </task:scheduled-tasks>
+
+
+    <!-- 合伙人业绩结算   每日凌晨触发  -->
+    <bean id="inPartnerStaticsTask" class="com.yanbao.task.InPartnerStaticsTask"></bean>
+    <task:scheduled-tasks>
+        <task:scheduled ref="inPartnerStaticsTask" method="doTask" cron="59 59 23 * * ?"/>
+    </task:scheduled-tasks>
+    <context:component-scan base-package="com.yanbao.task"/>
+</beans>

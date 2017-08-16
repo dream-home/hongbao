@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.GoodsWinMapper">
+
+    <sql id="fields">
+    	orderNo, userId, goodsId, saleSwitch, goodsName, icon, issueId, issueNo, price, drawPrice, score, expressNo, expressName, userName, phone, addr, createTime, updateTime, status, remark,storeId,storeName,issueNo,issueId,num,orderType
+    </sql>
+
+    <sql id="fields_id">
+        id,
+        <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_user_goods_win</sql>
+
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.goodsId != null and model.goodsId != ''">and goodsId=#{model.goodsId}</if>
+            <if test="model.goodsName != null and model.goodsName != ''">and goodsName=#{model.goodsName}</if>
+            <if test="model.icon != null and model.icon != ''">and icon=#{model.icon}</if>
+            <if test="model.price != null">and price=#{model.price}</if>
+            <if test="model.drawPrice != null">and drawPrice=#{model.drawPrice}</if>
+            <if test="model.score != null">and score=#{model.score}</if>
+            <if test="model.expressNo != null and model.expressNo != ''">and expressNo=#{model.expressNo}</if>
+            <if test="model.expressName != null and model.expressName != ''">and expressName=#{model.expressName}</if>
+            <if test="model.userName != null and model.userName != ''">and userName=#{model.userName}</if>
+            <if test="model.phone != null and model.phone != ''">and phone=#{model.phone}</if>
+            <if test="model.addr != null and model.addr != ''">and addr=#{model.addr}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.num != null">and num=#{model.num}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.orderType != null and model.orderType != ''">and orderType=#{model.orderType}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.orderNo},#{model.userId},#{model.price},#{model.drawPrice},#{model.score},#{model.goodsName},#{model.expressNo},#{model.expressName},#{model.userName},#{model.phone},#{model.addr},now(),now(),1,#{model.remark},#{model.storeId},#{model.storeName},#{model.issueNo},${model.issueId},${model.orderType});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.GoodsWin">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.GoodsWin">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit #{startRow}, #{pageSize};
+    </select>
+
+
+    <select id="readOne" resultType="com.mall.model.GoodsWin">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+            <if test="model.goodsId != null and model.goodsId !=''">goodsId= #{model.goodsId},</if>
+            <if test="model.goodsName != null and model.goodsName !=''">goodsName= #{model.goodsName},</if>
+            <if test="model.icon != null and model.icon !=''">icon= #{model.icon},</if>
+            <if test="model.price != null">price= #{model.price},</if>
+            <if test="model.drawPrice != null">drawPrice= #{model.drawPrice},</if>
+            <if test="model.score != null">score= #{model.score},</if>
+            <if test="model.expressNo != null and model.expressNo !=''">expressNo= #{model.expressNo},</if>
+            <if test="model.expressName != null and model.expressName !=''">expressName= #{model.expressName},</if>
+            <if test="model.userName != null and model.userName !=''">userName= #{model.userName},</if>
+            <if test="model.phone != null and model.phone !=''">phone= #{model.phone},</if>
+            <if test="model.addr != null and model.addr !=''">addr= #{model.addr},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            <if test="model.orderType != null and model.orderType !=''">orderType= #{model.orderType},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
+    
+    <select id="getByStoreIds" resultType="com.mall.model.GoodsWin">
+		<include refid="selector" />
+		WHERE orderType IN (1,3) AND STATUS IN(2,3) 
+		AND storeId IN
+		<foreach collection="storeIds" item="storeId" index="index" open="(" separator="," close=")">
+            #{storeId}
+        </foreach>
+	</select>
+
+</mapper>
+
+

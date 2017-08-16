@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanbao.mapper.PartnerBillMapper" >
+
+<!-- hb_partner_bill table all fields -->
+<sql id="fields" >
+	 id,uid,partnerId,userId,userGrade,userStoreId,orderNo,totalAmount,userName,phone,areaId,province,city,country,grade,EP,EPScale,balanceScale,balance,createTime,updateTime,status,remark,billday
+</sql>
+
+<sql id="table_name">hb_partner_bill</sql>
+
+<sql id="selector">
+        select <include refid="fields"/> from <include refid="table_name"/>
+</sql>
+
+<!-- 查询条件 -->
+<sql id="condition">
+<where>
+	<if test="model.id != null  and model.id != '' ">
+		 and id = #{model.id}
+	</if>
+	<if test="model.uid != null">
+		 and uid = #{model.uid}
+	</if>
+	<if test="model.partnerId != null  and model.partnerId != '' ">
+		 and partnerId = #{model.partnerId}
+	</if>
+	<if test="model.userId != null  and model.userId != '' ">
+		 and userId = #{model.userId}
+	</if>
+	<if test="model.userGrade != null  ">
+		 and userGrade=#{model.userGrade}
+	</if>
+	<if test="model.userStoreId != null  and model.userStoreId != '' ">
+		 and userStoreId = #{userStoreId}
+	</if>
+	<if test="model.orderNo != null  and model.orderNo != '' ">
+		 and orderNo = #{orderNo}
+	</if>
+	<if test="model.totalAmount != null  ">
+		 and totalAmount=#{model.totalAmount}
+	</if>
+	<if test="model.userName != null  and model.userName != '' ">
+		 and userName = #{model.userName}
+	</if>
+	<if test="model.phone != null  and model.phone != '' ">
+		 and phone = #{model.phone}
+	</if>
+	<if test="model.areaId != null  and model.areaId != '' ">
+		 and areaId = #{model.areaId}
+	</if>
+	<if test="model.province != null  and model.province != '' ">
+		 and province = #{model.province}
+	</if>
+	<if test="model.city != null  and model.city != '' ">
+		 and city = #{model.city}
+	</if>
+	<if test="model.country != null  and model.country != '' ">
+		 and country = #{model.country}
+	</if>
+	<if test="model.grade != null  ">
+		 and grade=#{model.grade}
+	</if>
+	<if test="model.EP != null  ">
+		 and EP=#{model.EP}
+	</if>
+	<if test="model.EPScale != null  ">
+		 and EPScale=#{model.EPScale}
+	</if>
+	<if test="model.balanceScale != null  ">
+		 and balanceScale=#{model.balanceScale}
+	</if>
+	<if test="model.balance != null  ">
+		 and balance=#{model.balance}
+	</if>
+	<if test="model.createTime != null  ">
+		 and createTime=#{model.createTime}
+	</if>
+	<if test="model.updateTime != null  ">
+		 and updateTime=#{model.updateTime}
+	</if>
+	<if test="model.status != null  ">
+		 and status=#{model.status}
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		 and remark = #{model.remark}
+	</if>
+	<if test="model.billday != null  and model.billday != '' ">
+		 and billday = #{model.billday}
+	</if>
+
+</where>
+</sql>
+   
+<!-- 插入记录 [说明：如果要返回当前对象，需要如下配置：<insert id="addVo" parameterType="Object" useGeneratedKeys="true" keyProperty="id">] -->
+<insert id="create">
+  insert into  hb_partner_bill 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		id,
+	</if>
+	<if test="model.uid != null  ">
+		uid,
+	</if>
+	<if test="model.partnerId != null  ">
+		partnerId,
+	</if>
+	<if test="model.userId != null  ">
+		userId,
+	</if>
+	<if test="model.userGrade != null  ">
+		userGrade,
+	</if>
+	<if test="model.userStoreId != null  ">
+		userStoreId,
+	</if>
+	<if test="model.orderNo != null  ">
+		orderNo,
+	</if>
+	<if test="model.totalAmount != null  ">
+		totalAmount,
+	</if>
+	<if test="model.userName != null  ">
+		userName,
+	</if>
+	<if test="model.phone != null  ">
+		phone,
+	</if>
+	<if test="model.areaId != null  ">
+		areaId,
+	</if>
+	<if test="model.province != null  ">
+		province,
+	</if>
+	<if test="model.city != null  ">
+		city,
+	</if>
+	<if test="model.country != null  ">
+		country,
+	</if>
+	<if test="model.grade != null  ">
+		grade,
+	</if>
+	<if test="model.EP != null  ">
+		EP,
+	</if>
+	<if test="model.EPScale != null  ">
+		EPScale,
+	</if>
+	<if test="model.balanceScale != null  ">
+		balanceScale,
+	</if>
+	<if test="model.balance != null  ">
+		balance,
+	</if>
+	<if test="model.createTime != null  ">
+		createTime,
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime,
+	</if>
+	<if test="model.status != null  ">
+		status,
+	</if>
+	<if test="model.remark != null  ">
+		remark,
+	</if>
+	<if test="model.billday != null  ">
+		billday,
+	</if>
+	</trim> 
+)
+ values 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		#{model.id},
+	</if>
+	<if test="model.uid != null ">
+		#{model.uid},
+	</if>
+	<if test="model.partnerId != null  ">
+		#{model.partnerId},
+	</if>
+	<if test="model.userId != null  ">
+		#{model.userId},
+	</if>
+	<if test="model.userGrade != null  ">
+		#{model.userGrade},
+	</if>
+	<if test="model.userStoreId != null  ">
+		#{model.userStoreId},
+	</if>
+	<if test="model.orderNo != null  ">
+		#{model.orderNo},
+	</if>
+	<if test="model.totalAmount != null  ">
+		#{model.totalAmount},
+	</if>
+	<if test="model.userName != null  ">
+		#{model.userName},
+	</if>
+	<if test="model.phone != null  ">
+		#{model.phone},
+	</if>
+	<if test="model.areaId != null  ">
+		#{model.areaId},
+	</if>
+	<if test="model.province != null  ">
+		#{model.province},
+	</if>
+	<if test="model.city != null  ">
+		#{model.city},
+	</if>
+	<if test="model.country != null  ">
+		#{model.country},
+	</if>
+	<if test="model.grade != null  ">
+		#{model.grade},
+	</if>
+	<if test="model.EP != null  ">
+		#{model.EP},
+	</if>
+	<if test="model.EPScale != null  ">
+		#{model.EPScale},
+	</if>
+	<if test="model.balanceScale != null  ">
+		#{model.balanceScale},
+	</if>
+	<if test="model.balance != null  ">
+		#{model.balance},
+	</if>
+	<if test="model.createTime != null  ">
+		#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		#{model.status},
+	</if>
+	<if test="model.remark != null  ">
+		#{model.remark},
+	</if>
+	<if test="model.billday != null  ">
+		#{model.billday},
+	</if>
+	</trim>
+)
+</insert>
+
+<!-- 多条件删除记录 -->
+<select id="delPo" resultType="java.lang.Integer"  >
+	delete from hb_partner_bill 
+	<include refid="condition"/>
+</select>
+
+<!-- 删除记录 -->
+<delete id="deleteById">
+	delete 	 from hb_partner_bill where id = #{id}
+</delete>
+
+<!--批量删除-->
+<delete id="delPoList">
+	delete 	 from hb_partner_bill where id in 
+	<foreach item="idItem" collection="list" index="index" open="(" separator="," close=")"> 
+	#{idItem}
+	</foreach> 
+</delete>
+
+<!-- 根据id，修改记录-->  
+ <update id="modPo">
+  update hb_partner_bill set uid=#{model.uid},partnerId=#{model.partnerId},userId=#{model.userId},userGrade=#{model.userGrade},userStoreId=#{model.userStoreId},orderNo=#{model.orderNo},totalAmount=#{model.totalAmount},userName=#{model.userName},phone=#{model.phone},areaId=#{model.areaId},province=#{model.province},city=#{model.city},country=#{model.country},grade=#{model.grade},EP=#{model.EP},EPScale=#{model.EPScale},balanceScale=#{model.balanceScale},balance=#{model.balance},createTime=#{model.createTime},updateTime=#{model.updateTime},status=#{model.status},remark=#{model.remark},billday=#{model.billday} where id=#{model.id}
+ </update>
+ <!-- 修改记录，只修改只不为空的字段 -->
+<update id="updateById">
+	update hb_partner_bill set 
+	<trim  suffixOverrides="," >
+	<if test="model.partnerId != null  and model.partnerId != '' ">
+		partnerId=#{model.partnerId},
+	</if>
+	<if test="model.userId != null  and model.userId != '' ">
+		userId=#{model.userId},
+	</if>
+	<if test="model.uid != null  and model.uid != '' ">
+		uid = #{model.uid},
+	</if>
+	<if test="model.userGrade != null  ">
+		userGrade=#{model.userGrade},
+	</if>
+	<if test="model.userStoreId != null  and model.userStoreId != '' ">
+		userStoreId=#{model.userStoreId},
+	</if>
+	<if test="model.orderNo != null  and model.orderNo != '' ">
+		orderNo=#{model.orderNo},
+	</if>
+	<if test="model.totalAmount != null  ">
+		totalAmount=#{model.totalAmount},
+	</if>
+	<if test="model.userName != null  and model.userName != '' ">
+		userName=#{model.userName},
+	</if>
+	<if test="model.phone != null  and model.phone != '' ">
+		phone=#{model.phone},
+	</if>
+	<if test="model.areaId != null  and model.areaId != '' ">
+		areaId=#{model.areaId},
+	</if>
+	<if test="model.province != null  and model.province != '' ">
+		province=#{model.province},
+	</if>
+	<if test="model.city != null  and model.city != '' ">
+		city=#{model.city},
+	</if>
+	<if test="model.country != null  and model.country != '' ">
+		country=#{model.country},
+	</if>
+	<if test="model.grade != null  ">
+		grade=#{model.grade},
+	</if>
+	<if test="model.EP != null  ">
+		EP=#{model.EP},
+	</if>
+	<if test="model.EPScale != null  ">
+		EPScale=#{model.EPScale},
+	</if>
+	<if test="model.balanceScale != null  ">
+		balanceScale=#{model.balanceScale},
+	</if>
+	<if test="model.balance != null  ">
+		balance=#{model.balance},
+	</if>
+	<if test="model.createTime != null  ">
+		createTime=#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime=#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		status=#{model.status},
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		remark=#{model.remark},
+	</if>
+	<if test="model.billday != null  and model.billday != '' ">
+		billday=#{model.billday},
+	</if>
+	</trim> where id=#{model.id}
+</update>
+
+<!-- 根据id查询 合伙人业绩表 -->
+<select id="readById"  resultType="com.mall.model.PartnerBill">
+	<include refid="selector"/>
+	where id = #{id}
+</select>
+
+<!-- 根据id查询 合伙人业绩表 -->
+<select id="readOne"  resultType="com.mall.model.PartnerBill">
+	<include refid="selector"/>
+	<include refid="condition"/>
+</select>
+
+<!-- 合伙人业绩表 列表总数-->
+<select id="readCount" resultType="java.lang.Long">
+	select count(1) from hb_partner_bill  
+	<include refid="condition"/>
+</select>
+
+<!-- 查询合伙人业绩表列表 -->
+<select id="getPoList" resultType="com.mall.model.PartnerBill">
+	<include refid="selector"/>
+	<include refid="condition"/>
+</select>
+
+<!-- 查询合伙人业绩表列表 带分页-->
+<select id="readList" resultType="com.mall.model.PartnerBill">
+	<include refid="selector"/>
+	<include refid="condition"/>
+	LIMIT #{startRow}, #{pageSize}
+</select>
+
+<select id="getBySearch" resultType="com.mall.model.PartnerBill">
+	<include refid="selector"/>
+	WHERE 1=1 
+	<if test="model.billday != null  and model.billday != '' ">
+	 	AND billday=#{model.billday} 
+	</if>
+	<if test="model.userName != null  and model.userName != '' and model.phone != null  and model.phone != '' ">
+		AND (
+		userName like '%${model.userName}%' OR phone=#{model.phone} 
+		<if test="model.uid != null  and model.uid != ''"> OR uid=#{model.uid}</if>
+		)
+	</if>
+	<if test="page != null">
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</if>
+</select> 
+
+</mapper>

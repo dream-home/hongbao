@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.SysRecordDao">
+
+	<sql id="fields">
+        id, orderNo, userId, score,recordType,createTime, updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_wallet_sysRecord</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+	<!-- 获取用户签到列表 -->
+	<!-- <select id="getList" resultType="WalletSign">
+		<include refid="selector"/>
+		WHERE status = 1 and userId = #{userid}
+		ORDER BY createTime ASC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select> -->
+	
+	<select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+	
+	</select>
+	
+	<select id="sysRecordSUM" resultType="java.lang.Double">
+		SELECT IFNULL(SUM(score),0)
+		FROM <include refid="table"/>
+	</select>
+	
+	
+	<select id="sysRecordRegister" resultType="java.lang.Double">
+		SELECT IFNULL(SUM(ABS(score)),0)
+		FROM <include refid="table"/>
+		WHERE recordType = 17
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	<select id="signSUM" resultType="java.lang.Double">
+			SELECT SUM(score)
+			FROM <include refid="table"/>
+	</select>
+	
+	
+</mapper>

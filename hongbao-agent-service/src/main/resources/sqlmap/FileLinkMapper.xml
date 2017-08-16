@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.FileLinkMapper">
+
+	<sql id="fields">
+        id, fileId, linkId, linkType, isDefault, 
+		createTime, updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_sys_file_link</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+    
+    <insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.fileId}, #{model.linkId}, #{model.linkType}, #{model.isDefault}, 
+			#{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark})
+    </insert> 
+    
+    <delete id="del">  
+        DELETE FROM <include refid="table"/>
+        WHERE id = #{id}
+    </delete> 
+	
+	<select id="getList" resultType="com.mall.model.SysFileLink">
+		<include refid="selector"/>
+        WHERE linkId= #{linkId}
+        AND status = 1
+        ORDER BY isDefault DESC, createTime ASC
+		LIMIT 100
+	</select>
+	
+	<update id="update">
+        UPDATE <include refid="table"/>
+        <set>
+            <if test="model.isDefault != null">isDefault= #{model.isDefault},</if>
+            <if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+        </set>
+		WHERE id = #{id}
+    </update>
+    <!-- 条件  V3.8 -->
+    <sql id="where">
+	<where>
+		<if test="model.id != null  ">
+			 and id=#{model.id}
+		</if>
+		<if test="model.fileId != null  ">
+			 and fileId=#{model.fileId}
+		</if>
+		<if test="model.linkId != null ">
+			 and linkId=#{model.linkId}
+		</if>
+		<if test="model.linkType != null ">
+			 and linkType=#{model.linkType}
+		</if>
+		<if test="model.isDefault != null ">
+			 and isDefault=#{model.isDefault}
+		</if>
+		<if test="model.createTime != null ">
+			 and createTime=#{model.createTime}
+		</if>
+		<if test="model.updateTime != null ">
+			 and updateTime=#{model.updateTime}
+		</if>
+		<if test="model.status != null ">
+			 and status=#{model.status}
+		</if>
+		<if test="model.remark != null ">
+			 and remark=#{model.remark}
+		</if>
+	</where>
+	</sql>
+    
+    <!-- 多条件删除记录 -->
+	<select id="delPo" resultType="java.lang.Integer">
+		DELETE FROM <include refid="table"/>
+		<include refid="where"/>
+	</select>
+		
+	<select id="getListByPo" resultType="com.mall.model.SysFileLink">
+		<include refid="selector"/>
+        <include refid="where"/>
+        ORDER BY isDefault DESC, createTime ASC
+		LIMIT 100
+	</select>
+</mapper>
+
+

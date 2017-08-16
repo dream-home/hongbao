@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.WalletRechargeDao">
+
+    <sql id="fields">
+        orderNo,userId,score,confirmScore,poundage,source,createTime,updateTime,status,remark
+    </sql>
+
+    <sql id="fields_id">
+        id,
+        <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_wallet_recharge</sql>
+
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.score != null">and score=#{model.score}</if>
+            <if test="model.confirmScore != null">and confirmScore=#{model.confirmScore}</if>
+            <if test="model.poundage != null">and poundage=#{model.poundage}</if>
+            <if test="model.source != null">and source=#{model.source}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.orderNo},#{model.userId},#{model.score},#{model.confirmScore},#{model.poundage},#{model.source},now(),now(),2,#{model.remark});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.WalletRecharge">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.WalletRecharge">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.WalletRecharge">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+    
+    
+    <!--付款1680加入合伙人   2017-07-03 zyc  -->
+    
+    <select id="readCountPartner" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+         <where>
+             1=1
+            <if test="model.orderNo != null and model.orderNo != ''">and orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.score != null">and score=#{model.score}</if>
+            <if test="model.confirmScore != null">and confirmScore=#{model.confirmScore}</if>
+            <if test="model.poundage != null">and poundage=#{model.poundage}</if>
+            <if test="model.source != null">and source=#{model.source}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            and source in (16,26,34)
+        </where>
+    </select>
+    
+    
+    
+    <select id="readListPartner" resultType="com.yanbao.vo.RechargeVo">
+        select u.uid,u.phone,r.* from hb_wallet_recharge r inner join hb_sys_user u 
+        <where>
+        	1=1
+        	<if test="model.uid != null and model.uid != '' ">and u.uid=#{model.uid}</if>
+			<if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+        	<if test="model.orderNo != null and model.orderNo != ''">r.orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and r.userId=#{model.userId}</if>
+            <if test="model.score != null">and r.score=#{model.score}</if>
+            <if test="model.confirmScore != null">and r.confirmScore=#{model.confirmScore}</if>
+            <if test="model.poundage != null">and r.poundage=#{model.poundage}</if>
+            <if test="model.source != null">and r.source=#{model.source}</if>
+            <if test="model.status != null">and r.status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and r.remark=#{model.remark}</if>
+        	 and r.source in (16,26,34) and r.userId = u.id
+        </where>
+        ORDER BY createTime DESC
+        limit #{startRow}, #{pageSize};
+         
+    </select>
+    
+    
+    
+    
+    
+    <!--付款1680加入合伙人   结束  -->
+    
+    
+    
+    
+    
+    
+
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+            <if test="model.score != null">score= #{model.score},</if>
+            <if test="model.confirmScore != null">confirmScore= #{model.confirmScore},</if>
+            <if test="model.poundage != null">poundage= #{model.poundage},</if>
+            <if test="model.source != null">source= #{model.source},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <select id="getIncome" resultType="java.lang.Double">
+        SELECT SUM(poundage) ct FROM
+        <include refid="table_name"/>
+        WHERE `status`=2;
+    </select>
+
+    <select id="getRechargeVoList" resultType="com.yanbao.vo.RechargeVo">
+        SELECT u.uid,u.phone,u.userName,u.id userId,r.*
+        from hb_wallet_recharge r LEFT JOIN hb_sys_user u ON r.userId=u.id
+        <where>
+        	1=1 and r.source not in (3,31,32,33,34)
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.remark != null and model.remark != ''">and r.remark=#{model.remark}</if>
+            <if test="model.fromTime != null">and r.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null ">and #{model.stopTime}>=r.createTime</if>
+            <if test="model.status != null ">and r.status=#{model.status}</if>
+            <if test="model.source != null ">and r.source=#{model.source}</if>
+        </where> ORDER BY updateTime DESC
+        LIMIT #{pageNo},#{pageSize}
+    </select>
+    <select id="getRechargeVoCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        from hb_wallet_recharge r LEFT JOIN hb_sys_user u ON r.userId=u.id
+        <where>
+        	1=1 and r.source not in (3,31,32,33,34)
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.remark != null and model.remark != ''">and r.remark=#{model.remark}</if>
+            <if test="model.fromTime != null ">and r.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null ">and #{model.stopTime}>=r.createTime</if>
+            <if test="model.status != null ">and r.status=#{model.status}</if>
+            <if test="model.source != null ">and r.source=#{model.source}</if>
+        </where>
+    </select>
+
+
+    <select id="getSomeSum" resultType="double">
+        SELECT SUM(score) FROM `hb_wallet_recharge`
+        <where>
+        	1=1 and source not in (3,31,33)
+            <if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.score != null">and score=#{model.score}</if>
+            <if test="model.confirmScore != null">and confirmScore=#{model.confirmScore}</if>
+            <if test="model.poundage != null">and poundage=#{model.poundage}</if>
+            <if test="model.source != null">and source=#{model.source}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </select>
+    <!-- 扫码支付订单 zyc 2017-07-04 -->
+    <select id="getRechargeVoList2" resultType="com.yanbao.vo.RechargeVo">
+        SELECT u.uid,u.phone,u.userName,u.id userId,r.*
+        from hb_wallet_recharge r LEFT JOIN hb_sys_user u ON r.userId=u.id
+        <where>
+            1=1
+
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.remark != null and model.remark != ''">and r.remark=#{model.remark}</if>
+            <if test="model.fromTime != null">and r.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null ">and #{model.stopTime}>=r.createTime</if>
+            <if test="model.status != null ">and r.status=#{model.status}</if>
+            <if test="model.source != null ">and r.source=#{model.source}</if>
+        </where> ORDER BY updateTime DESC
+        LIMIT #{pageNo},#{pageSize}
+    </select>
+    <select id="getRechargeVoCount2" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        from hb_wallet_recharge r LEFT JOIN hb_sys_user u ON r.userId=u.id
+        <where>
+            1=1
+
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.remark != null and model.remark != ''">and r.remark=#{model.remark}</if>
+            <if test="model.fromTime != null ">and r.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null ">and #{model.stopTime}>=r.createTime</if>
+            <if test="model.status != null ">and r.status=#{model.status}</if>
+            <if test="model.source != null ">and r.source=#{model.source}</if>
+        </where>
+    </select>
+    <!-- end -->
+</mapper>
+
+

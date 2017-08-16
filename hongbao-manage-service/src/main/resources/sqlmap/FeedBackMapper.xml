@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.FeedBackDao">
+
+	<sql id="fields">
+        id, userId, title, type,detail,icons, createTime, updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_user_feedback</sql>
+    
+    
+    <sql id="condition">
+        <where>
+            <if test="model.userId != null and model.userId != ''">userId=#{model.userId}</if>
+            <if test="model.title != null and model.title != ''">and title=#{model.title}</if>
+            <if test="model.type != null and model.type != ''">and type=#{model.type}</if>
+            <if test="model.detail != null and model.detail != ''">and detail=#{model.detail}</if>
+            <if test="model.icons != null and model.icons != ''">and icons=#{model.icons}</if>
+            <if test="model.fromTime != null">and createTime &gt;=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and createTime &lt;=#{model.stopTime}</if>
+            <if test="model.status != null">and status = #{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            
+        </where>
+    </sql>
+    
+    <sql id="selector">
+        SELECT   f.* ,u.uid,u.nickName,u.phone
+        FROM  hb_user_feedback f inner join  hb_sys_user u
+        <where>
+        1=1
+            <if test="model.userId != null and model.userId != ''">f.userId=#{model.userId}</if>
+            <if test="model.title != null and model.title != ''">and f.title=#{model.title}</if>
+            <if test="model.type != null">and f.type=#{model.type}</if>
+            <if test="model.detail != null and model.detail != ''">and f.detail=#{model.detail}</if>
+            <if test="model.icons != null and model.icons != ''">and f.icons=#{model.icons}</if>
+            <if test="model.fromTime != null">and f.createTime &gt;=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and f.createTime &lt;=#{model.stopTime}</if>
+            <if test="model.status != null">and f.status = #{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and f.remark=#{model.remark}</if>
+            and  f.userId = u.id
+        </where>
+        
+        
+    </sql>
+    
+    <select id="readList" resultType="com.mall.model.FeedBack">
+         SELECT   f.* ,u.uid,u.nickName,u.phone
+        FROM  hb_user_feedback f inner join  hb_sys_user u
+        <where>
+        1=1
+            <if test="model.userId != null and model.userId != ''">f.userId=#{model.userId}</if>
+            <if test="model.title != null and model.title != ''">and f.title=#{model.title}</if>
+            <if test="model.type != null">and f.type=#{model.type}</if>
+            <if test="model.detail != null and model.detail != ''">and f.detail=#{model.detail}</if>
+            <if test="model.icons != null and model.icons != ''">and f.icons=#{model.icons}</if>
+            <if test="model.fromTime != null">and f.createTime &gt;=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and f.createTime &lt;=#{model.stopTime}</if>
+            <if test="model.status != null">and f.status = #{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and f.remark=#{model.remark}</if>
+            and  f.userId = u.id
+        </where>
+         ORDER BY createTime DESC
+        limit #{startRow}, #{pageSize};
+    </select>
+    
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table"/> <include refid="condition"/>
+    </select>
+
+	<select id="getById" resultType="FeedBack">
+		<include refid="selector"/>
+		WHERE id = #{id}
+		LIMIT 1
+	</select>
+
+	<insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id},#{model.userId}, #{model.title}, #{model.type},
+			#{model.detail}, #{model.icons}, #{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark})
+    </insert> 
+
+</mapper>
+
+

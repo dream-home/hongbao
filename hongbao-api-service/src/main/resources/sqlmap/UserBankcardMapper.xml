@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.UserBankcardMapper">
+
+	<sql id="fields">
+        id, userId, bankId, bankName, type, 
+        province, city, county, cardNo, isDefault, 
+		createTime, updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_user_bankcard</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<select id="getList" resultType="UserBankcard">
+		<include refid="selector"/>
+		WHERE userId = #{userId}
+	</select>
+	
+	<insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.userId}, #{model.bankId},#{model.bankName},  #{model.type}, 
+			#{model.province}, #{model.city}, #{model.county}, #{model.cardNo}, #{model.isDefault}, 
+			#{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark})
+    </insert>
+    
+    <update id="update">
+		UPDATE <include refid="table"/>
+		<set>
+            <if test="model.bankId != null">bankId= #{model.bankId},</if>
+            <if test="model.bankId != null">bankName= #{model.bankName},</if>
+            <if test="model.type != null">type= #{model.type},</if>
+            <if test="model.province != null">province= #{model.province},</if>
+            <if test="model.city != null">city= #{model.city},</if>
+            <if test="model.county != null">county= #{model.county},</if>
+            <if test="model.cardNo != null">cardNo= #{model.cardNo},</if>
+            <if test="model.isDefault != null">isDefault= #{model.isDefault},</if>
+            <if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+        </set>
+		WHERE id = #{id}
+    </update>
+	
+</mapper>
+
+

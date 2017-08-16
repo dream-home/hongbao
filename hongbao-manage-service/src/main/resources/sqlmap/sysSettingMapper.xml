@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.SysSettingDao">
+
+    <sql id="fields">
+        drawMinScore,winnerScaleMax,winnerScaleMin,systemPoundageScale,firstReferrerScale,secondReferrerScale,thirdReferrerScale,drawNumMax,drawNumMin,winnerListNum,donateSwich,donateMax,donateMin,
+        donatePoundageScale,exchangeSwitch,exchangeMax,exchangeMin,exchangePoundageScale,androidAppVersion,androidAppUrl,androidAppDetail,androidAppForceUpdate,iosAppVersion,iosAppUrl,iosAppDetail,
+        iosAppForceUpdate,systemCopyright,systemDomain,createTime,updateTime,status,remark,storeStockMax,storeGoodsMax,createStoreCondition,inviteSwich,vipWinScale,levelNo,registerEP,inviterEP,bindEP,
+        mailPeople,shareTitle,shareMessage,tradeRate,EPScale,balanceScale,billDay,joinEp,joinFirstReferrerScale,joinSecondReferrerScale,joinThirdReferrerScale,guideFlag,joinToDouScale,EPToDouScale,
+        minEPConvertNum,maxEPConvertNum,commonReleaseScale,vipReleaseScale,minSignDouNum,epSwitch,servicePhone,provinceBalanceScale,cityBalanceScale,countryBalanceScale,provinceEPScale,cityEPScale,countryEPScale,isAndroidPopup,isIOSPopup,registerDoudou,inviterDoudou,bindDoudou
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_sys_setting</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.drawMinScore != null">drawMinScore=#{model.drawMinScore}</if>
+            <if test="model.winnerScaleMax != null">and winnerScaleMax=#{model.winnerScaleMax}</if>
+            <if test="model.winnerScaleMin != null">and winnerScaleMin=#{model.winnerScaleMin}</if>
+            <if test="model.systemPoundageScale != null">and systemPoundageScale=#{model.systemPoundageScale}</if>
+            <if test="model.firstReferrerScale != null">and firstReferrerScale=#{model.firstReferrerScale}</if>
+            <if test="model.secondReferrerScale != null">and secondReferrerScale=#{model.secondReferrerScale}</if>
+            <if test="model.thirdReferrerScale != null">and thirdReferrerScale=#{model.thirdReferrerScale}</if>
+            <if test="model.drawNumMax != null">and drawNumMax=#{model.drawNumMax}</if>
+            <if test="model.drawNumMin != null">and drawNumMin=#{model.drawNumMin}</if>
+            <if test="model.winnerListNum != null">and winnerListNum=#{model.winnerListNum}</if>
+            <if test="model.donateSwich != null">and donateSwich=#{model.donateSwich}</if>
+            <if test="model.donateMax != null">and donateMax=#{model.donateMax}</if>
+            <if test="model.donateMin != null">and donateMin=#{model.donateMin}</if>
+            <if test="model.donatePoundageScale != null">and donatePoundageScale=#{model.donatePoundageScale}</if>
+            <if test="model.exchangeSwitch != null">and exchangeSwitch=#{model.exchangeSwitch}</if>
+            <if test="model.exchangeMax != null">and exchangeMax=#{model.exchangeMax}</if>
+            <if test="model.exchangeMin != null">and exchangeMin=#{model.exchangeMin}</if>
+            <if test="model.exchangePoundageScale != null">and exchangePoundageScale=#{model.exchangePoundageScale}</if>
+            <if test="model.androidAppVersion != null and model.androidAppVersion != ''">and androidAppVersion=#{model.androidAppVersion}</if>
+            <if test="model.androidAppUrl != null and model.androidAppUrl != ''">and androidAppUrl=#{model.androidAppUrl}</if>
+            <if test="model.androidAppDetail != null and model.androidAppDetail != ''">and androidAppDetail=#{model.androidAppDetail}</if>
+            <if test="model.androidAppForceUpdate != null">and androidAppForceUpdate=#{model.androidAppForceUpdate}</if>
+            <if test="model.iosAppVersion != null and model.iosAppVersion != ''">and iosAppVersion=#{model.iosAppVersion}</if>
+            <if test="model.iosAppUrl != null and model.iosAppUrl != ''">and iosAppUrl=#{model.iosAppUrl}</if>
+            <if test="model.iosAppDetail != null and model.iosAppDetail != ''">and iosAppDetail=#{model.iosAppDetail}</if>
+            <if test="model.iosAppForceUpdate != null">and iosAppForceUpdate=#{model.iosAppForceUpdate}</if>
+            <if test="model.systemCopyright != null and model.systemCopyright != ''">and systemCopyright=#{model.systemCopyright}</if>
+            <if test="model.systemDomain != null and model.systemDomain != ''">and systemDomain=#{model.systemDomain}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.inviteSwich != null and model.inviteSwich != ''">and inviteSwich=#{model.inviteSwich}</if>
+            <if test="model.servicePhone != null and model.servicePhone != ''">and servicePhone=#{model.servicePhone}</if>
+        	<if test="model.provinceBalanceScale != null">and provinceBalanceScale=#{model.provinceBalanceScale}</if>
+        	<if test="model.cityBalanceScale != null">and cityBalanceScale=#{model.cityBalanceScale}</if>
+        	<if test="model.countryBalanceScale != null">and countryBalanceScale=#{model.countryBalanceScale}</if>
+        	<if test="model.cityEPScale != null">and cityEPScale=#{model.cityEPScale}</if>
+        	<if test="model.provinceEPScale != null">and provinceEPScale=#{model.provinceEPScale}</if>
+        	<if test="model.countryEPScale != null">and countryEPScale=#{model.countryEPScale}</if>
+        </where>
+    </sql>
+
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.drawMinScore},#{model.winnerScaleMax},#{model.winnerScaleMin},#{model.systemPoundageScale},#{model.firstReferrerScale},#{model.secondReferrerScale},#{model.thirdReferrerScale},#{model.drawNumMax},#{model.drawNumMin},
+        #{model.winnerListNum},#{model.donateSwich},#{model.donateMax},#{model.donateMin},#{model.donatePoundageScale},#{model.exchangeSwitch},#{model.exchangeMax},#{model.exchangeMin},#{model.exchangePoundageScale},#{model.androidAppVersion},#{model.androidAppUrl},
+        #{model.androidAppDetail},#{model.androidAppForceUpdate},#{model.iosAppVersion},#{model.iosAppUrl},#{model.iosAppDetail},#{model.iosAppForceUpdate},#{model.systemCopyright},#{model.systemDomain},now(),now(),1,#{model.remark},
+        #{model.storeStockMax},#{model.storeGoodsMax},#{model.createStoreCondition},#{model.inviteSwich},#{model.vipWinScale},#{model.levelNo}),#{model.registerEP},#{model.inviterEP},#{model.bindEP},#{model.guideFlag},#{model.joinToDouScale},#{model.EPToDouScale},#{model.minEPConvertNum},#{model.maxEPConvertNum},
+        #{model.commonReleaseScale},#{model.vipReleaseScale},#{model.minSignDouNum},#{model.epSwitch},#{model.servicePhone});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.SysSetting">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.SysSetting">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.SysSetting">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.drawMinScore != null">drawMinScore= #{model.drawMinScore},</if>
+            <if test="model.winnerScaleMax != null">winnerScaleMax= #{model.winnerScaleMax},</if>
+            <if test="model.winnerScaleMin != null">winnerScaleMin= #{model.winnerScaleMin},</if>
+            <if test="model.systemPoundageScale != null">systemPoundageScale= #{model.systemPoundageScale},</if>
+            <if test="model.firstReferrerScale != null">firstReferrerScale= #{model.firstReferrerScale},</if>
+            <if test="model.secondReferrerScale != null">secondReferrerScale= #{model.secondReferrerScale},</if>
+            <if test="model.thirdReferrerScale != null">thirdReferrerScale= #{model.thirdReferrerScale},</if>
+            <if test="model.drawNumMax != null">drawNumMax= #{model.drawNumMax},</if>
+            <if test="model.drawNumMin != null">drawNumMin= #{model.drawNumMin},</if>
+            <if test="model.winnerListNum != null">winnerListNum= #{model.winnerListNum},</if>
+            <if test="model.donateSwich != null">donateSwich= #{model.donateSwich},</if>
+            <if test="model.donateMax != null">donateMax= #{model.donateMax},</if>
+            <if test="model.donateMin != null">donateMin= #{model.donateMin},</if>
+            <if test="model.storeStockMax != null">storeStockMax= #{model.storeStockMax},</if>
+            <if test="model.storeGoodsMax != null">storeGoodsMax= #{model.storeGoodsMax},</if>
+            <if test="model.createStoreCondition != null">createStoreCondition= #{model.createStoreCondition},</if>
+            <if test="model.donatePoundageScale != null">donatePoundageScale= #{model.donatePoundageScale},</if>
+            <if test="model.exchangeSwitch != null">exchangeSwitch= #{model.exchangeSwitch},</if>
+            <if test="model.exchangeMax != null">exchangeMax= #{model.exchangeMax},</if>
+            <if test="model.exchangeMin != null">exchangeMin= #{model.exchangeMin},</if>
+            <if test="model.exchangePoundageScale != null">exchangePoundageScale= #{model.exchangePoundageScale},</if>
+            <if test="model.androidAppVersion != null and model.androidAppVersion !=''">androidAppVersion= #{model.androidAppVersion},</if>
+            <if test="model.androidAppUrl != null and model.androidAppUrl !=''">androidAppUrl= #{model.androidAppUrl},</if>
+            <if test="model.androidAppDetail != null and model.androidAppDetail !=''">androidAppDetail= #{model.androidAppDetail},</if>
+            <if test="model.androidAppForceUpdate != null">androidAppForceUpdate= #{model.androidAppForceUpdate},</if>
+            <if test="model.iosAppVersion != null and model.iosAppVersion !=''">iosAppVersion= #{model.iosAppVersion},</if>
+            <if test="model.iosAppUrl != null and model.iosAppUrl !=''">iosAppUrl= #{model.iosAppUrl},</if>
+            <if test="model.iosAppDetail != null and model.iosAppDetail !=''">iosAppDetail= #{model.iosAppDetail},</if>
+            <if test="model.iosAppForceUpdate != null">iosAppForceUpdate= #{model.iosAppForceUpdate},</if>
+            <if test="model.systemCopyright != null and model.systemCopyright !=''">systemCopyright= #{model.systemCopyright},</if>
+            <if test="model.systemDomain != null and model.systemDomain !=''">systemDomain= #{model.systemDomain},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            <if test="model.inviteSwich != null">inviteSwich= #{model.inviteSwich},</if>
+            <if test="model.vipWinScale != null">vipWinScale= #{model.vipWinScale},</if>
+            <if test="model.levelNo != null">levelNo= #{model.levelNo},</if>
+            <if test="model.registerEP != null">registerEP= #{model.registerEP},</if>
+            <if test="model.inviterEP != null">inviterEP= #{model.inviterEP},</if>
+            <if test="model.bindEP != null">bindEP= #{model.bindEP},</if>
+            <if test="model.mailPeople != null and model.mailPeople !=''">mailPeople= #{model.mailPeople},</if>
+            <if test="model.shareTitle != null  and model.shareTitle !=''">shareTitle= #{model.shareTitle},</if>
+            <if test="model.shareMessage != null  and model.shareMessage !=''">shareMessage= #{model.shareMessage},</if>
+            <if test="model.tradeRate != null">tradeRate= #{model.tradeRate},</if>
+            <if test="model.EPScale != null">EPScale= #{model.EPScale},</if>
+            <if test="model.balanceScale != null">balanceScale= #{model.balanceScale},</if>
+            <if test="model.billDay != null">billDay= #{model.billDay},</if>
+            <if test="model.joinEp != null">joinEp= #{model.joinEp},</if>
+            <if test="model.joinFirstReferrerScale != null">joinFirstReferrerScale= #{model.joinFirstReferrerScale},</if>
+            <if test="model.joinSecondReferrerScale != null">joinSecondReferrerScale= #{model.joinSecondReferrerScale},</if>
+            <if test="model.joinThirdReferrerScale != null">joinThirdReferrerScale= #{model.joinThirdReferrerScale},</if>
+            <if test="model.guideFlag != null and model.guideFlag != ''">guideFlag= #{model.guideFlag},</if>
+            <if test="model.joinToDouScale != null ">joinToDouScale= #{model.joinToDouScale},</if>
+            <if test="model.EPToDouScale != null ">EPToDouScale= #{model.EPToDouScale},</if>
+            <if test="model.minEPConvertNum != null">minEPConvertNum= #{model.minEPConvertNum},</if>
+            <if test="model.maxEPConvertNum != null ">maxEPConvertNum= #{model.maxEPConvertNum},</if>
+            <if test="model.commonReleaseScale != null">commonReleaseScale= #{model.commonReleaseScale},</if>
+            <if test="model.minSignDouNum != null ">minSignDouNum= #{model.minSignDouNum},</if>
+            <if test="model.vipReleaseScale != null ">vipReleaseScale= #{model.vipReleaseScale},</if>
+            <if test="model.epSwitch != null and model.epSwitch != ''">epSwitch= #{model.epSwitch},</if>
+            <if test="model.provinceBalanceScale != null">provinceBalanceScale=#{model.provinceBalanceScale},</if>
+        	<if test="model.cityBalanceScale != null">cityBalanceScale=#{model.cityBalanceScale},</if>
+        	<if test="model.countryBalanceScale != null">countryBalanceScale=#{model.countryBalanceScale},</if>
+        	<if test="model.cityEPScale != null">cityEPScale=#{model.cityEPScale},</if>
+        	<if test="model.provinceEPScale != null">provinceEPScale=#{model.provinceEPScale},</if>
+        	<if test="model.countryEPScale != null">countryEPScale=#{model.countryEPScale},</if>
+        	<if test="model.servicePhone != null">servicePhone= #{model.servicePhone},</if>
+        	<if test="model.isAndroidPopup != null">isAndroidPopup=#{model.isAndroidPopup},</if>
+        	<if test="model.isIOSPopup != null">isIOSPopup= #{model.isIOSPopup},</if>
+        	<if test="model.registerDoudou != null">registerDoudou= #{model.registerDoudou},</if>
+        	<if test="model.inviterDoudou != null">inviterDoudou=#{model.inviterDoudou},</if>
+        	<if test="model.bindDoudou != null">bindDoudou= #{model.bindDoudou},</if>
+        	
+            
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+</mapper>
+
+

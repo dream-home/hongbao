@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.ParameterMapper">
+
+	<sql id="fields">
+        id,name,value,kind,remark,title,createtime,updatetime,status,groupType
+    </sql>
+
+	<resultMap id="getStoreMap" type="HashMap">
+		<result column=""></result>
+	</resultMap>
+    
+    <sql id="table">hb_parameter</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.name != null and model.name != ''">name=#{model.name}</if>
+            <if test="model.value != null and model.value != ''">and value=#{model.value}</if>
+            <if test="model.kind != null">and kind=#{model.kind}</if>
+            <if test="model.status != null and model.status != ''">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.title != null and model.title != ''">and title=#{model.title}</if>
+            <if test="model.groupType != null and model.groupType != ''">and groupType=#{model.groupType}</if>
+        </where>
+    </sql>
+
+    <select id="readById" resultType="com.mall.model.Parameter">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+	<!-- 查询商家提现记录，根据userId进行分类 -->
+	<select id="getList" resultType="com.mall.model.Parameter">
+		<include refid="selector"/>
+	</select>
+	
+</mapper>
+
+

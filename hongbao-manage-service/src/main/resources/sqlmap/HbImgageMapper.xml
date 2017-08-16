@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanbao.mapper.ImgageMapper" >
+
+<!-- hb_image table all fields -->
+<sql id="Po_Column_List" >
+	 id,imageLinkId,type,path,rank,createTime,updateTime,status,remark
+</sql>
+
+<!-- 查询条件 -->
+<sql id="Po_Where_Clause">
+<where>
+	1=1
+	<if test="model.id != null  and model.id != '' ">
+		 and id =#{id}
+	</if>
+	<if test="model.imageLinkId != null  and model.imageLinkId != '' ">
+		 and imageLinkId = #{imageLinkId}
+	</if>
+	<if test="model.type != null  ">
+		 and type=#{model.type}
+	</if>
+	<if test="model.path != null  and model.path != '' ">
+		 and path = #{model.path}
+	</if>
+	<if test="model.rank != null  ">
+		 and rank=#{model.rank}
+	</if>
+	<if test="model.createTime != null  ">
+		 and createTime=#{model.createTime}
+	</if>
+	<if test="model.updateTime != null  ">
+		 and updateTime=#{model.updateTime}
+	</if>
+	<if test="model.status != null  ">
+		 and status=#{model.status}
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		 and remark like '%${model.remark}%'
+	</if>
+
+</where>
+</sql>
+
+<!-- 插入记录 [说明：如果要返回当前对象，需要如下配置：<insert id="addVo" parameterType="Object" useGeneratedKeys="true" keyProperty="id">] -->
+<insert id="create">
+  insert into  hb_image
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		id,
+	</if>
+	<if test="model.imageLinkId != null  ">
+		imageLinkId,
+	</if>
+	<if test="model.type != null  ">
+		type,
+	</if>
+	<if test="model.path != null  ">
+		path,
+	</if>
+	<if test="model.rank != null  ">
+		rank,
+	</if>
+	<if test="model.createTime != null  ">
+		createTime,
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime,
+	</if>
+	<if test="model.status != null  ">
+		status,
+	</if>
+	<if test="model.remark != null  ">
+		remark,
+	</if>
+	</trim> 
+)
+ values 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		#{model.id},
+	</if>
+	<if test="model.imageLinkId != null  ">
+		#{model.imageLinkId},
+	</if>
+	<if test="model.type != null  ">
+		#{model.type},
+	</if>
+	<if test="model.path != null  ">
+		#{model.path},
+	</if>
+	<if test="model.rank != null  ">
+		#{model.rank},
+	</if>
+	<if test="model.createTime != null  ">
+		#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		#{model.status},
+	</if>
+	<if test="model.remark != null  ">
+		#{model.remark},
+	</if>
+	</trim>
+)
+</insert>
+
+<!-- 多条件删除记录 -->
+<select id="delPo" resultType="java.lang.Integer"  >
+	delete from hb_image
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 删除记录 -->
+<delete id="deleteById">
+	delete 	 from hb_image where id = #{id}
+</delete>
+
+<!--批量删除-->
+<delete id="delPoList">
+	delete 	 from hb_image where id in
+	<foreach item="idItem" collection="list" index="index" open="(" separator="," close=")">
+	#{idItem}
+	</foreach>
+</delete>
+
+<!-- 根据id，修改记录-->
+ <update id="modPo">
+  update hb_image set imageLinkId=#{model.imageLinkId},type=#{model.type},path=#{model.path},rank=#{model.rank},createTime=#{model.createTime},updateTime=#{model.updateTime},status=#{model.status},remark=#{model.remark} where id=#{model.id}
+ </update>
+ <!-- 修改记录，只修改只不为空的字段 -->
+<update id="updateById">
+	update hb_image set
+	<trim  suffixOverrides="," >
+	<if test="model.imageLinkId != null  and model.imageLinkId != '' ">
+		imageLinkId=#{model.imageLinkId},
+	</if>
+	<if test="model.type != null  ">
+		type=#{model.type},
+	</if>
+	<if test="model.path != null  and model.path != '' ">
+		path=#{model.path},
+	</if>
+	<if test="model.rank != null  ">
+		rank=#{model.rank},
+	</if>
+	<if test="model.createTime != null  ">
+		createTime=#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime=#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		status=#{model.status},
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		remark=#{model.remark},
+	</if>
+	</trim> where id=#{id}
+</update>
+
+<!-- 根据id查询 图片表 -->
+<select id="readById"  resultType="com.mall.model.Image">
+	select
+	<include refid="Po_Column_List"/>
+	from hb_image
+	where id = #{id}
+</select>
+
+<!-- 根据id查询 图片表 -->
+<select id="readOne"  resultType="com.mall.model.Image">
+	select
+	<include refid="Po_Column_List"/>
+	from hb_image
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 图片表 列表总数-->
+<select id="readCount" resultType="java.lang.Integer">
+	select count(1) from hb_image
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 查询图片表列表 -->
+<select id="getPoList" resultType="com.mall.model.Image">
+	select
+	<include refid="Po_Column_List"/>
+	from hb_image
+	<where>
+		1=1
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.type != null">and type=#{model.type}</if>
+            <if test="model.imageLinkId != null and model.imageLinkId != ''">and imageLinkId=#{model.imageLinkId}</if>
+            <if test="model.id != null and model.id != ''">and bankName=#{model.id}</if>
+	</where>
+	<!-- <include refid="Po_Where_Clause"/> -->
+</select>
+
+<!-- 查询图片表列表 带分页-->
+<select id="readList" resultType="com.mall.model.Image">
+	select
+	<include refid="Po_Column_List"/>
+	from hb_image
+	<include refid="Po_Where_Clause"/>
+	LIMIT #{startRow}, #{pageSize}
+</select>
+
+<!-- 根据多个id查询 图片表 -->
+<select id="readByIds"  resultType="com.mall.model.Image">
+	select
+	<include refid="Po_Column_List"/>
+	from hb_image
+	<if test="list !=null">
+		where id in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+	</if>
+</select>
+
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.PayDistributionMapper">
+
+	<sql id="fields">
+		id,userId,businessSendEp,firstReferrerScale,secondReferrerScale,
+		thirdReferrerScale,createTime,updateTime,status, remark,type,discountEP
+	</sql>
+
+	<sql id="table">hb_pay_distribution</sql>
+
+	<sql id="selector">
+		SELECT
+		<include refid="fields" />
+		FROM
+		<include refid="table" />
+	</sql>
+
+	<select id="getByUserId" resultType="PayDistribution">
+		<include refid="selector" />
+		WHERE userId = #{userId}
+        <if test="type != null and type >0">and type = #{type}</if>
+		LIMIT 1;
+	</select>
+
+	<insert id="addPayDistribution" keyProperty="id">
+		INSERT INTO
+		<include refid="table" />
+		(
+		<include refid="fields" />
+		)
+		VALUES (#{model.id},#{model.userId}, #{model.businessSendEp},
+		#{model.firstReferrerScale}, #{model.secondReferrerScale},#{model.thirdReferrerScale},
+		#{model.createTime}, #{model.updateTime}, #{model.status},#{model.remark},#{model.type},#{model.discountEP})
+	</insert>
+
+	<update id="updatePayDistribution">
+		UPDATE
+		<include refid="table" />
+		<set>
+			<if test="model.businessSendEp != null and model.businessSendEp >= 0">businessSendEp= #{model.businessSendEp},</if>
+			<if test="model.firstReferrerScale != null and model.firstReferrerScale >= 0">firstReferrerScale= #{model.firstReferrerScale},</if>
+			<if test="model.secondReferrerScale != null and model.secondReferrerScale >= 0">secondReferrerScale= #{model.secondReferrerScale},</if>
+			<if test="model.thirdReferrerScale != null and model.thirdReferrerScale >= 0">thirdReferrerScale= #{model.thirdReferrerScale},</if>
+			<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null">remark= #{model.remark},</if>
+			<if test="model.discountEP != null">discountEP= #{model.discountEP},</if>
+		</set>
+		WHERE id = #{model.id}
+        <if test="model.type != null and model.type >0">and type = #{model.type}</if>
+	</update>
+
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.MessageMapper">
+
+	<sql id="fields">
+        id, orderNo, userId, title, type, 
+		detail, createTime, updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_sys_message</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<select id="getById" resultType="Message">
+		<include refid="selector"/>
+		WHERE id = #{id}
+		LIMIT 1
+	</select>
+
+	<select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE userId IN 
+		<foreach collection="userIds" index="index" item="item" open="(" separator="," close=")">
+		   #{item}
+		</foreach>
+		AND type IN
+		<foreach collection="types" index="index" item="item" open="(" separator="," close=")">
+		   #{item}
+		</foreach>
+		<if test="status != null">AND status= #{status}</if>
+	</select>
+
+	<select id="getList" resultType="Message">
+		<include refid="selector"/>
+		WHERE userId IN 
+		<foreach collection="userIds" index="index" item="item" open="(" separator="," close=")">
+		   #{item}
+		</foreach>
+		<if test="types != null">
+		AND type IN
+		<foreach collection="types" index="index" item="item" open="(" separator="," close=")">
+		   #{item}
+		</foreach>
+		</if>
+		ORDER BY status ASC, createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	
+	<insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.orderNo}, #{model.userId}, #{model.title}, #{model.type}, 
+			#{model.detail}, #{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark})
+    </insert> 
+    
+    <update id="update">
+        UPDATE <include refid="table"/>
+        <set>
+        	<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+        </set>
+		WHERE id = #{id}
+    </update>
+	
+</mapper>
+
+

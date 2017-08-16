@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanbao.mapper.ImageMapper" >
+
+<sql id="Po_Column_List" >
+	 id,imageLinkId,type,path,rank,createTime,updateTime,status,remark
+</sql>
+
+<!-- 插入记录 [说明：如果要返回当前对象，需要如下配置：<insert id="addVo" parameterType="Object" useGeneratedKeys="true" keyProperty="id">] -->
+<insert id="add">
+  insert into  hb_image
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		id,
+	</if>
+	<if test="model.imageLinkId != null  ">
+		imageLinkId,
+	</if>
+	<if test="model.type != null  ">
+		type,
+	</if>
+	<if test="model.path != null  ">
+		path,
+	</if>
+	<if test="model.rank != null  ">
+		rank,
+	</if>
+	<if test="model.createTime != null  ">
+		createTime,
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime,
+	</if>
+	<if test="model.status != null  ">
+		status,
+	</if>
+	<if test="model.remark != null  ">
+		remark,
+	</if>
+	</trim> 
+)
+ values 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		#{model.id},
+	</if>
+	<if test="model.imageLinkId != null  ">
+		#{model.imageLinkId},
+	</if>
+	<if test="model.type != null  ">
+		#{model.type},
+	</if>
+	<if test="model.path != null  ">
+		#{model.path},
+	</if>
+	<if test="model.rank != null  ">
+		#{model.rank},
+	</if>
+	<if test="model.createTime != null  ">
+		#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		#{model.status},
+	</if>
+	<if test="model.remark != null  ">
+		#{model.remark},
+	</if>
+	</trim>
+)
+</insert>
+
+
+<!-- 删除记录 -->
+<delete id="deleteById">
+	delete 	 from hb_image where id = #{id}
+</delete>
+
+
+ <!-- 修改记录，只修改只不为空的字段 -->
+<update id="updateById">
+	update hb_image set 
+	<trim  suffixOverrides="," >
+	<if test="model.imageLinkId != null  and model.imageLinkId != '' ">
+		imageLinkId=#{model.imageLinkId},
+	</if>
+	<if test="model.type != null  ">
+		type=#{model.type},
+	</if>
+	<if test="model.path != null  and model.path != '' ">
+		path=#{model.path},
+	</if>
+	<if test="model.rank != null  ">
+		rank=#{model.rank},
+	</if>
+	<if test="model.createTime != null  ">
+		createTime=#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime=#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		status=#{model.status},
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		remark=#{model.remark},
+	</if>
+	</trim> where id=#{id}
+</update>
+
+<!-- 根据id查询 图片表 -->
+<select id="getById"  resultType="com.mall.model.Image">
+	select
+	<include refid="Po_Column_List"/>
+	from hb_image
+	where id = #{id}
+</select>
+
+<!-- 根据多个id查询 图片表 -->
+<select id="getByLinkId"  resultType="com.mall.model.Image">
+    select
+    <include refid="Po_Column_List"/>
+    from hb_image
+	where imageLinkId = #{linkId} AND  status=0
+	<if test="type !=null">
+		AND type= #{type}
+	</if>
+    ORDER  BY  createTime ASC
+   <!-- <if test="list !=null">
+        where imageLinkId in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+    </if>-->
+</select>
+
+</mapper>

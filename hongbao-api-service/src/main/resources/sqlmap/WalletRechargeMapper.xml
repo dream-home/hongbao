@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.WalletRechargeMapper">
+
+	<sql id="fields">
+        id, orderNo, userId, score, confirmScore, 
+		poundage, source, createTime, updateTime, status, 
+		remark,storeUserId,businessSendEp,firstReferrerScale,secondReferrerScale,thirdReferrerScale,discountEP,scenes,doudou
+    </sql>
+    
+    <sql id="table">hb_wallet_recharge</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<select id="getByOrderNo" resultType="WalletRecharge">
+		<include refid="selector"/>
+		WHERE orderNo = #{orderNo} AND userId=#{userId}
+		LIMIT 1;
+	</select>
+
+	<select id="getUserOrderByOrderNo" resultType="WalletRecharge">
+		<include refid="selector"/>
+		WHERE orderNo = #{orderNo}
+		LIMIT 1;
+	</select>
+
+	<select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		AND userId = #{userId}
+		WHERE userId = #{userId}
+	</select>
+
+	<select id="getList" resultType="WalletRecharge">
+		<include refid="selector"/>
+		WHERE userId = #{userId}
+		ORDER BY createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	
+	<insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.orderNo}, #{model.userId}, #{model.score}, #{model.confirmScore}, 
+			#{model.poundage}, #{model.source}, #{model.createTime}, #{model.updateTime}, #{model.status}, 
+			#{model.remark},#{model.storeUserId},#{model.businessSendEp},#{model.firstReferrerScale},#{model.secondReferrerScale},#{model.thirdReferrerScale},#{model.discountEP},#{model.scenes},#{model.doudou})
+    </insert> 
+    
+    <update id="update">
+        UPDATE <include refid="table"/>
+        <set>
+        	<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+            <if test="model.discountEP != null">discountEP= #{model.discountEP},</if>
+            <if test="model.scenes != null">scenes= #{model.scenes},</if>
+            <if test="model.doudou != null">doudou= #{model.doudou},</if>
+        </set>
+		WHERE id = #{id}
+    </update>
+	
+	
+	<select id="getByscore" resultType="WalletRecharge">
+		<include refid="selector"/>
+		WHERE storeUserId = #{model.userId}
+		<if test="model.status != null"> AND status= #{model.status}</if>
+		<if test="sources != null ">
+			AND source in
+			<foreach item="item" collection="sources" index="index" open="(" separator="," close=")"> 
+			  #{item}
+			</foreach> 
+		</if>
+		ORDER BY createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	
+	<select id="countByscore" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE storeUserId = #{model.userId}
+		<if test="model.status != null"> AND status= #{model.status}</if>
+		<if test="sources != null  ">
+			AND source in
+			<foreach item="item" collection="sources" index="index" open="(" separator="," close=")"> 
+			  #{item}
+			</foreach> 
+		</if>
+		ORDER BY createTime DESC
+	</select>
+	
+	
+	<select id="statistics" resultType="Double">
+		SELECT SUM(confirmScore-poundage)
+		FROM <include refid="table"/>
+		WHERE storeUserId = #{model.userId}
+		<if test="model.status != null"> AND status= #{model.status}</if>
+		<if test="sources != null">
+			AND source in
+			<foreach item="item" collection="sources" index="index" open="(" separator="," close=")"> 
+			  #{item}
+			</foreach> 
+		</if>
+		<if test="nowDate != null  and nowDate != '' ">
+			AND createTime LIKE '%${nowDate}%'
+		</if>
+	</select>
+	
+	<select id="getListByTime" resultType="WalletRecharge">
+		<include refid="selector"/>
+		WHERE 1=1
+		<if test="status != null"> AND status= #{status}</if>
+		<if test="source != null"> AND source= #{source}</if>
+		 AND createTime>=#{starttime} and createTime&lt;#{endtime}
+		ORDER BY createTime DESC
+	</select>
+	
+	
+</mapper>
+
+

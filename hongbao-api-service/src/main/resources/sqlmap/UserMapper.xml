@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.UserMapper">
+
+	<sql id="fields">
+		id, uid, account, password, payPwd,
+		weixin, phone, email,
+		userName, nickName,
+		sex, headImgUrl, salt, score, freezeScore,
+		firstReferrer, secondReferrer, thirdReferrer, storeId, isKF,
+		groupType, groupChildCountA, groupChildCountB, groupChildCountC,
+		createTime, updateTime, status, remark, registrationId,
+		exchangeEP,consumeEP,grade,remainSign,performanceOne,performanceTwo,
+		performanceThree,signTime,bindEP,bindDoudou,checked,levles,loginTime,openId,doudou,douSignTime,province,city,county,areaId,joinPartnerTime
+	</sql>
+
+	<sql id="table">hb_sys_user</sql>
+
+	<sql id="selector">
+		SELECT
+		<include refid="fields" />
+		FROM
+		<include refid="table" />
+	</sql>
+
+	<sql id="condition">
+		<where>
+			1=1
+			<if test="model.id != null">AND id= #{model.id}</if>
+			<if test="model.uid != null">AND uid= #{model.uid}</if>
+			<if test="model.weixin != null">AND weixin= #{model.weixin}</if>
+			<if test="model.phone != null">AND phone= #{model.phone}</if>
+			<if test="model.status != null">AND status= #{model.status}</if>
+			<if test="model.firstReferrer != null">AND firstReferrer= #{model.firstReferrer}</if>
+			<if test="model.secondReferrer != null">AND secondReferrer= #{model.secondReferrer}</if>
+			<if test="model.thirdReferrer != null">AND thirdReferrer= #{model.thirdReferrer}</if>
+			<if test="model.storeId != null">AND storeId= #{model.storeId}</if>
+			<if test="model.openId != null">AND openId= #{model.openId}</if>
+		</where>
+	</sql>
+
+	<select id="getById" resultType="User">
+		<include refid="selector" />
+		WHERE id = #{id}
+		LIMIT 1;
+	</select>
+
+	<select id="getByCondition" resultType="User">
+		<include refid="selector" />
+		<include refid="condition" />
+		LIMIT 1;
+	</select>
+
+	<select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM
+		<include refid="table" />
+		<include refid="condition" />
+	</select>
+
+	<select id="getList" resultType="User">
+		<include refid="selector" />
+		<include refid="condition" />
+		ORDER BY createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+
+	<insert id="add" keyProperty="id">
+		INSERT INTO
+		<include refid="table" />
+		(
+		<include refid="fields" />
+		)
+		VALUES (#{model.id}, #{model.uid}, #{model.account},
+		#{model.password}, #{model.payPwd},
+		#{model.weixin}, #{model.phone},
+		#{model.email}, #{model.userName}, #{model.nickName},
+		#{model.sex},
+		#{model.headImgUrl}, #{model.salt}, #{model.score},
+		#{model.freezeScore},
+		#{model.firstReferrer}, #{model.secondReferrer},
+		#{model.thirdReferrer}, #{model.storeId},
+		#{model.isKF},
+		#{model.groupType}, #{model.groupChildCountA},
+		#{model.groupChildCountB},
+		#{model.groupChildCountC},
+		#{model.createTime}, #{model.updateTime}, #{model.status},
+		#{model.remark},
+		#{model.registrationId}, #{model.exchangeEP},
+		#{model.consumeEP},
+		#{model.grade},
+		#{model.remainSign},
+		#{model.performanceOne}, #{model.performanceTwo},
+		#{model.performanceThree}, 
+		#{model.signTime},
+		0,
+		0,
+		#{model.checked},
+		#{model.levles},
+		#{model.loginTime},
+		#{model.openId},
+		0,
+		#{model.douSignTime},
+		#{model.province},
+		#{model.city},
+		#{model.county},
+		#{model.areaId},
+		null)
+	</insert>
+
+	<update id="update">
+		UPDATE
+		<include refid="table" />
+		<set>
+			<if test="model.account != null">account= #{model.account},</if>
+			<if test="model.password != null">password= #{model.password},</if>
+			<if test="model.payPwd != null">payPwd= #{model.payPwd},</if>
+			<if test="model.weixin != null">weixin= #{model.weixin},</if>
+			<if test="model.phone != null">phone= #{model.phone},</if>
+			<if test="model.email != null">email= #{model.email},</if>
+			<if test="model.userName != null">userName= #{model.userName},</if>
+			<if test="model.nickName != null">nickName= #{model.nickName},</if>
+			<if test="model.sex != null">sex= #{model.sex},</if>
+			<if test="model.headImgUrl != null">headImgUrl= #{model.headImgUrl},</if>
+			<if test="model.freezeScore != null">freezeScore= #{model.freezeScore},</if>
+			<if test="model.firstReferrer != null">firstReferrer= #{model.firstReferrer},</if>
+			<if test="model.secondReferrer != null">secondReferrer= #{model.secondReferrer},</if>
+			<if test="model.thirdReferrer != null">thirdReferrer= #{model.thirdReferrer},</if>
+			<if test="model.storeId != null">storeId= #{model.storeId},</if>
+			<if test="model.groupType != null">groupType= #{model.groupType},</if>
+			<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null">remark= #{model.remark},</if>
+			<if test="model.exchangeEP != null and model.exchangeEP!=0 ">exchangeEP= #{model.exchangeEP},</if>
+			<if test="model.consumeEP != null  and model.consumeEP!=0">consumeEP= #{model.consumeEP},</if>
+			<if test="model.grade != null  and model.grade!=0">grade= #{model.grade},</if>
+			<if test="model.remainSign != null">remainSign= #{model.remainSign},</if>
+			<if test="model.signTime != null">signTime= #{model.signTime},</if>
+			<if test="model.registrationId != null">registrationId= #{model.registrationId},</if>
+			<if test="model.isKF != null">isKF= #{model.isKF},</if>
+			<if test="model.checked != null">checked= #{model.checked},</if>
+			<if test="model.levles != null">levles= #{model.levles},</if>
+			<if test="model.loginTime != null">loginTime= #{model.loginTime},</if>
+			<if test="model.openId != null">openId= #{model.openId},</if>
+			<if test="model.doudou != null and model.doudou != 0">doudou= #{model.doudou},</if>
+			<if test="model.douSignTime != null">douSignTime= #{model.douSignTime},</if>
+			<if test="model.province != null">province= #{model.province},</if>
+			<if test="model.city != null">city= #{model.city},</if>
+			<if test="model.county != null">county= #{model.county},</if>
+			<if test="model.areaId != null">areaId= #{model.areaId},</if>
+			<if test="model.joinPartnerTime != null">joinPartnerTime= #{model.joinPartnerTime},</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateScore">
+		UPDATE
+		<include refid="table" />
+		SET score = IFNULL(score,0) + #{score}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateDoudou">
+		UPDATE
+		<include refid="table" />
+		SET doudou = IFNULL(doudou,0) + #{doudou}
+		<if test="douSignTime != null">,douSignTime= #{douSignTime}</if>
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateEp">
+		UPDATE
+		<include refid="table" />
+		SET exchangeEP = IFNULL(exchangeEP,0) + #{exchangeEP}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateGroupChildCountA">
+		UPDATE
+		<include refid="table" />
+		SET groupChildCountA = IFNULL(groupChildCountA,0) + 1
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateGroupChildCountB">
+		UPDATE
+		<include refid="table" />
+		SET groupChildCountB = IFNULL(groupChildCountB,0) + 1
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateGroupChildCountC">
+		UPDATE
+		<include refid="table" />
+		SET groupChildCountC = IFNULL(groupChildCountC,0) + 1
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateGroupChildCount">
+		UPDATE
+		<include refid="table" />
+		SET groupChildCountC = #{C} , groupChildCountB = #{B} ,groupChildCountA= #{A} 
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateRegistrationId">
+		UPDATE
+		<include refid="table" />
+		SET registrationId = #{registrationId}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateEpById">
+		UPDATE
+		<include refid="table" />
+		SET exchangeEP = IFNULL(exchangeEP,0)+#{ep}
+		WHERE id = #{id} AND
+		(IFNULL(exchangeEP,0)+#{ep}) >=0
+	</update>
+
+	<update id="updateBindEpById">
+		UPDATE
+		<include refid="table" />
+		SET bindEP = IFNULL(bindEP,0)+#{ep}
+		WHERE id = #{id} AND
+		(IFNULL(bindEP,0)+#{ep}) >=0
+	</update>
+
+	<update id="updateBindDoudouById">
+		UPDATE
+		<include refid="table" />
+		SET bindDoudou = IFNULL(bindDoudou,0)+#{doudou}
+		WHERE id = #{id} AND
+		(IFNULL(bindDoudou,0)+#{doudou}) >=0
+	</update>
+	
+	<update id="updateBySignIn">
+		UPDATE
+		<include refid="table" />
+		SET consumeEP= #{model.consumeEP},grade= #{model.grade},score =#{model.score}
+		,signTime= #{model.signTime},remainSign=
+		#{model.remainSign}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateAllPerformance">
+		UPDATE
+		<include refid="table" />
+		SET performanceOne = #{performanceOne} , performanceTwo = #{performanceTwo} ,performanceThree= #{performanceThree}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updatePerformanceOne">
+		UPDATE
+		<include refid="table" />
+		SET performanceOne = IFNULL(performanceOne,0) + #{count}
+		WHERE id =
+		#{id}
+	</update>
+
+	<update id="updatePerformanceTwo">
+		UPDATE
+		<include refid="table" />
+		SET performanceTwo = IFNULL(performanceTwo,0) + #{count}
+		WHERE id =
+		#{id}
+	</update>
+
+	<update id="updatePerformanceThree">
+		UPDATE
+		<include refid="table" />
+		SET performanceThree = IFNULL(performanceThree,0) + #{count}
+		WHERE id =
+		#{id}
+	</update>
+
+	<update id="updateConsumeEPById">
+		UPDATE
+		<include refid="table" />
+		SET consumeEP = IFNULL(consumeEP,0)+#{consumeEP}
+		WHERE id = #{id} AND
+		(IFNULL(consumeEP,0)+#{consumeEP}) >=0
+	</update>
+
+	<select id="getMinGroupType" resultType="String">
+		SELECT grouptype FROM (
+		SELECT 'A' as grouptype,COUNT(grouptype) AS gcount
+		FROM hb_sys_user
+		WHERE firstreferrer=#{firstreferrer} AND grouptype='A'
+		UNION
+		SELECT 'B'
+		as grouptype,COUNT(grouptype) AS gcount
+		FROM hb_sys_user
+		WHERE
+		firstreferrer=#{firstreferrer} AND grouptype='B'
+		UNION
+		SELECT 'C' as
+		grouptype,COUNT(grouptype) AS gcount
+		FROM hb_sys_user
+		WHERE
+		firstreferrer=#{firstreferrer} AND grouptype='C'
+		) AS A
+		ORDER BY gcount
+		LIMIT 1
+	</select>
+
+	<select id="getInnerList" resultType="User">
+		<include refid="selector" />
+		<if test="uidList!=null">
+			where uid in 
+			<foreach collection="uidList" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+		</if>
+	</select>
+	
+	<select id="getUpdateList" resultType="User">
+		<include refid="selector" />
+		WHERE IFNULL(groupType,'')='' AND  IFNULL(firstReferrer,'')!=''  ORDER BY createTime asc LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	
+	<select id="getLeafList" resultType="User">
+		<include refid="selector" />
+		WHERE  isKF=1  LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+
+	<update id="batchUpdatePerformanceOne">
+		UPDATE
+		<include refid="table" />
+		SET performanceOne = IFNULL(performanceOne,0) + #{epCount}
+		where id in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+	</update>
+
+	<update id="batchUpdatePerformanceTwo">
+		UPDATE
+		<include refid="table" />
+		SET performanceTwo = IFNULL(performanceTwo,0) + #{epCount}
+		where id in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+	</update>
+
+	<update id="batchUpdatePerformanceThree">
+		UPDATE
+		<include refid="table" />
+		SET performanceThree = IFNULL(performanceThree,0) + #{epCount}
+		where id in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+	</update>
+</mapper>
+
+
+

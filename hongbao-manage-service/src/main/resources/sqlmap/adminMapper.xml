@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.AdminDao">
+
+    <sql id="fields">
+        account,password,weixin,phone,email,userName,nickName,sex,headImgUrl,salt,createTime,updateTime,status,remark,flag,role,payPassWord
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_sys_admin</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.account != null and model.account != ''">account=#{model.account}</if>
+            <if test="model.password != null and model.password != ''">and password=#{model.password}</if>
+            <if test="model.weixin != null and model.weixin != ''">and weixin=#{model.weixin}</if>
+            <if test="model.phone != null and model.phone != ''">and phone=#{model.phone}</if>
+            <if test="model.email != null and model.email != ''">and email=#{model.email}</if>
+            <if test="model.userName != null and model.userName != ''">and userName=#{model.userName}</if>
+            <if test="model.nickName != null and model.nickName != ''">and nickName=#{model.nickName}</if>
+            <if test="model.sex != null">and sex=#{model.sex}</if>
+            <if test="model.role != null">and role=#{model.role}</if>
+            <if test="model.headImgUrl != null and model.headImgUrl != ''">and headImgUrl=#{model.headImgUrl}</if>
+            <if test="model.salt != null and model.salt != ''">and salt=#{model.salt}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.payPassWord != null and model.payPassWord != ''">and payPassWord=#{model.payPassWord}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.account},#{model.password},#{model.weixin},#{model.phone},#{model.email},#{model.userName},#{model.nickName},#{model.sex},#{model.headImgUrl},#{model.salt},now(),now(),1,#{model.remark},0,#{model.role},#{model.payPassWord});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.Admin">
+        <include refid="selector"/> where id=#{id} and status=1 limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.Admin">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.Admin">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.account != null and model.account !=''">account= #{model.account},</if>
+            <if test="model.password != null and model.password !=''">password= #{model.password},</if>
+            <if test="model.weixin != null and model.weixin !=''">weixin= #{model.weixin},</if>
+            <if test="model.phone != null and model.phone !=''">phone= #{model.phone},</if>
+            <if test="model.email != null and model.email !=''">email= #{model.email},</if>
+            <if test="model.userName != null and model.userName !=''">userName= #{model.userName},</if>
+            <if test="model.nickName != null and model.nickName !=''">nickName= #{model.nickName},</if>
+            <if test="model.sex != null">sex= #{model.sex},</if>
+            <if test="model.headImgUrl != null and model.headImgUrl !=''">headImgUrl= #{model.headImgUrl},</if>
+            <if test="model.salt != null and model.salt !=''">salt= #{model.salt},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.flag != null">flag= #{model.flag},</if>
+            <if test="model.role != null">role= #{model.role},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            <if test="model.payPassWord != null and model.payPassWord !=''">payPassWord= #{model.payPassWord},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        delete from <include refid="table_name"/>  where id = #{id}
+    </update>
+
+    <select id="getByNickName" resultType="com.mall.model.Admin">
+        SELECT * from <include refid="table_name"/> WHERE nickName=#{nickName} and status=1
+    </select>
+</mapper>
+
+

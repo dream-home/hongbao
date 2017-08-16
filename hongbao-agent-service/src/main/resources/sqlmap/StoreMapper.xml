@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.StoreMapper">
+
+	<sql id="fields">
+        id, userId, storeName, icon, province, 
+		city, county, addr, businessScope, inviteCode, 
+		detail, isRecommend, collectNum, firstReferrerScale, secondReferrerScale, 
+		thirdReferrerScale, createTime, updateTime, status, remark,storeLicense,IDCardIcon,servicePhone,message,areaId
+    </sql>
+    
+    <sql id="table">hb_mall_user_store</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+	
+	<update id="updateById">
+        UPDATE <include refid="table"/>
+        <set>
+            <if test="model.storeName != null">storeName= #{model.storeName},</if>
+            <if test="model.icon != null">icon= #{model.icon},</if>
+            <if test="model.province != null">province= #{model.province},</if>
+            <if test="model.city != null">city= #{model.city},</if>
+            <if test="model.county != null">county= #{model.county},</if>
+            <if test="model.addr != null">addr= #{model.addr},</if>
+            <if test="model.inviteCode != null">inviteCode= #{model.inviteCode},</if>
+            <if test="model.detail != null">detail= #{model.detail},</if>
+            <if test="model.firstReferrerScale != null">firstReferrerScale= #{model.firstReferrerScale},</if>
+            <if test="model.secondReferrerScale != null">secondReferrerScale= #{model.secondReferrerScale},</if>
+            <if test="model.thirdReferrerScale != null">thirdReferrerScale= #{model.thirdReferrerScale},</if>
+            <if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+            <if test="model.businessScope != null">businessScope= #{model.businessScope},</if>
+            <if test="model.storeLicense != null">storeLicense= #{model.storeLicense},</if>
+            <if test="model.IDCardIcon != null">IDCardIcon= #{model.IDCardIcon},</if>
+            <if test="model.servicePhone != null">servicePhone= #{model.servicePhone},</if>
+        </set>
+		WHERE id = #{id}
+    </update>
+    
+    <update id="updateCollectNum">
+        UPDATE <include refid="table"/>
+        SET collectNum = collectNum + #{num}
+		WHERE id = #{id}
+    </update>
+    
+    <select id="getById" resultType="com.mall.model.Store">
+		<include refid="selector"/>
+		WHERE id = #{id}
+		LIMIT 1;
+	</select>
+	
+	<select id="readById" resultType="com.mall.model.Store">
+		<include refid="selector"/>
+		WHERE id = #{id}
+		LIMIT 1;
+	</select>
+    
+    <select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+        WHERE status = 1
+		AND (
+			locate(#{location},city)>0
+			OR locate(#{location},county)>0
+		)
+	</select>
+
+	<select id="getList" resultType="com.mall.model.Store">
+		<include refid="selector"/>
+        WHERE status = 1
+		AND (
+			locate(#{location},city)>0
+			OR locate(#{location},county)>0
+		)
+        ORDER BY collectNum DESC, createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+
+    <!-- 按地区搜索商家列表 -->
+	<select id="getStoreList" resultType="com.mall.model.Store">
+		<include refid="selector"/>
+        <where>
+            1=1
+            <if test="ids !=null">
+                AND areaId IN
+                <foreach collection="ids" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+            </if>
+            <if test="statusList !=null">
+                AND status IN
+                <foreach collection="statusList" index="index" item="status" open="(" separator="," close=")"> #{status} </foreach>
+            </if>
+        </where>
+        ORDER BY createTime DESC
+        LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+
+    <select id="countStoreList" resultType="Integer">
+        SELECT COUNT(id)
+        FROM <include refid="table"/>
+        <where>
+            1=1
+            <if test="ids !=null">
+                AND areaId IN
+                <foreach collection="ids" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+            </if>
+            <if test="statusList !=null">
+                AND status IN
+                <foreach collection="statusList" index="index" item="status" open="(" separator="," close=")"> #{status} </foreach>
+            </if>
+        </where>
+    </select>
+
+     <!-- 搜索几个地区的商家列表 -->
+	<select id="getListByAreaId" resultType="com.mall.model.Store">
+		<include refid="selector"/>
+        <where>
+            1=1
+            <if test="searh !=null">
+            	AND storeName LIKE CONCAT('%',#{searh},'%')
+            </if>
+            <if test="statusList !=null">
+                AND status IN
+                <foreach collection="statusList" index="index" item="status" open="(" separator="," close=")"> #{status} </foreach>
+            </if>
+            AND areaId in 
+            <foreach collection="areaIds" item="areaId" index="index" open="(" separator="," close=")">
+            #{areaId}
+       		</foreach>
+        </where>
+        ORDER BY createTime DESC
+        <if test="startRow != null and pageSize != null ">
+        	LIMIT #{startRow}, #{pageSize}
+        </if>
+	</select>
+</mapper>
+
+

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.UserDao">
+
+    <sql id="fields">
+        uid,account,password,payPwd,weixin,phone,email,userName,nickName,sex,headImgUrl,salt,score,freezeScore,firstReferrer,secondReferrer,thirdReferrer,isKF, groupType, groupChildCountA, groupChildCountB, groupChildCountC,createTime,updateTime,status,remark,exchangeEP,consumeEP,grade,remainSign,performanceOne,performanceTwo,performanceThree,registrationId,bindEP,levles,areaId,joinPartnerTime,province,city,county
+    </sql>
+
+    <sql id="fields_id">
+        id,
+        <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_sys_user</sql>
+
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/> 
+    </sql>
+
+    <sql id="condition">
+        <where>
+        	1=1
+            <if test="model.id != null and model.id != ''">and id=#{model.id}</if>
+            <if test="model.uid != null">and uid=#{model.uid}</if>
+            <if test="model.account != null and model.account != ''">and account=#{model.account}</if>
+            <if test="model.password != null and model.password != ''">and password=#{model.password}</if>
+            <if test="model.payPwd != null and model.payPwd != ''">and payPwd=#{model.payPwd}</if>
+            <if test="model.weixin != null and model.weixin != ''">and weixin=#{model.weixin}</if>
+            <if test="model.phone != null and model.phone != ''">and phone=#{model.phone}</if>
+            <if test="model.email != null and model.email != ''">and email=#{model.email}</if>
+            <if test="model.userName != null and model.userName != ''">and userName=#{model.userName}</if>
+            <if test="model.nickName != null and model.nickName != ''">and nickName=#{model.nickName}</if>
+            <if test="model.sex != null">and sex=#{model.sex}</if>
+            <if test="model.headImgUrl != null and model.headImgUrl != ''">and headImgUrl=#{model.headImgUrl}</if>
+            <if test="model.salt != null and model.salt != ''">and salt=#{model.salt}</if>
+            <if test="model.score != null">and score=#{model.score}</if>
+            <if test="model.freezeScore != null">and freezeScore=#{model.freezeScore}</if>
+            <if test="model.firstReferrer != null and model.firstReferrer != ''">and firstReferrer=#{model.firstReferrer}</if>
+            <if test="model.secondReferrer != null and model.secondReferrer != ''">and secondReferrer=#{model.secondReferrer}</if>
+            <if test="model.thirdReferrer != null and model.thirdReferrer != ''">and thirdReferrer=#{model.thirdReferrer}</if>
+            <if test="model.fromTime != null">and fromTime=#{model.fromTime}</if>
+            <if test="model.toTime != null">and toTime=#{model.toTime}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.joinPartnerTime != null and model.joinPartnerTime != ''">and joinPartnerTime=#{model.joinPartnerTime}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.uid},#{model.account},#{model.password},#{model.payPwd},#{model.weixin},#{model.phone},#{model.email},#{model.userName},#{model.nickName},#{model.sex},#{model.headImgUrl},#{model.salt},#{model.score},#{model.freezeScore},#{model.firstReferrer},#{model.secondReferrer},#{model.thirdReferrer},#{model.isKF}, #{model.groupType}, 0, 0, 0,now(),now(),1,#{model.remark},#{model.bindEP},null);
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.User">
+        <include refid="selector"/>
+        where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.User">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.User">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.uid != null">uid= #{model.uid},</if>
+            <if test="model.account != null and model.account !=''">account= #{model.account},</if>
+            <if test="model.password != null and model.password !=''">password= #{model.password},</if>
+            <if test="model.payPwd != null and model.payPwd !=''">payPwd= #{model.payPwd},</if>
+            <if test="model.weixin != null and model.weixin !=''">weixin= #{model.weixin},</if>
+            <if test="model.phone != null and model.phone !=''">phone= #{model.phone},</if>
+            <if test="model.email != null and model.email !=''">email= #{model.email},</if>
+            <if test="model.userName != null and model.userName !=''">userName= #{model.userName},</if>
+            <if test="model.nickName != null and model.nickName !=''">nickName= #{model.nickName},</if>
+            <if test="model.sex != null">sex= #{model.sex},</if>
+            <if test="model.headImgUrl != null and model.headImgUrl !=''">headImgUrl= #{model.headImgUrl},</if>
+            <if test="model.salt != null and model.salt !=''">salt= #{model.salt},</if>
+            <if test="model.score != null">score= #{model.score},</if>
+            <if test="model.freezeScore != null">freezeScore= #{model.freezeScore},</if>
+            <if test="model.firstReferrer != null and model.firstReferrer !=''">firstReferrer= #{model.firstReferrer},</if>
+            <if test="model.secondReferrer != null and model.secondReferrer !=''">secondReferrer= #{model.secondReferrer},</if>
+            <if test="model.thirdReferrer != null and model.thirdReferrer !=''">thirdReferrer= #{model.thirdReferrer},</if>
+            <if test="model.isKF != null">isKF= #{model.isKF},</if>
+            <if test="model.fromTime != null">fromTime= #{model.fromTime},</if>
+            <if test="model.toTime != null">toTime= #{model.toTime},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.exchangeEP != null">exchangeEP= #{model.exchangeEP},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <select id="readUserVoList" resultType="com.yanbao.vo.UserVo">
+        SELECT u.id ,u.uid ,u.userName,u.nickName ,u.levles,u.exchangeEP,u.performanceOne,u.performanceTwo,u.performanceThree,u.phone ,u.headImgUrl, u.createTime ,u.weixin,u.score,u.firstReferrer ,u.freezeScore,u.status,u.isKF,u.remark,bc.bankId ,bc.cardNo,bc.type,bc.bankName,u.grade
+        from hb_sys_user u LEFT JOIN hb_user_bankcard bc ON u.id=bc.userId
+        <where>
+        	1=1
+            <if test="model.id != null and model.id != ''">and u.id=#{model.id}</if>
+            <if test="model.uid != null">and uid=#{model.uid}</if>
+            <if test="model.nickName != null and model.nickName != ''">and u.nickName=#{model.nickName}</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.weixin != null and model.weixin != ''">and u.weixin=#{model.weixin}</if>
+            <if test="model.cardNo != null and model.cardNo != ''">and bc.cardNo=#{model.cardNo}</if>
+            <if test="model.bankId != null and model.bankId != ''">and bc.bankId=#{model.bankId}</if>
+            <if test="model.firstReferrer != null">and u.firstReferrer=#{model.firstReferrer}</if>
+            <if test="model.isKF != null">and u.isKF=#{model.isKF}</if>
+            <if test="model.fromTime != null">and u.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and #{model.stopTime}>=u.createTime</if>
+        </where>
+        order by u.createTime desc
+        LIMIT #{pageNo},#{pageSize}
+    </select>
+
+    <select id="getUnderlineAll" resultType="com.mall.model.User">
+        select
+        id,uid,account,weixin,phone,email,userName,nickName,sex,headImgUrl,score,freezeScore,firstReferrer,secondReferrer,thirdReferrer,createTime,updateTime,remark,groupType,performanceOne,performanceTwo,performanceThree
+        FROM
+        <include refid="table_name"/>
+        WHERE firstReferrer=#{leaderId} or secondReferrer=#{leaderId} or thirdReferrer=#{leaderId} LIMIT
+        #{pageNo},#{pageSize}
+    </select>
+
+    <select id="getUnderlineAllCount" resultType="java.lang.Integer">
+        select COUNT(*)
+        FROM
+        <include refid="table_name"/>
+        WHERE firstReferrer=#{leaderId} or secondReferrer=#{leaderId} or thirdReferrer=#{leaderId}
+    </select>
+
+    <update id="addScoreByUserId" >
+      UPDATE <include refid="table_name"/> SET score=score+#{score} WHERE id=#{userId};
+    </update>
+    
+    
+    <select id="getExchangeEP" resultType="java.lang.Double">
+    
+    	select IFNULL(SUM(exchangeEP),0)
+    	FROM
+    	<include refid="table_name"/>
+    </select>
+    
+    
+    <select id="getScoreSUM" resultType="java.lang.Double">
+    
+    	select IFNULL(SUM(score),0)
+    	FROM
+    	<include refid="table_name"/>
+    </select>
+    
+     <select id="sysScoreBalance" resultType="java.lang.Double">
+    
+    	select IFNULL(score,0)
+    	FROM 
+    	<include refid="table_name"/>
+    	WHERE ID = "system";
+    </select>
+    
+      <select id="sysEPBalance" resultType="java.lang.Double">
+    
+    	select IFNULL(exchangeEP,0)
+    	FROM 
+    	<include refid="table_name"/>
+    	WHERE ID = "system";
+    </select>
+    
+   	<!-- 修改用户ep值 -->
+    <update id="updateEpById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.exchangeEP != null">exchangeEP=#{model.exchangeEP},</if>
+            <if test="model.consumeEP != null">consumeEP=#{model.consumeEP},</if>
+            updateTime=now()
+        </set>
+        where id=#{model.id}
+    </update>
+
+
+    <update id="updatePerformanceOne">
+        UPDATE
+        <include refid="table_name" />
+        SET performanceOne = IFNULL(performanceOne,0) + #{count}
+        WHERE id =
+        #{id}
+    </update>
+
+    <update id="updatePerformanceTwo">
+        UPDATE
+        <include refid="table_name" />
+        SET performanceTwo = IFNULL(performanceTwo,0) + #{count}
+        WHERE id =
+        #{id}
+    </update>
+
+    <update id="updatePerformanceThree">
+        UPDATE
+        <include refid="table_name" />
+        SET performanceThree = IFNULL(performanceThree,0) + #{count}
+        WHERE id =
+        #{id}
+    </update>
+    
+    
+    <select id="readAllByOR" resultType="com.mall.model.User">
+		<include refid="selector" />
+		<where>
+        	1=1 
+            <if test="model.phone != null and model.phone != '' and model.userName != null and model.userName != ''">
+	            and phone=#{model.phone}
+	            or userName=#{model.userName}
+            </if>
+            <if test="model.uid != null">
+	            or uid=#{model.uid}
+            </if>
+        </where>
+		ORDER BY createTime DESC
+	</select>
+	
+	
+	<select id="getByUserids" resultType="com.mall.model.User">
+		<include refid="selector" />
+		WHERE 1=1
+		 <if test="ids!=null">
+            AND id in
+            <foreach collection="ids" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+        </if>
+	</select>
+</mapper>
+
+

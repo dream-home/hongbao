@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.StoreDao">
+
+    <sql id="fields">
+        userId,storeName,icon,province,city,county,addr,businessScope,inviteCode,isRecommend,collectNum,detail,createTime,updateTime,status,remark,servicePhone,storeLicense,IDCardIcon,areaId
+        
+        ,qrcodeUrl,menuUrl,shareUrl,weixinStatus
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_mall_user_store</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.userId != null and model.userId != ''">userId=#{model.userId}</if>
+            <if test="model.storeName != null and model.storeName != ''">and storeName=#{model.storeName}</if>
+            <if test="model.icon != null and model.icon != ''">and icon=#{model.icon}</if>
+            <if test="model.province != null and model.province != ''">and province=#{model.province}</if>
+            <if test="model.city != null and model.city != ''">and city=#{model.city}</if>
+            <if test="model.county != null and model.county != ''">and county=#{model.county}</if>
+            <if test="model.addr != null and model.addr != ''">and addr=#{model.addr}</if>
+            <if test="model.businessScope != null and model.businessScope != ''">and businessScope=#{model.businessScope}</if>
+            <if test="model.inviteCode != null and model.inviteCode != ''">and inviteCode=#{model.inviteCode}</if>
+            <if test="model.isRecommend != null">and isRecommend=#{model.isRecommend}</if>
+            <if test="model.collectNum != null">and collectNum=#{model.collectNum}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.servicePhone != null and model.servicePhone != ''">and servicePhone=#{model.servicePhone}</if>
+            <if test="model.storeLicense != null and model.storeLicense != ''">and storeLicense=#{model.storeLicense}</if>
+            <if test="model.IDCardIcon != null and model.IDCardIcon != ''">and IDCardIcon=#{model.IDCardIcon}</if>
+            <if test="model.areaId != null and model.areaId != ''">and areaId=#{model.areaId}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.userId},#{model.storeName},#{model.icon},#{model.province},#{model.city},#{model.county},#{model.addr},#{model.businessScope},#{model.inviteCode},#{model.isRecommend},#{model.collectNum},now(),now(),#{model.status},#{model.remark},#{model.areaId}
+        #{qrcodeUrl},#{menuUrl},#{shareUrl},#{weixinStatus}
+        );
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.Store">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+	
+	
+	
+	
+    <select id="readList" resultType="com.mall.model.Store">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readVoList" resultType="com.yanbao.vo.StoreVo">
+        SELECT s.id,u.uid,u.phone,s.storeName,s.`status`,u.userName,s.addr,s.createTime,s.inviteCode,s.collectNum,s.isRecommend,s.userId,s.businessScope,s.icon,s.detail
+        ,s.weixinStatus,s.menuUrl,s.shareUrl,s.qrcodeUrl
+        FROM hb_mall_user_store s
+        LEFT JOIN hb_sys_user u on u.id=s.userId
+        <where>
+            <if test="model.userId != null and model.userId != ''">u.id=#{model.userId}</if>
+            <if test="model.id != null and model.id != ''">s.id=#{model.id}</if>
+            <if test="model.storeName != null and model.storeName != ''">and s.storeName LIKE CONCAT(CONCAT('%', #{model.storeName}), '%')</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.userName != null and model.userName != ''">and u.userName LIKE CONCAT(CONCAT('%', #{model.userName}), '%')</if>
+            <if test="model.status != null">and s.status=#{model.status}</if>
+        </where>
+        order by createTime desc
+        limit #{page.startRow}, #{page.pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.Store">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <select id="readVoCount" resultType="int">
+        SELECT COUNT(*)
+        FROM hb_mall_user_store s
+        LEFT JOIN hb_sys_user u on u.id=s.userId
+        <where>
+            <if test="model.userId != null and model.userId != ''">u.id=#{model.userId}</if>
+            <if test="model.storeName != null and model.storeName != ''">and s.storeName LIKE CONCAT(CONCAT('%', #{model.storeName}), '%')</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.userName != null and model.userName != ''">and u.userName LIKE CONCAT(CONCAT('%', #{model.userName}), '%')</if>
+            <if test="model.status != null">and s.status=#{model.status}</if>
+        </where>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+            <if test="model.storeName != null and model.storeName !=''">storeName= #{model.storeName},</if>
+            <if test="model.icon != null and model.icon !=''">icon= #{model.icon},</if>
+            <if test="model.province != null and model.province !=''">province= #{model.province},</if>
+            <if test="model.city != null and model.city !=''">city= #{model.city},</if>
+            <if test="model.county != null and model.county !=''">county= #{model.county},</if>
+            <if test="model.addr != null and model.addr !=''">addr= #{model.addr},</if>
+            <if test="model.businessScope != null and model.businessScope !=''">businessScope= #{model.businessScope},</if>
+            <if test="model.inviteCode != null and model.inviteCode !=''">inviteCode= #{model.inviteCode},</if>
+            <if test="model.isRecommend != null">isRecommend= #{model.isRecommend},</if>
+            <if test="model.collectNum != null">collectNum= #{model.collectNum},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            <if test="model.qrcodeUrl != null and model.qrcodeUrl !=''">qrcodeUrl= #{model.qrcodeUrl},</if>
+            <if test="model.qrcodeUrl ==''">qrcodeUrl= '',</if>
+            <if test="model.menuUrl != null and model.menuUrl !=''">menuUrl= #{model.menuUrl},</if>
+            <if test="model.menuUrl =='' ">menuUrl= '',</if>
+            <if test="model.shareUrl != null and model.shareUrl !=''">shareUrl= #{model.shareUrl},</if>
+            <if test="model.shareUrl ==''">shareUrl= '',</if>
+            <if test="model.weixinStatus != null and model.remark !=''">weixinStatus= #{model.weixinStatus},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+</mapper>
+
+

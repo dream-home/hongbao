@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanbao.mapper.PayCallbackMapper" >
+
+<sql id="Po_Column_List" >
+	 id,userId,orderNo,uri,payWay,param,createTime,updateTime,status,remark
+</sql>
+
+<!-- 查询条件 -->
+<sql id="Po_Where_Clause">
+<where>
+	<if test="model.id != null  and model.id != '' ">
+		 and id =#{model.id}
+	</if>
+	<if test="model.userId != null  and model.userId != '' ">
+		 and userId = #{model.userId}
+	</if>
+	<if test="model.orderNo != null  and model.orderNo != '' ">
+		 and orderNo = #{model.orderNo}
+	</if>
+	<if test="model.uri != null  and model.uri != '' ">
+		 and uri like '%${model.uri}%'
+	</if>
+	<if test="model.payWay != null  ">
+		 and payWay=#{model.payWay}
+	</if>
+	<if test="model.param != null  and model.param != '' ">
+		 and param like '%${model.param}%'
+	</if>
+	<if test="model.createTime != null  ">
+		 and createTime=#{model.createTime}
+	</if>
+	<if test="model.updateTime != null  ">
+		 and updateTime=#{model.updateTime}
+	</if>
+	<if test="model.status != null  ">
+		 and status=#{model.status}
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		 and remark like '%${model.remark}%'
+	</if>
+</where>
+</sql>
+   
+<insert id="add">
+  insert into  hb_pay_callback 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		id,
+	</if>
+	<if test="model.userId != null  ">
+		userId,
+	</if>
+	<if test="model.orderNo != null  ">
+		orderNo,
+	</if>
+	<if test="model.uri != null  ">
+		uri,
+	</if>
+	<if test="model.payWay != null  ">
+		payWay,
+	</if>
+	<if test="model.param != null  ">
+		param,
+	</if>
+	<if test="model.createTime != null  ">
+		createTime,
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime,
+	</if>
+	<if test="model.status != null  ">
+		status,
+	</if>
+	<if test="model.remark != null  ">
+		remark,
+	</if>
+	</trim> 
+)
+ values 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		#{model.id},
+	</if>
+	<if test="model.userId != null  ">
+		#{model.userId},
+	</if>
+	<if test="model.orderNo != null  ">
+		#{model.orderNo},
+	</if>
+	<if test="model.uri != null  ">
+		#{model.uri},
+	</if>
+	<if test="model.payWay != null  ">
+		#{model.payWay},
+	</if>
+	<if test="model.param != null  ">
+		#{model.param},
+	</if>
+	<if test="model.createTime != null  ">
+		#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		#{model.status},
+	</if>
+	<if test="model.remark != null  ">
+		#{model.remark},
+	</if>
+	</trim>
+)
+</insert>
+
+<!-- 多条件删除记录 -->
+<select id="del" resultType="java.lang.Integer" >
+	delete from hb_pay_callback 
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 删除记录 -->
+<delete id="delByPk">
+	delete 	 from hb_pay_callback where id = #{id}
+</delete>
+
+<!--批量删除-->
+<delete id="delList" parameterType="java.lang.Integer">
+	delete 	from hb_pay_callback where id in 
+	<foreach item="idItem" collection="list" index="index" open="(" separator="," close=")"> 
+	#{idItem}
+	</foreach> 
+</delete>
+
+<!-- 根据id，修改记录-->  
+ <update id="modUpdate">
+  update hb_pay_callback set userId=#{model.userId},orderNo=#{model.orderNo},uri=#{model.uri},payWay=#{model.payWay},param=#{model.param},createTime=#{model.createTime},updateTime=#{model.updateTime},status=#{model.status},remark=#{model.remark} where id=#{model.id}
+ </update>
+ <!-- 修改记录，只修改只不为空的字段 -->
+<update id="modUpdateNotNull">
+	update hb_pay_callback set 
+	<trim  suffixOverrides="," >
+	<if test="model.userId != null  and model.userId != '' ">
+		userId=#{model.userId},
+	</if>
+	<if test="model.orderNo != null  and model.orderNo != '' ">
+		orderNo=#{model.orderNo},
+	</if>
+	<if test="model.uri != null  and model.uri != '' ">
+		uri=#{model.uri},
+	</if>
+	<if test="model.payWay != null  ">
+		payWay=#{model.payWay},
+	</if>
+	<if test="model.param != null  and model.param != '' ">
+		param=#{model.param},
+	</if>
+	<if test="model.createTime != null  ">
+		createTime=#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime=#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		status=#{model.status},
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		remark=#{model.remark},
+	</if>
+	</trim> where id=#{model.id}
+</update>
+
+<!-- 根据id查询 支付回调记录 -->
+<select id="getByPk"  resultType="PayCallback" >
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_pay_callback  
+	where id = #{id}
+</select>
+
+<!-- 支付回调记录 列表总数-->
+<select id="getCount" resultType="java.lang.Long">
+	select count(1) from hb_pay_callback  
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 查询支付回调记录列表 -->
+<select id="getList" resultType="PayCallback">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_pay_callback 
+	<include refid="Po_Where_Clause"/>
+</select>
+
+</mapper>

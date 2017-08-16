@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.WalletRecordDao">
+
+    <sql id="fields">
+        orderNo,userId,score,recordType,createTime,updateTime,status,remark,province,city,county
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_wallet_record</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.score != null">and score=#{model.score}</if>
+            <if test="model.recordType != null">and recordType=#{model.recordType}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.province != null and model.province != ''">and province=#{model.province}</if>
+            <if test="model.city != null and model.city != ''">and city=#{model.city}</if>
+            <if test="model.county != null and model.county != ''">and county=#{model.county}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.orderNo},#{model.userId},#{model.score},#{model.recordType},now(),now(),1,#{model.remark},#{model.province},#{model.city},#{model.county});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.WalletRecord">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.WalletRecord">
+        <include refid="selector"/> <include refid="condition"/>order by createTime desc limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.WalletRecord">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+            <if test="model.score != null">score= #{model.score},</if>
+            <if test="model.recordType != null">recordType= #{model.recordType},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <select id="getScoreCoutByType" resultType="map">
+        SELECT recordType,SUM(score) ct FROM `hb_wallet_record` WHERE 3>recordType and score>0 GROUP BY recordType
+    </select>
+
+    <select id="getRecordVoList" resultType="com.yanbao.vo.RecordVo">
+        SELECT u.uid,u.phone,r.id,r.status,r.createTime,r.userId,r.recordType,r.remark,r.score
+        from hb_wallet_record r LEFT JOIN hb_sys_user u
+        on r.userId=u.id
+        <where>
+            <if test="model.uid != null ">u.uid=#{model.uid}</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.fromTime != null ">and r.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null ">and #{model.stopTime}>=r.createTime</if>
+            <if test="model.recordType != null ">and r.recordType=#{model.recordType}</if>
+        </where>order by createTime desc  LIMIT #{pageNo},#{pageSize}
+    </select>
+    
+    
+    <select id="getRecordVoList1" resultType="com.yanbao.vo.WalletRecordVo">
+       SELECT r.*,u.uid,u.userName,u.nickName,w.goodsName,w.storeName FROM hb_wallet_record r 
+        	INNER JOIN hb_sys_user u  ON r.userId = u.id
+        	INNER JOIN hb_user_goods_win w ON r.orderNo = w.orderNo
+        <where>
+        	<if test="model.recordType != null">r.recordType= #{model.recordType}</if>
+            <if test="model.province != null and model.province != ''">and r.province=#{model.province}</if>
+            <if test="model.city != null and model.city != ''">and r.city=#{model.city}</if>
+            <if test="model.county != null and model.county != ''">and r.county=#{model.county}</if>
+            <if test="model.fromTime != null ">and r.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null ">and #{model.stopTime}>=r.createTime</if>
+             <if test="model.uid != null and model.uid != '' ">and u.uid=#{model.uid}</if>
+        </where> order by r.createTime desc  LIMIT #{pageNo},#{pageSize}
+    </select>
+   <select id="getRecordVoCount1" resultType="java.lang.Integer" >
+        SELECT count(1) FROM hb_wallet_record r 
+        	INNER JOIN hb_sys_user u  ON r.userId = u.id
+        	INNER JOIN hb_user_goods_win w ON r.orderNo = w.orderNo 
+        <where>
+        	<if test="model.recordType != null">r.recordType= #{model.recordType}</if>
+            <if test="model.province != null and model.province != ''">and r.province=#{model.province}</if>
+            <if test="model.city != null and model.city != ''">and r.city=#{model.city}</if>
+            <if test="model.county != null and model.county != ''">and r.county=#{model.county}</if>
+            <if test="model.fromTime != null ">and r.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null ">and #{model.stopTime}>=r.createTime</if>
+             <if test="model.uid != null and model.uid != '' ">and u.uid=#{model.uid}</if>
+        </where>
+    </select> 
+    
+    
+    
+    
+    
+    <select id="getRecordVoCount" resultType="java.lang.Integer" >
+        SELECT COUNT(*)
+        from hb_wallet_record r LEFT JOIN hb_sys_user u
+        on r.userId=u.id
+        <where>
+            <if test="model.uid != null ">u.uid=#{model.uid}</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.fromTime != null ">and r.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null ">and #{model.stopTime}>=r.createTime</if>
+            <if test="model.recordType != null ">and r.recordType=#{model.recordType}</if>
+        </where>
+    </select>
+    <!--获得一些费用费用-->
+    <select id="getSomeFee" resultType="double">
+        SELECT SUM(score) FROM `hb_wallet_record`
+        <where>
+            <if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.score != null">and score=#{model.score}</if>
+            <if test="model.recordType != null">and recordType=#{model.recordType}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </select>
+
+    <!-- 获取扫码支付订单详情 zyc 2017-07-04 -->
+    <select id="getPaymentDetail" resultType="com.yanbao.vo.WalletRecordVo">
+        select * from hb_wallet_record where orderNo = #{orderNo};
+
+    </select>
+	
+	<!-- 2017-08-01 用户详情积分积分（只显示积分） -->
+	
+    <select id="getUserRecordVoList" resultType="com.yanbao.vo.RecordVo">
+        SELECT u.uid,u.phone,r.id,r.status,r.createTime,r.userId,r.recordType,r.remark,r.score
+        from hb_wallet_record r LEFT JOIN hb_sys_user u
+        on r.userId=u.id
+        <where>
+        	(r.recordType in (13,19,20,22,23,24,26,27) or 11>=r.recordType)  
+            <if test="model.uid != null and model.uid != '' ">and u.uid=#{model.uid}</if>
+            <if test="model.userId != null and model.userId != ''">and r.userId=#{model.userId}</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.fromTime != null ">and r.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null ">and #{model.stopTime}>=r.createTime</if>
+            
+        </where>order by createTime desc  LIMIT #{pageNo},#{pageSize}
+    </select>
+    
+    
+    <!-- 2017-08-01 用户详情积分积分（只显示积分） -->
+     <select id="getUserRecordVoCount" resultType="java.lang.Integer" >
+        SELECT COUNT(*)
+        from hb_wallet_record r LEFT JOIN hb_sys_user u
+        on r.userId=u.id
+        <where>
+        	(r.recordType in (13,19,20,22,23,24,26,27) or 11>=r.recordType)
+            <if test="model.uid != null and model.uid != '' ">and u.uid=#{model.uid}</if>
+            <if test="model.userId != null and model.userId != ''">and r.userId=#{model.userId}</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.fromTime != null ">and r.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null ">and #{model.stopTime}>=r.createTime</if>
+            
+        </where>
+    </select>
+	
+	
+	
+	
+</mapper>
+
+

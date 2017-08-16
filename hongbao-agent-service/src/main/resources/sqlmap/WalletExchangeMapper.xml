@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.WalletExchangeMapper">
+
+	<sql id="fields">
+        id, orderNo, userId, score, confirmScore,
+		poundage, bankName, cardType, cardNo, createTime, 
+		updateTime, status, remark,bankId,type
+    </sql>
+
+	<resultMap id="getStoreMap" type="HashMap">
+		<result column=""></result>
+	</resultMap>
+    
+    <sql id="table">hb_wallet_exchange</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<!-- 查询商家提现记录，根据userId进行分类 -->
+	<select id="getStoreList" resultType="com.yanbao.vo.StoreExchangeRecord">
+		SELECT e.userId,e.score AS score,e.orderNo,u.areaId,u.storeId,e.createTime,e.updateTime FROM hb_wallet_exchange e LEFT JOIN hb_sys_user u ON e.userId = u.id
+		WHERE e.status=3
+		AND e.updateTime>#{starttime}
+		AND e.updateTime&lt;=#{endtime}
+	</select>
+	
+	<select id="getByStoreIds" resultType="com.mall.model.WalletExchange">
+		<include refid="selector" />
+		WHERE status=3
+		AND userId in
+		<foreach collection="storeIds" item="storeId" index="index" open="(" separator="," close=")">
+            #{storeId}
+        </foreach>
+	</select>
+	
+</mapper>
+
+

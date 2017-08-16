@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.GoodsWinMapper">
+
+	<sql id="fields">
+        id, orderNo, orderType, userId, storeId, storeName, goodsId, goodsName, detail,
+		icon, issueId, issueNo, price, drawPrice, 
+		score, expressNo, expressName, userName, phone, 
+		addr, saleSwitch, createTime, updateTime, status, remark,num,shareUserId,payWay,discountEP,
+		firstReferrerScale,secondReferrerScale,thirdReferrerScale,businessSendEp,scenes,doudou
+    </sql>
+    
+    <sql id="table">hb_user_goods_win</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<!-- 获取首页竞拍排行榜-->
+	<select id="getTopList" resultType="com.yanbao.vo.TopVo">
+		SELECT  SUM(w.score) score, u.userName, u.nickName
+		FROM hb_user_goods_win w, hb_sys_user u
+		WHERE w.userId = u.id
+		AND w.orderType = 0
+		GROUP BY w.userId
+		ORDER BY score DESC
+		LIMIT 0, #{num}
+	</select>
+	
+	<select id="getByOrderNo" resultType="GoodsWin">
+		<include refid="selector"/>
+		WHERE orderNo = #{orderNo}
+		AND userId = #{userId}
+		LIMIT 1;
+	</select>
+
+	<select id="getUserOrderByOrderNo" resultType="GoodsWin">
+		<include refid="selector"/>
+		WHERE orderNo = #{orderNo}
+		LIMIT 1;
+	</select>
+	
+	<select id="getStoreOrderByOrderNo" resultType="GoodsWin">
+		<include refid="selector"/>
+		WHERE orderNo = #{orderNo}
+		<if test="storeId != null">AND storeId= #{storeId}</if>
+		LIMIT 1;
+	</select>
+	
+	<select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE 1=1
+		<if test="userId != null">AND userId= #{userId}</if>
+		<if test="storeId != null">AND storeId= #{storeId}</if>
+		<if test="status == null">AND status IN (0,2, 3)</if>
+		<if test="status != null and status!=1000">AND status= #{status}</if>
+		<if test="status != null and status==1000 ">AND LENGTH(icon)>2000</if>
+		<if test="orderType != null">AND orderType = #{orderType}</if>
+	</select>
+
+	<select id="getList" resultType="GoodsWin">
+		<include refid="selector"/>
+		WHERE 1=1
+		<if test="userId != null">AND userId= #{userId}</if>
+		<if test="storeId != null">AND storeId= #{storeId}</if>
+		<if test="status == null and storeId != null">AND status IN (0,2, 3)</if>
+		<if test="status != null and status!=1000">AND status= #{status}</if>
+		<if test="status != null and status==1000 ">AND LENGTH(icon)>2000</if>
+		<if test="status == null and storeId == null">AND status IN (0,2, 3)</if>
+		<if test="orderType != null">AND orderType = #{orderType}</if>
+		ORDER BY createTime DESC,score DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	
+	<insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.orderNo}, #{model.orderType}, #{model.userId}, #{model.storeId}, #{model.storeName}, #{model.goodsId}, #{model.goodsName}, "",
+			#{model.icon}, #{model.issueId}, #{model.issueNo}, #{model.price}, #{model.drawPrice}, 
+			#{model.score}, #{model.expressNo}, #{model.expressName}, #{model.userName}, #{model.phone}, 
+			#{model.addr}, #{model.saleSwitch}, #{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark}, #{model.num}, #{model.shareUserId}, #{model.payWay}, #{model.discountEP},
+			#{model.firstReferrerScale},#{model.secondReferrerScale},#{model.thirdReferrerScale},#{model.businessSendEp},#{model.scenes},#{model.doudou})
+    </insert> 
+    
+    <update id="update">
+        UPDATE <include refid="table"/>
+        <set>
+        	<if test="model.expressNo != null">expressNo= #{model.expressNo},</if>
+        	<if test="model.expressName != null">expressName= #{model.expressName},</if>
+        	<if test="model.userName != null">userName= #{model.userName},</if>
+        	<if test="model.phone != null">phone= #{model.phone},</if>
+        	<if test="model.addr != null">addr= #{model.addr},</if>
+        	<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+            <if test="model.shareUserId != null">shareUserId= #{model.shareUserId},</if>
+			<if test="model.orderNo != null">orderNo= #{model.orderNo},</if>
+            <if test="model.payWay != null">payWay= #{model.payWay},</if>
+            <if test="model.icon != null">icon= #{model.icon},</if>
+			<if test="model.price != null">price= #{model.price},</if>
+            <if test="model.discountEP != null">discountEP= #{model.discountEP},</if>
+            <if test="model.firstReferrerScale != null">firstReferrerScale= #{model.firstReferrerScale},</if>
+            <if test="model.secondReferrerScale != null">secondReferrerScale= #{model.secondReferrerScale},</if>
+            <if test="model.thirdReferrerScale != null">thirdReferrerScale= #{model.thirdReferrerScale},</if>
+            <if test="model.businessSendEp != null">businessSendEp= #{model.businessSendEp},</if>
+            <if test="model.scenes != null">scenes= #{model.scenes},</if>
+            <if test="model.doudou != null">doudou= #{model.doudou},</if>
+        </set>
+		WHERE id = #{id}
+    </update>
+	
+	<select id="countStoreOrder" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE storeId = #{storeId}
+		<if test="status != null">AND status= #{status}</if>
+		<if test="status == null">AND status IN (2, 3)</if>
+	</select>
+
+	<select id="getStoreOrderList" resultType="GoodsWin">
+		<include refid="selector"/>
+		WHERE storeId = #{storeId}
+		<if test="status != null">AND status= #{status}</if>
+		<if test="status == null">AND status IN (2, 3)</if>
+		ORDER BY createTime DESC,score DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	
+	<select id="countStoreSales" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE storeId = #{storeId}
+	</select>
+	
+	<select id="countStoreGoodsSales" resultType="com.yanbao.vo.GoodsSalesVo">
+		SELECT goodsId id, COUNT(id) total
+		FROM <include refid="table"/>
+		WHERE storeId = #{storeId}
+		GROUP BY goodsId
+	</select>
+
+	<select id="getById" resultType="GoodsWin">
+		<include refid="selector"/>
+		WHERE id = #{goodsWinId};
+	</select>
+	
+	<select id="getListByTime" resultType="GoodsWin">
+		<include refid="selector"/>
+		WHERE 1=1
+		<if test="status != null">AND status= #{status}</if>
+		<if test="payWay != null">AND payWay= #{payWay}</if>
+		 AND createTime>=#{starttime} and createTime&lt;#{endtime}
+		<if test="isShare == null">AND shareUserId IS NULL</if>
+		<if test="isShare != null">AND shareUserId IS NOT NULL</if>
+		ORDER BY createTime DESC 
+	</select>
+
+	<select id="sumUserBuyAmt" resultType="Double">
+		select sum(case orderType when 1 then price * num when 3 then price else 0 end) FROM <include refid="table"/>
+		WHERE userid = #{userId} and status in (2,3)
+	</select>
+	
+</mapper>
+
+

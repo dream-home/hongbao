@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.MessageMapper">
+
+    <sql id="fields">
+        userId,orderNo,title,type,detail,createTime,updateTime,status,remark
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_sys_message</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+            <if test="model.title != null and model.title != ''">and title=#{model.title}</if>
+            <if test="model.type != null">and type=#{model.type}</if>
+            <if test="model.detail != null and model.detail != ''">and detail=#{model.detail}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.fromTime != null">and createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and createTime &lt;=#{model.stopTime}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.userId},#{model.orderNo},#{model.title},#{model.type},#{model.detail},now(),now(),#{model.status},#{model.remark});
+    </insert>
+	
+	 <insert id="insertAll" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO <include refid="table_name"/> (<include refid="fields_id"/>)
+        SELECT REPLACE(UUID(),'-','') AS id,id as userid,#{model.orderNo},#{model.title},#{model.type},#{model.detail},now(),now(),#{model.status},#{model.remark}
+        FROM hb_sys_user WHERE STATUS=1
+    </insert>
+	
+	
+    <select id="readById" resultType="com.mall.model.Message">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.Message">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.Message">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+            <if test="model.title != null and model.title !=''">title= #{model.title},</if>
+            <if test="model.type != null">type= #{model.type},</if>
+            <if test="model.detail != null and model.detail !=''">detail= #{model.detail},</if>
+            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        delete from <include refid="table_name"/>  where id = #{id}
+    </update>
+</mapper>
+
+

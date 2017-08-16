@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.SysSettingMapper">
+
+    <sql id="fields">
+        id, drawMinScore, winnerScaleMax, winnerScaleMin, systemPoundageScale, firstReferrerScale,
+        secondReferrerScale, thirdReferrerScale, drawNumMax, drawNumMin,winnerListNum, donateSwich,
+        donateMax, donateMin, donatePoundageScale, exchangeSwitch, exchangeMax, exchangeMin,
+        exchangePoundageScale, createStoreCondition,storeStockMax, storeGoodsMax, inviteSwich,
+        vipWinScale,androidAppVersion, androidAppUrl, androidAppDetail, androidAppForceUpdate,
+        iosAppVersion,iosAppUrl, iosAppDetail, iosAppForceUpdate, systemCopyright, systemDomain,
+		createTime, updateTime, status, remark,levelNo,registerEP,inviterEP,bindEp,mailPeople,
+		shareTitle,shareMessage,tradeRate,joinFirstReferrerScale,joinSecondReferrerScale,
+		joinThirdReferrerScale,guideFlag,joinEP,joinToDouScale,EPToDouScale,minEPConvertNum,maxEPConvertNum,
+		commonReleaseScale,vipReleaseScale,minSignDouNum,epSwitch,provinceBalanceScale,cityBalanceScale,countryBalanceScale,provinceEPScale,cityEPScale,countryEPScale
+    </sql>
+
+    <sql id="table">hb_sys_setting</sql>
+
+    <sql id="selector">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="table"/>
+    </sql>
+
+    <select id="get" resultType="com.mall.model.SysSetting">
+        <include refid="selector"/>
+        LIMIT 1;
+    </select>
+
+</mapper>
+
+

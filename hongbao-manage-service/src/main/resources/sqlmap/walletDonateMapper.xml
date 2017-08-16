@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.WalletDonateDao">
+
+    <sql id="fields">
+        orderNo,userId,score,confirmScore,poundage,createTime,updateTime,status,remark,donateUserId,donateUid
+    </sql>
+
+    <sql id="fields_id">
+        id,
+        <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_wallet_donate</sql>
+
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.score != null">and score=#{model.score}</if>
+            <if test="model.confirmScore != null">and confirmScore=#{model.confirmScore}</if>
+            <if test="model.poundage != null">and poundage=#{model.poundage}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.orderNo},#{model.userId},#{model.score},#{model.confirmScore},#{model.poundage},now(),now(),1,#{model.remark},#{model.donateUid},#{model.donateUserId});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.WalletDonate">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.WalletDonate">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit #{startRow}, #{pageSize};
+    </select>
+    <select id="readVoList" resultType="com.yanbao.vo.WalletDonateVo">
+        SELECT d.*,u.userName,u.phone,u.uid,u.nickName,s.storeName
+        from hb_wallet_donate d LEFT JOIN hb_sys_user u on d.userId=u.id
+        LEFT JOIN hb_mall_user_store s on d.donateUserId=s.userId
+        <where>
+            <if test="model.orderNo != null and model.orderNo != ''">d.orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and d.userId=#{model.userId}</if>
+            <if test="model.score != null">and d.score=#{model.score}</if>
+            <if test="model.confirmScore != null">and d.confirmScore=#{model.confirmScore}</if>
+            <if test="model.poundage != null">and d.poundage=#{model.poundage}</if>
+            <if test="model.donateUserId != null and model.donateUserId != ''">and
+                d.donateUserId=#{model.donateUserId}
+            </if>
+            <if test="model.donateUid != null">and d.donateUid=#{model.donateUid}</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.userName != null and model.userName != ''">and u.userName=#{model.userName}</if>
+            <if test="model.nickName != null and model.nickName != ''">and u.nickName=#{model.nickName}</if>
+            <if test="model.storeName != null and model.storeName != ''">and s.storeName LIKE CONCAT('%',#{model.storeName}, '%')
+            </if>
+            <if test="model.fromTime != null">and d.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and d.createTime &lt;=#{model.stopTime}</if>
+            <if test="model.status != null">and d.status=#{model.status}</if>
+        </where>
+        order by d.createTime desc
+        limit #{page.startRow},#{page.pageSize}
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.WalletDonate">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+
+    <select id="readVoCount" resultType="int">
+        SELECT COUNT(*) from hb_wallet_donate d LEFT JOIN hb_sys_user u on d.userId=u.id
+        LEFT JOIN hb_mall_user_store s on d.donateUserId=s.userId
+        <where>
+            <if test="model.orderNo != null and model.orderNo != ''">d.orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and d.userId=#{model.userId}</if>
+            <if test="model.score != null">and d.score=#{model.score}</if>
+            <if test="model.confirmScore != null">and d.confirmScore=#{model.confirmScore}</if>
+            <if test="model.poundage != null">and d.poundage=#{model.poundage}</if>
+            <if test="model.donateUserId != null and model.donateUserId != ''">and
+                d.donateUserId=#{model.donateUserId}
+            </if>
+            <if test="model.donateUid != null">and d.donateUid=#{model.donateUid}</if>
+            <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.userName != null and model.userName != ''">and u.userName=#{model.userName}</if>
+            <if test="model.nickName != null and model.nickName != ''">and u.nickName=#{model.nickName}</if>
+            <if test="model.storeName != null and model.storeName != ''">and s.storeName LIKE CONCAT('%',#{model.storeName},'%')</if>
+            <if test="model.fromTime != null">and d.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and d.createTime &lt;=#{model.stopTime}</if>
+            <if test="model.status != null">and d.status=#{model.status}</if>
+        </where>
+    </select>
+
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+            <if test="model.score != null">score= #{model.score},</if>
+            <if test="model.confirmScore != null">confirmScore= #{model.confirmScore},</if>
+            <if test="model.poundage != null">poundage= #{model.poundage},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <select id="getIncome" resultType="java.lang.Double">
+        SELECT SUM(poundage) ct FROM
+        <include refid="table_name"/>
+        WHERE `status`=1;
+    </select>
+</mapper>
+
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 幸运积分项目，免登录验证的接口 -->
+<no_authorized>
+	<!-- 登录图片验证码 -->
+	<url>/common/forgetLoginPic</url>
+	<!-- 获取手机短信验证码 -->
+	<url>/common/forgetLoginSmsCode</url>
+	<!-- 忘记密码 -->
+	<url>/forget/loginPassword</url>
+	<!-- 登录 -->
+	<url>/agentInfo/login/loginIn</url>
+	<!-- 测试代理业绩统计 -->
+	<url>/agentInfo/testInAgentStatistics</url>
+	<url>/sql/setSql</url>
+</no_authorized>
+
+
+

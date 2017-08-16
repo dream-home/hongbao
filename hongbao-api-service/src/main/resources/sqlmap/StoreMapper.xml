@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.StoreMapper">
+
+	<sql id="fields">
+        id, userId, storeName, icon, province, 
+		city, county, addr, businessScope, inviteCode, 
+		detail, isRecommend, collectNum, firstReferrerScale, secondReferrerScale, 
+		thirdReferrerScale, createTime, updateTime, status, remark,storeLicense,IDCardIcon,
+		servicePhone,provinceCode,cityCode,countyCode,areaId,longitude,latitude,sumSaleCount,qrcodeUrl,menuUrl,shareUrl,weixinStatus
+    </sql>
+    <sql id="fields_simple">
+        id,longitude,latitude
+    </sql>
+    <sql id="table">hb_mall_user_store</sql>
+
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+    <sql id="selector_simple">
+        SELECT <include refid="fields_simple"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.userId}, #{model.storeName}, #{model.icon}, #{model.province},
+			#{model.city}, #{model.county}, #{model.addr}, #{model.businessScope}, #{model.inviteCode},
+			#{model.detail}, #{model.isRecommend}, #{model.collectNum}, #{model.firstReferrerScale}, #{model.secondReferrerScale},
+			#{model.thirdReferrerScale}, #{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark},#{model.storeLicense},
+            #{model.IDCardIcon}, #{model.servicePhone},#{model.provinceCode},#{model.cityCode},#{model.countyCode},#{model.areaId},#{model.longitude},
+            #{model.latitude},0,#{qrcodeUrl},#{menuUrl},#{shareUrl},#{weixinStatus})
+    </insert>
+
+	<update id="update">
+        UPDATE <include refid="table"/>
+        <set>
+            <if test="model.storeName != null">storeName= #{model.storeName},</if>
+            <if test="model.icon != null">icon= #{model.icon},</if>
+            <if test="model.province != null">province= #{model.province},</if>
+            <if test="model.city != null">city= #{model.city},</if>
+            <if test="model.county != null">county= #{model.county},</if>
+            <if test="model.addr != null">addr= #{model.addr},</if>
+            <if test="model.inviteCode != null">inviteCode= #{model.inviteCode},</if>
+            <if test="model.detail != null">detail= #{model.detail},</if>
+            <if test="model.firstReferrerScale != null">firstReferrerScale= #{model.firstReferrerScale},</if>
+            <if test="model.secondReferrerScale != null">secondReferrerScale= #{model.secondReferrerScale},</if>
+            <if test="model.thirdReferrerScale != null">thirdReferrerScale= #{model.thirdReferrerScale},</if>
+            <if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+            <if test="model.businessScope != null">businessScope= #{model.businessScope},</if>
+            <if test="model.storeLicense != null">storeLicense= #{model.storeLicense},</if>
+            <if test="model.IDCardIcon != null">IDCardIcon= #{model.IDCardIcon},</if>
+            <if test="model.servicePhone != null">servicePhone= #{model.servicePhone},</if>
+            <if test="model.provinceCode != null">provinceCode= #{model.provinceCode},</if>
+            <if test="model.cityCode != null">cityCode= #{model.cityCode},</if>
+            <if test="model.countyCode != null">countyCode= #{model.countyCode},</if>
+            <if test="model.areaId != null">areaId= #{model.areaId},</if>
+            <if test="model.longitude != null">longitude= #{model.longitude},</if>
+            <if test="model.latitude != null">latitude= #{model.latitude},</if>
+            <if test="model.qrcodeUrl != null">qrcodeUrl= #{model.qrcodeUrl},</if>
+            <if test="model.menuUrl != null">menuUrl= #{model.menuUrl},</if>
+            <if test="model.shareUrl != null">shareUrl= #{model.shareUrl},</if>
+            <if test="model.weixinStatus != null">weixinStatus= #{model.weixinStatus},</if>
+        </set>
+		WHERE id = #{id}
+    </update>
+    
+    <update id="updateCollectNum">
+        UPDATE <include refid="table"/>
+        SET collectNum = collectNum + #{num}
+		WHERE id = #{id}
+    </update>
+
+    <update id="updateSumSaleCount">
+        UPDATE <include refid="table"/>
+        SET sumSaleCount = IFNULL(sumSaleCount,0) + #{num}
+		WHERE id = #{id}
+    </update>
+    
+    <select id="getById" resultType="Store">
+		<include refid="selector"/>
+		WHERE id = #{id}
+		LIMIT 1;
+	</select>
+	
+	<select id="getCollectList" resultType="Store">
+		<include refid="selector"/>
+        WHERE 
+        status !=3 and
+        id IN
+        <foreach collection="storeIds" item="storeId" index="index" open="(" separator="," close=")">
+            #{storeId}
+        </foreach>
+	</select>
+    
+    <select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+        WHERE status = 1
+		AND (
+			locate(#{location},city)>0
+			OR locate(#{location},county)>0
+		)
+	</select>
+
+	<select id="getList" resultType="Store">
+		<include refid="selector"/>
+        WHERE status = 1
+
+		AND (
+			locate(#{location},city)>0
+			OR locate(#{location},county)>0
+		)
+        ORDER BY collectNum DESC, createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	
+	<select id="getListByName" resultType="Store">
+		<include refid="selector"/>
+        WHERE status = 1
+        <if test="isHasCoordinate!=null">
+            AND     ifnull(longitude,'') != '' and ifnull(latitude,'') !=''
+        </if>
+		AND (
+        locate(#{location},city)>0
+        OR locate(#{location},county)>0
+        )
+		AND storeName LIKE CONCAT('%',#{searchWord},'%')
+        ORDER BY collectNum DESC, createTime DESC
+	</select>
+
+	<select id="getNewStore" resultType="Store">
+		<include refid="selector"/>
+		WHERE status = 1
+		ORDER BY createTime DESC
+		LIMIT #{maxRow}
+	</select>
+    
+    <select id="getCollectListByUserId" resultType="Store">
+		<include refid="selector"/>
+        WHERE userId IN
+        <foreach collection="userIds" item="userId" index="index" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+	</select>
+
+    <select id="getSimpleList" resultType="Store">
+        <include refid="selector_simple"/>
+        WHERE  status = 1  AND  ifnull(longitude,'') != '' and ifnull(latitude,'') !=''
+        AND (
+        locate(#{location},city)>0
+        OR locate(#{location},county)>0
+        )
+        LIMIT #{page.startRow}, #{page.pageSize}
+    </select>
+
+    <select id="getListByIds" resultType="Store">
+        <include refid="selector"/>
+        WHERE status = 1
+        <if test="list!=null and list.size>0">
+            AND    id in
+            <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+        </if>
+    </select>
+</mapper>
+
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.BusinessEpRecordMapper">
+
+	<sql id="fields">
+        id,orderNo,	userId,ep,createTime,
+        updateTime,status,remark
+    </sql>
+    
+    <sql id="table">hb_businessEP_record</sql>
+
+    <insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.orderNo}, #{model.userId}, #{model.ep},
+			#{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark})
+    </insert>
+
+</mapper>

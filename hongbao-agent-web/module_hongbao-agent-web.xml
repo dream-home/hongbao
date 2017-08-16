@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_hongbao-agent-web" default="compile.module.hongbao-agent-web">
+  <dirname property="module.hongbao-agent-web.basedir" file="${ant.file.module_hongbao-agent-web}"/>
+  
+  <property name="module.jdk.home.hongbao-agent-web" value=""/>
+  <property name="module.jdk.bin.hongbao-agent-web" value=""/>
+  <property name="module.jdk.classpath.hongbao-agent-web" value=""/>
+  
+  <property name="compiler.args.hongbao-agent-web" value="-encoding UTF-8 -source 8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="hongbao-agent-web.output.dir" value="undefined"/>
+  <property name="hongbao-agent-web.testoutput.dir" value="undefined"/>
+  
+  <path id="hongbao-agent-web.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="hongbao-agent-web.module.production.classpath"/>
+  
+  <path id="hongbao-agent-web.runtime.production.module.classpath"/>
+  
+  <path id="hongbao-agent-web.module.classpath"/>
+  
+  <path id="hongbao-agent-web.runtime.module.classpath"/>
+  
+  
+  <patternset id="excluded.from.module.hongbao-agent-web">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.hongbao-agent-web">
+    <patternset refid="excluded.from.module.hongbao-agent-web"/>
+  </patternset>
+  
+  
+  <target name="compile.module.hongbao-agent-web" depends="compile.module.hongbao-agent-web.production,compile.module.hongbao-agent-web.tests" description="Compile module hongbao-agent-web"/>
+  
+  <target name="compile.module.hongbao-agent-web.production" depends="register.custom.compilers" description="Compile module hongbao-agent-web; production classes"/>
+  
+  <target name="compile.module.hongbao-agent-web.tests" depends="register.custom.compilers,compile.module.hongbao-agent-web.production" description="compile module hongbao-agent-web; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.hongbao-agent-web" description="cleanup module">
+    <delete dir="${hongbao-agent-web.output.dir}"/>
+    <delete dir="${hongbao-agent-web.testoutput.dir}"/>
+  </target>
+</project>

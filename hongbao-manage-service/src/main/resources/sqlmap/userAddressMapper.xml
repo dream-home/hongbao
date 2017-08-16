@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.UserAddressDao">
+
+    <sql id="fields">
+        userId,province,city,county,addr,isDefault,createTime,updateTime,status,remark
+    </sql>
+
+    <sql id="fields_id">
+        id,
+        <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_user_address</sql>
+
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.userId != null and model.userId != ''">userId=#{model.userId}</if>
+            <if test="model.province != null and model.province != ''">and province=#{model.province}</if>
+            <if test="model.city != null and model.city != ''">and city=#{model.city}</if>
+            <if test="model.county != null and model.county != ''">and county=#{model.county}</if>
+            <if test="model.addr != null and model.addr != ''">and addr=#{model.addr}</if>
+            <if test="model.isDefault != null">and isDefault=#{model.isDefault}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.userId},#{model.province},#{model.city},#{model.county},#{model.addr},#{model.isDefault},now(),now(),1,#{model.remark});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.UserAddress">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.UserAddress">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.UserAddress">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+            <if test="model.province != null and model.province !=''">province= #{model.province},</if>
+            <if test="model.city != null and model.city !=''">city= #{model.city},</if>
+            <if test="model.county != null and model.county !=''">county= #{model.county},</if>
+            <if test="model.addr != null and model.addr !=''">addr= #{model.addr},</if>
+            <if test="model.isDefault != null">isDefault= #{model.isDefault},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+    <update id="updateByUserId">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.province != null and model.province !=''">province= #{model.province},</if>
+            <if test="model.city != null and model.city !=''">city= #{model.city},</if>
+            <if test="model.county != null and model.county !=''">county= #{model.county},</if>
+            <if test="model.addr != null and model.addr !=''">addr= #{model.addr},</if>
+            updateTime=now()
+        </set>
+        where userId=#{model.userId}
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
+</mapper>
+
+

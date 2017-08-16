@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.WalletSubsidySignDao">
+
+    <sql id="fields">
+        orderNo,id, userId, donateUserId, donateUid, score,confirmScore,poundage,createTime, updateTime, status, remark,subsidyNo,grade,signTime,signCount
+    </sql>
+
+    <sql id="table">hb_wallet_subsidy_sign</sql>
+
+    <sql id="selector">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="table"/>
+    </sql>
+
+    <!-- 获取用户签到列表 -->
+    <select id="getList" resultType="WalletSubsidySign">
+        <include refid="selector"/>
+        WHERE status = #{status} and userId = #{userid}
+        ORDER BY createTime desc
+        LIMIT #{page.startRow}, #{page.pageSize}
+    </select>
+
+    <select id="count" resultType="Integer">
+        SELECT COUNT(id)
+        FROM
+        <include refid="table"/>
+        WHERE status = #{status} and userId = #{userid}
+    </select>
+
+    <!-- 获取用户信息 -->
+    <select id="getByUserId" resultType="WalletSubsidySign">
+        <include refid="selector"/>
+        WHERE userId = #{userid} and status = #{status}
+    </select>
+    
+    
+     <!-- 查询用户签到补贴列表查询全部- 2017-06-02 -->
+    <select id="readSubsidyCount" resultType="int">
+        select count(1) from hb_wallet_subsidy_sign  s INNER JOIN  hb_sys_user u 
+    	 <where>
+        	1=1
+        	 <if test="model.donateUid != null and model.donateUid != ''">and u.uid=#{model.donateUid}</if>
+             <if test="model.orderNo != null and model.orderNo != ''">and s.orderNo=#{model.orderNo}</if>
+             <if test="model.status != null">and s.status=#{model.status}</if>
+             <if test="model.grade != null">and s.grade=#{model.grade}</if>
+            
+             <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+             <if test="model.remark != null and model.remark != ''">and s.remark=#{model.remark}</if>
+             <if test="model.fromTime != null">and s.signTime>=#{model.fromTime}</if>
+             <if test="model.stopTime != null">and s.signTime &lt;=#{model.stopTime}</if>
+        	
+        	
+    	</where>
+    	 and  s.userId   = u.id 
+    </select>
+    
+    
+    
+    
+    
+    
+    
+    
+    <!--查询用户签到补贴列表- 2017-06-02 -->
+    <select id="readList1" resultType="com.yanbao.vo.WalletSubsidySignVo">
+    	select s.orderNo,s.id, s.userId, s.donateUserId, u.uid as donateUid, s.score,s.confirmScore
+    			,s.poundage,s.createTime, s.updateTime, s.status, s.remark,s.subsidyNo,s.grade,s.signTime
+    	 		,u.userName,u.phone from hb_wallet_subsidy_sign  s INNER JOIN  hb_sys_user u 
+    	 <where>
+        	1=1
+        	 <if test="model.donateUid != null and model.donateUid != ''">and u.uid=#{model.donateUid}</if>
+             <if test="model.orderNo != null and model.orderNo != ''">and s.orderNo=#{model.orderNo}</if>
+             <if test="model.status != null">and s.status=#{model.status}</if>
+             <if test="model.grade != null">and s.grade=#{model.grade}</if>
+             <if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+             <if test="model.remark != null and model.remark != ''">and s.remark=#{model.remark}</if>
+             <if test="model.fromTime != null">and s.signTime>=#{model.fromTime}</if>
+             <if test="model.stopTime != null">and s.signTime &lt;=#{model.stopTime}</if>
+        	
+        	
+    	</where>
+    	 and  s.userId   = u.id    limit #{page.startRow}, #{page.pageSize}
+    </select>
+    
+    
+    
+    
+    
+    
+</mapper>
+
+

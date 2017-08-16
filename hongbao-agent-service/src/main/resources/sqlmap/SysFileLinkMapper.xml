@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.SysFileLinkMapper">
+
+    <sql id="fields">
+        fileId,linkId,linkType,isDefault,createTime,updateTime,status,remark
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_sys_file_link</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.fileId != null and model.fileId != ''">fileId=#{model.fileId}</if>
+            <if test="model.linkId != null and model.linkId != ''">and linkId=#{model.linkId}</if>
+            <if test="model.linkType != null">and linkType=#{model.linkType}</if>
+            <if test="model.isDefault != null">and isDefault=#{model.isDefault}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.fileId},#{model.linkId},#{model.linkType},#{model.isDefault},now(),now(),#{model.status},#{model.remark});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.SysFileLink">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.SysFileLink">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.SysFileLink">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+    
+    <select id="readAllData" resultType="com.mall.model.SysFileLink">
+    	<include refid="selector"/> where linkId=#{id} 	ORDER BY isDefault DESC
+    </select>
+    
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.fileId != null and model.fileId !=''">fileId= #{model.fileId},</if>
+            <if test="model.linkId != null and model.linkId !=''">linkId= #{model.linkId},</if>
+            <if test="model.linkType != null">linkType= #{model.linkType},</if>
+            <if test="model.isDefault != null">isDefault= #{model.isDefault},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where linkId = #{id}
+    </update>
+</mapper>
+
+

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.IndexBannerDao">
+
+	<sql id="fields">
+        id, type,title, img, href, rank,
+		createTime, updateTime, status, remark
+    </sql>
+    
+    
+    <sql id="table_name">hb_index_banner</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table_name"/>
+    </sql>
+    
+    <sql id="condition">
+        <where>
+            <if test="model.status != null">status=#{model.status}</if>
+        </where>
+    </sql>
+    
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(<include refid="fields"/>)
+        values(#{model.id},#{model.type},#{model.title},#{model.img},#{model.href},#{model.rank},now(),now(),1,#{model.remark});
+        
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.IndexBanner">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.IndexBanner">
+       <include refid="selector"/> <include refid="condition"/>
+        ORDER BY createTime DESC
+        limit #{startRow}, #{pageSize};
+    </select>
+    
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.type != null">type= #{model.type},</if>
+            <if test="model.title != null and model.title !=''">title= #{model.title},</if>
+            <if test="model.img != null and model.img !=''">img= #{model.img},</if>
+            <if test="model.href != null and model.href !=''">href= #{model.href},</if>
+            <if test="model.rank != null and model.rank !=''">rank= #{model.rank},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+    
+     <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+    
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+    
+    
+    
+
+</mapper>
+
+

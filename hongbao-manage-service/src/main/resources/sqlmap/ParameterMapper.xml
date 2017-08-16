@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.ParameterMapper">
+
+    <sql id="fields">
+        id,name,value,kind,createtime,updatetime,status,remark,title,groupType
+    </sql>
+
+    <resultMap id="getStoreMap" type="HashMap">
+        <result column=""></result>
+    </resultMap>
+
+    <sql id="table">hb_parameter</sql>
+
+    <sql id="selector">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="table"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.name != null and model.name != ''">name=#{model.name}</if>
+            <if test="model.value != null and model.value != ''">and value=#{model.value}</if>
+            <if test="model.kind != null">and kind=#{model.kind}</if>
+            <if test="model.status != null and model.status != ''">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.title != null and model.title != ''">and title=#{model.title}</if>
+            <if test="model.groupType != null and model.groupType != ''">and groupType=#{model.groupType}</if>
+        </where>
+    </sql>
+
+    <select id="readById" resultType="com.mall.model.Parameter">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.Parameter">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.Parameter">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table"/>
+        <include refid="condition"/>
+    </select>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table"/>(<include refid="fields"/>)
+        values(#{model.id},#{model.name},#{model.value},#{model.kind},now(),null,#{model.status},#{model.remark},#{model.title},#{model.groupType});
+    </insert>
+
+    <update id="updateById">
+        update
+        <include refid="table"/>
+        <set>
+            <if test="model.name != null and model.name !=''">name= #{model.name},</if>
+            <if test="model.value != null">value= #{model.value},</if>
+            <if test="model.kind != null and model.kind !=''">kind= #{model.kind},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            <if test="model.status != null and model.status !=''">status= #{model.status},</if>
+            <if test="model.title != null and model.title !=''">title= #{model.title},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        update
+        <include refid="table"/>
+        set value=
+        <foreach collection="list" item="item" index="index" separator=" " open="case ID" close="end">
+            when #{item.id} then #{item.value}
+        </foreach>
+        ,updateTime=now()
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <!-- 查询所有系统参数 -->
+    <select id="getList" resultType="com.mall.model.Parameter">
+        <include refid="selector"/>
+    </select>
+
+</mapper>
+
+

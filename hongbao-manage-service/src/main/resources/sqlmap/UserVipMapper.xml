@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.UserVipDao">
+
+    <sql id="fields">
+        id, userId, uid, userName, nickName, 
+		createTime, updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_sys_user_vip</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+        	1=1
+            <if test="model.uid != null">and uid=#{model.uid}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.userName != null and model.userName != ''">and userName=#{model.userName}</if>
+            <if test="model.nickName != null and model.nickName != ''">and nickName=#{model.nickName}</if>
+        </where>
+    </sql>
+
+    <insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.userId}, #{model.uid}, #{model.userName}, #{model.nickName}, 
+			#{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark})
+    </insert>
+
+    <select id="del">
+        DELETE FROM <include refid="table"/>
+        WHERE id = #{id}
+    </select>
+
+    <select id="readList" resultType="UserVip">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        order by createTime desc
+        limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readCount" resultType="int">
+        SELECT COUNT(1) FROM
+        <include refid="table"/>
+        <include refid="condition"/>
+    </select>
+
+</mapper>
+
+

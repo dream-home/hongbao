@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.AgentInfoDao">
+
+	<sql id="fields">
+		id,uid,agentId,nickName,sex,headImgUrl,loginName,password,payPassWord,salt,phone
+		,email,userName,IDCard,bankCard,bankTypeCode,bankType,bankBranch,company
+		,servicePhone,address,agentLevel,licenseId,agentAreaId,agentProvince,agentCity,agentCountry
+		,cardIconId,licenseIconId,loginTime,errorCount,createTime,updateTime,status,remark,exchangeEP,consumeEP,doudou,score,agentProvinceName,agentCityName,agentCountryName,payPassWord,statisticsTime
+	</sql>
+
+
+
+
+	<sql id="table">hb_agent_info</sql>
+
+	<sql id="selector">
+		SELECT
+		<include refid="fields" />
+		FROM
+		<include refid="table" />
+	</sql>
+
+	<sql id="condition">
+		<where>
+			1=1
+			<if test="model.id != null">AND id= #{model.id}</if>
+			<if test="model.uid != null">AND uid= #{model.uid}</if>
+			<if test="model.agentId != null">AND agentId= #{model.agentId}</if>
+			<if test="model.nickName != null">AND nickName= #{model.nickName}</if>
+			<if test="model.sex != null">AND sex= #{model.sex}</if>
+			<if test="model.headImgUrl != null">AND headImgUrl= #{model.headImgUrl}</if>
+			<if test="model.loginName != null">AND loginName= #{model.loginName}</if>
+			<if test="model.password != null">AND password= #{model.password}</if>
+			<if test="model.salt != null">AND salt= #{model.salt}</if>
+			<if test="model.phone != null and model.phone !='' ">
+				AND (phone= #{model.phone} or userName= #{model.phone}  or company LIKE CONCAT('%',#{model.phone}, '%') ) 
+			</if>
+
+			<if test="model.email != null">AND email= #{model.email}</if>
+			<if test="model.userName != null">AND userName= #{model.userName}</if>
+			<if test="model.IDCard != null">AND IDCard= #{model.IDCard}</if>
+			<if test="model.bankCard != null">AND bankCard= #{model.bankCard}</if>
+			<if test="model.bankTypeCode != null">AND bankTypeCode= #{model.bankTypeCode}</if>
+			<if test="model.bankType != null">AND bankType= #{model.bankType}</if>
+			<if test="model.bankBranch != null">AND bankBranch= #{model.bankBranch}</if>
+			<if test="model.company != null">AND company LIKE CONCAT('%',#{model.company}, '%')</if>
+
+			<if test="model.servicePhone != null">AND servicePhone= #{model.servicePhone}</if>
+			<if test="model.address != null">AND address= #{model.address}</if>
+			<if test="model.agentLevel != null">AND agentLevel= #{model.agentLevel}</if>
+			<if test="model.licenseId != null">AND licenseId= #{model.licenseId}</if>
+			<if test="model.agentAreaId != null">AND agentAreaId= #{model.agentAreaId}</if>
+			<if test="model.agentProvince != null and model.agentProvince != '' ">AND agentProvince= #{model.agentProvince}</if>
+			<if test="model.agentCity != null and model.agentCity != ''">AND agentCity= #{model.agentCity}</if>
+			<if test="model.agentCountry != null and model.agentCountry != ''">AND agentCountry= #{model.agentCountry}</if>
+
+			<if test="model.cardIconId != null">AND cardIconId= #{model.cardIconId}</if>
+			<if test="model.licenseIconId != null">AND licenseIconId= #{model.licenseIconId}</if>
+			<if test="model.loginTime != null">AND loginTime= #{model.loginTime}</if>
+			<if test="model.errorCount != null">AND errorCount= #{model.errorCount}</if>
+			<!-- <if test="model.createTime != null">AND createTime= #{model.createTime}</if>
+			<if test="model.updateTime != null">AND updateTime= #{model.updateTime}</if> -->
+			<if test="model.status != null">AND status= #{model.status}</if>
+			<if test="model.remark != null">AND remark= #{model.remark}</if>
+			<if test="model.fromTime != null">and createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and #{model.stopTime}>=createTime</if>
+			
+		</where>
+	</sql>
+	
+	
+	
+	<!-- 插入记录 [说明：如果要返回当前对象，需要如下配置：<insert id="addVo" parameterType="Object" useGeneratedKeys="true" keyProperty="id">] -->
+	<insert id="create" >
+	  insert into  hb_agent_info 
+	(	<trim  suffixOverrides="," >
+		<if test="model.id != null  ">
+			id,
+		</if>
+		<if test="model.uid != null  ">
+			uid,
+		</if>
+		<if test="model.agentId != null  ">
+			agentId,
+		</if>
+		<if test="model.nickName != null  ">
+			nickName,
+		</if>
+		<if test="model.sex != null  ">
+			sex,
+		</if>
+		<if test="model.headImgUrl != null  ">
+			headImgUrl,
+		</if>
+		<if test="model.loginName != null  ">
+			loginName,
+		</if>
+		<if test="model.password != null  ">
+			password,
+		</if>
+		<if test="model.payPassWord != null  ">
+			payPassWord,
+		</if>
+		<if test="model.salt != null  ">
+			salt,
+		</if>
+		<if test="model.phone != null  ">
+			phone,
+		</if>
+		<if test="model.email != null  ">
+			email,
+		</if>
+		<if test="model.userName != null  ">
+			userName,
+		</if>
+		<if test="model.IDCard != null  ">
+			IDCard,
+		</if>
+		<if test="model.bankCard != null  ">
+			bankCard,
+		</if>
+		<if test="model.bankTypeCode != null  ">
+			bankTypeCode,
+		</if>
+		<if test="model.bankType != null  ">
+			bankType,
+		</if>
+		<if test="model.bankBranch != null  ">
+			bankBranch,
+		</if>
+		<if test="model.company != null  ">
+			company,
+		</if>
+		<if test="model.servicePhone != null  ">
+			servicePhone,
+		</if>
+		<if test="model.address != null  ">
+			address,
+		</if>
+		<if test="model.agentLevel != null  ">
+			agentLevel,
+		</if>
+		<if test="model.licenseId != null  ">
+			licenseId,
+		</if>
+		<if test="model.agentAreaId != null  ">
+			agentAreaId,
+		</if>
+		<if test="model.agentProvince != null  ">
+			agentProvince,
+		</if>
+		<if test="model.agentCity != null  ">
+			agentCity,
+		</if>
+		<if test="model.agentCountry != null  ">
+			agentCountry,
+		</if>
+		<if test="model.cardIconId != null  ">
+			cardIconId,
+		</if>
+		<if test="model.licenseIconId != null  ">
+			licenseIconId,
+		</if>
+		<if test="model.loginTime != null  ">
+			loginTime,
+		</if>
+		<if test="model.errorCount != null  ">
+			errorCount,
+		</if>
+
+	
+		<if test="model.createTime != null  ">
+			createTime,
+		</if>
+		<if test="model.updateTime != null  ">
+			updateTime,
+		</if>
+		<if test="model.status != null  ">
+			status,
+		</if>
+		<if test="model.remark != null  ">
+			remark,
+		</if>
+		<if test="model.exchangeEP != null  ">
+			exchangeEP,
+		</if>
+		<if test="model.consumeEP != null  ">
+			consumeEP,
+		</if>
+		<if test="model.doudou != null  ">
+			doudou,
+		</if>
+		<if test="model.score != null  ">
+			score,
+		</if>
+		<if test="model.agentProvinceName != null  ">
+			agentProvinceName,
+		</if>
+		<if test="model.agentCityName != null  ">
+			agentCityName,
+		</if>
+		<if test="model.agentCountryName != null  ">
+			agentCountryName,
+		</if>
+		<if test="model.statisticsTime != null  ">
+			statisticsTime,
+		</if>
+		
+		
+		
+		
+		
+		</trim> 
+	)
+	 values 
+	(	<trim  suffixOverrides="," >
+		<if test="model.id != null  ">
+			#{model.id},
+		</if>
+		<if test="model.uid != null  ">
+			#{model.uid},
+		</if>
+		<if test="model.agentId != null  ">
+			#{model.agentId },
+		</if>
+		<if test="model.nickName != null  ">
+			#{model.nickName},
+		</if>
+		<if test="model.sex != null  ">
+			#{model.sex},
+		</if>
+		<if test="model.headImgUrl != null  ">
+			#{model.headImgUrl},
+		</if>
+		<if test="model.loginName != null  ">
+			#{model.loginName},
+		</if>
+		<if test="model.password != null  ">
+			#{model.password},
+		</if>
+		<if test="model.payPassWord != null  ">
+			#{model.payPassWord},
+		</if>
+		<if test="model.salt != null  ">
+			#{model.salt},
+		</if>
+		<if test="model.phone != null  ">
+			#{model.phone},
+		</if>
+		<if test="model.email != null  ">
+			#{model.email},
+		</if>
+		<if test="model.userName != null  ">
+			#{model.userName},
+		</if>
+		<if test="model.IDCard != null  ">
+			#{model.IDCard},
+		</if>
+		<if test="model.bankCard != null  ">
+			#{model.bankCard},
+		</if>
+		<if test="model.bankTypeCode != null  ">
+			#{model.bankTypeCode},
+		</if>
+		<if test="model.bankType != null  ">
+			#{model.bankType},
+		</if>
+		<if test="model.bankBranch != null  ">
+			#{model.bankBranch},
+		</if>
+		<if test="model.company != null  ">
+			#{model.company},
+		</if>
+		<if test="model.servicePhone != null  ">
+			#{model.servicePhone},
+		</if>
+		<if test="model.address != null  ">
+			#{model.address},
+		</if>
+		<if test="model.agentLevel != null  ">
+			#{model.agentLevel},
+		</if>
+		<if test="model.licenseId != null  ">
+			#{model.licenseId},
+		</if>
+		<if test="model.agentAreaId != null  ">
+			#{model.agentAreaId},
+		</if>
+		<if test="model.agentProvince != null  ">
+			#{model.agentProvince},
+		</if>
+		<if test="model.agentCity != null  ">
+			#{model.agentCity},
+		</if>
+		<if test="model.agentCountry != null  ">
+			#{model.agentCountry},
+		</if>
+		<if test="model.cardIconId != null  ">
+			#{model.cardIconId},
+		</if>
+		<if test="model.licenseIconId != null  ">
+			#{model.licenseIconId},
+		</if>
+		<if test="model.loginTime != null  ">
+			#{model.loginTime},
+		</if>
+		<if test="model.errorCount != null  ">
+			#{model.errorCount},
+		</if>
+
+	
+		<if test="model.createTime != null  ">
+			#{model.createTime},
+		</if>
+		<if test="model.updateTime != null  ">
+			#{model.updateTime},
+		</if>
+		<if test="model.status != null  ">
+			#{model.status},
+		</if>
+		<if test="model.remark != null  ">
+			#{model.remark},
+		</if>
+		<if test="model.exchangeEP != null  ">
+			#{model.exchangeEP},
+		</if>
+		<if test="model.consumeEP != null  ">
+			#{model.consumeEP},
+		</if>
+		<if test="model.doudou != null  ">
+			#{model.doudou},
+		</if>
+		<if test="model.score != null  ">
+			#{model.score},
+		</if>
+		
+		<if test="model.agentProvinceName != null  ">
+			#{model.agentProvinceName},
+		</if>
+		<if test="model.agentCityName != null  ">
+			#{model.agentCityName},
+		</if>
+		<if test="model.agentCountryName != null  ">
+			#{model.agentCountryName},
+		</if>
+		<if test="model.statisticsTime != null  ">
+			#{model.statisticsTime},
+		</if>
+		
+		
+		
+		
+		</trim> 
+	)
+	</insert>
+	
+	<select id="readById" resultType="com.mall.model.AgentInfo">
+		<include refid="selector" />
+		WHERE id = #{id}
+		LIMIT 1;
+	</select>
+
+	<!-- <select id="getList" resultType="com.mall.model.AgentInfo">
+		<include refid="selector" />
+		<include refid="condition" />
+		LIMIT 1;
+	</select> -->
+
+	<select id="readCount" resultType="Integer">
+		SELECT COUNT(id)
+		FROM
+		<include refid="table" />
+		<include refid="condition" />
+	</select>
+
+	<select id="readList" resultType="com.mall.model.AgentInfo">
+		<include refid="selector" />
+		<where>
+			1=1
+			<if test="model.id != null">AND id= #{model.id}</if>
+			<if test="model.uid != null">AND uid= #{model.uid}</if>
+			<if test="model.agentId != null">AND agentId= #{model.agentId}</if>
+			<if test="model.nickName != null">AND nickName= #{model.nickName}</if>
+			<if test="model.sex != null">AND sex= #{model.sex}</if>
+			<if test="model.headImgUrl != null">AND headImgUrl= #{model.headImgUrl}</if>
+			<if test="model.loginName != null">AND loginName= #{model.loginName}</if>
+			<if test="model.password != null">AND password= #{model.password}</if>
+			<if test="model.salt != null">AND salt= #{model.salt}</if>
+			
+
+			<if test="model.email != null">AND email= #{model.email}</if>
+			<if test="model.userName != null">AND userName= #{model.userName}</if>
+			<if test="model.IDCard != null">AND IDCard= #{model.IDCard}</if>
+			<if test="model.bankCard != null">AND bankCard= #{model.bankCard}</if>
+			<if test="model.bankTypeCode != null">AND bankTypeCode= #{model.bankTypeCode}</if>
+			<if test="model.bankType != null">AND bankType= #{model.bankType}</if>
+			<if test="model.bankBranch != null">AND bankBranch= #{model.bankBranch}</if>
+			<if test="model.company != null">AND company LIKE CONCAT('%',#{model.company}, '%')</if>
+
+			<if test="model.servicePhone != null">AND servicePhone= #{model.servicePhone}</if>
+			<if test="model.address != null">AND address= #{model.address}</if>
+			<if test="model.agentLevel != null">AND agentLevel= #{model.agentLevel}</if>
+			<if test="model.licenseId != null">AND licenseId= #{model.licenseId}</if>
+			<if test="model.agentAreaId != null">AND agentAreaId= #{model.agentAreaId}</if>
+			<if test="model.agentProvince != null and model.agentProvince != '' ">AND agentProvince= #{model.agentProvince}</if>
+			<if test="model.agentCity != null and model.agentCity != ''">AND agentCity= #{model.agentCity}</if>
+			<if test="model.agentCountry != null and model.agentCountry != ''">AND agentCountry= #{model.agentCountry}</if>
+
+			<if test="model.cardIconId != null">AND cardIconId= #{model.cardIconId}</if>
+			<if test="model.licenseIconId != null">AND licenseIconId= #{model.licenseIconId}</if>
+			<if test="model.loginTime != null">AND loginTime= #{model.loginTime}</if>
+			<if test="model.errorCount != null">AND errorCount= #{model.errorCount}</if>
+			<!-- <if test="model.createTime != null">AND createTime= #{model.createTime}</if>
+			<if test="model.updateTime != null">AND updateTime= #{model.updateTime}</if> -->
+			<if test="model.status != null">AND status= #{model.status}</if>
+			<if test="model.remark != null">AND remark= #{model.remark}</if>
+			
+			<if test="model.fromTime != null">and createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and #{model.stopTime}>=createTime</if>
+			<if test="model.phone != null and model.phone !='' ">
+				AND (phone= #{model.phone} or userName= #{model.phone}  or company LIKE CONCAT('%',#{model.phone}, '%') ) 
+			</if>
+		</where>
+		
+		
+		
+		ORDER BY createTime DESC
+		LIMIT #{startRow}, #{pageSize}
+	</select>
+
+	<!-- 根据代理id修改代理资料 -->
+	<update id="updateById">
+		UPDATE
+		<include refid="table" />
+		<set>
+			<if test="model.uid != null">uid= #{model.uid},</if>
+			<if test="model.agentId != null">agentId= #{model.agentId},</if>
+			<if test="model.nickName != null">nickName= #{model.nickName},</if>
+			<if test="model.sex != null">sex= #{model.sex},</if>
+			<if test="model.headImgUrl != null">headImgUrl= #{model.headImgUrl},</if>
+			<if test="model.loginName != null and model.loginName!=''">loginName= #{model.loginName},</if>
+			<if test="model.password != null">password= #{model.password},</if>
+			<if test="model.payPassWord != null">payPassWord= #{model.payPassWord},</if>
+			<if test="model.salt != null">salt= #{model.salt},</if>
+			<if test="model.phone != null">phone= #{model.phone},</if>
+			<if test="model.email != null">email= #{model.email},</if>
+			<if test="model.userName != null">userName= #{model.userName},</if>
+			<if test="model.IDCard != null">IDCard= #{model.IDCard},</if>
+			<if test="model.bankCard != null">bankCard= #{model.bankCard},</if>
+			<if test="model.bankTypeCode != null">bankTypeCode= #{model.bankTypeCode},</if>
+			<if test="model.bankType != null">bankType= #{model.bankType},</if>
+			<if test="model.bankBranch != null">bankBranch= #{model.bankBranch},</if>
+			<if test="model.company != null">company= #{model.company},</if>
+			<if test="model.servicePhone != null">servicePhone= #{model.servicePhone},</if>
+			<if test="model.address != null">address= #{model.address},</if>
+			<if test="model.agentLevel != null">agentLevel= #{model.agentLevel},</if>
+			<if test="model.licenseId != null">licenseId= #{model.licenseId},</if>
+			<if test="model.agentAreaId != null and model.agentAreaId!= ''">agentAreaId= #{model.agentAreaId},</if>
+			<if test="model.agentProvince != null">agentProvince= #{model.agentProvince},</if>
+			<if test="model.agentCity != null">agentCity= #{model.agentCity},</if>
+			<if test="model.agentCountry != null">agentCountry= #{model.agentCountry},</if>
+			<if test="model.cardIconId != null">cardIconId= #{model.cardIconId},</if>
+			<if test="model.licenseIconId != null">licenseIconId= #{model.licenseIconId},</if>
+			<if test="model.loginTime != null">loginTime= #{model.loginTime},</if>
+			<if test="model.errorCount != null">errorCount= #{model.errorCount},</if>
+			<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null">remark= #{model.remark},</if>
+			<if test="model.exchangeEP != null">exchangeEP= #{model.exchangeEP},</if>
+			<if test="model.consumeEP != null">consumeEP= #{model.consumeEP},</if>
+			<if test="model.doudou != null">doudou= #{model.doudou},</if>
+			<if test="model.score != null">score= #{model.score},</if>
+			<if test="model.agentProvinceName != null  ">agentProvinceName = #{model.agentProvinceName},</if>
+			<if test="model.agentCityName != null  ">agentCityName = #{model.agentCityName},</if>
+			<if test="model.agentCountryName != null  ">agentCountryName = #{model.agentCountryName},</if>
+			
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<update id="deleteById">
+        update <include refid="table"/> set status = 3, statisticsTime=null, updateTime=now() where id = #{id}
+    </update>
+	
+	
+	
+	<!-- 根据代理id修改代理资料 -->
+	<update id="updateVo">
+		UPDATE
+		<include refid="table" />
+		<set>
+			<if test="model.uid != null">uid= #{model.uid},</if>
+			<if test="model.agentId != null">agentId= #{model.agentId},</if>
+			<if test="model.nickName != null">nickName= #{model.nickName},</if>
+			<if test="model.sex != null">sex= #{model.sex},</if>
+			<if test="model.headImgUrl != null">headImgUrl= #{model.headImgUrl},</if>
+			<if test="model.loginName != null">loginName= #{model.loginName},</if>
+			<if test="model.password != null">password= #{model.password},</if>
+			<if test="model.payPassWord != null">payPassWord= #{model.payPassWord},</if>
+			<if test="model.salt != null">salt= #{model.salt},</if>
+			<if test="model.phone != null">phone= #{model.phone},</if>
+			<if test="model.email != null">email= #{model.email},</if>
+			<if test="model.userName != null">userName= #{model.userName},</if>
+			<if test="model.IDCard != null">IDCard= #{model.IDCard},</if>
+			<if test="model.bankCard != null">bankCard= #{model.bankCard},</if>
+			<if test="model.bankTypeCode != null">bankTypeCode= #{model.bankTypeCode},</if>
+			<if test="model.bankType != null">bankType= #{model.bankType},</if>
+			<if test="model.bankBranch != null">bankBranch= #{model.bankBranch},</if>
+			<if test="model.company != null">company= #{model.company},</if>
+			<if test="model.servicePhone != null">servicePhone= #{model.servicePhone},</if>
+			<if test="model.address != null">address= #{model.address},</if>
+			<if test="model.agentLevel != null">agentLevel= #{model.agentLevel},</if>
+			<if test="model.licenseId != null">licenseId= #{model.licenseId},</if>
+			<if test="model.agentAreaId != null">agentAreaId= #{model.agentAreaId},</if>
+			<if test="model.agentProvince != null">agentProvince= #{model.agentProvince},</if>
+			<if test="model.agentCity != null">agentCity= #{model.agentCity},</if>
+			<if test="model.agentCountry != null">agentCountry= #{model.agentCountry},</if>
+			<if test="model.cardIconId != null">cardIconId= #{model.cardIconId},</if>
+			<if test="model.licenseIconId != null">licenseIconId= #{model.licenseIconId},</if>
+			<if test="model.loginTime != null">loginTime= #{model.loginTime},</if>
+			<if test="model.errorCount != null">errorCount= #{model.errorCount},</if>
+			<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null">remark= #{model.remark},</if>
+			<if test="model.exchangeEP != null">exchangeEP= #{model.exchangeEP},</if>
+			<if test="model.consumeEP != null">consumeEP= #{model.consumeEP},</if>
+			<if test="model.doudou != null">doudou= #{model.doudou},</if>
+			<if test="model.score != null">score= #{model.score},</if>
+		</set>
+		WHERE id = #{model.id}
+	</update>
+	
+	
+	<select id="readOne" resultType="com.mall.model.AgentInfo">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+	
+	
+	<select id="readAllByOR" resultType="com.mall.model.AgentInfo">
+		<include refid="selector" />
+		<where>
+        	1=1
+            <if test="model.phone != null and model.phone != '' and model.userName != null and model.userName != '' and model.loginName != null and model.loginName != ''">
+            and phone=#{model.phone}
+            or userName=#{model.userName}
+            or loginName=#{model.loginName}
+            </if>
+        </where>
+		ORDER BY createTime DESC
+	</select>
+	
+	<select id="getByUserids" resultType="com.mall.model.AgentInfo">
+		<include refid="selector" />
+		WHERE 1=1
+		 <if test="ids!=null">
+            AND id in
+            <foreach collection="ids" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+        </if>
+	</select>
+
+	<!-- 根据地区id查询代理 -->
+	<select id="readListByAreaid" resultType="com.mall.model.AgentInfo">
+		<include refid="selector" />
+		where status= 1 AND agentAreaId in
+		<foreach item="idItem" collection="list" index="index" open="(" separator="," close=")">
+			#{idItem}
+		</foreach>
+	</select>
+</mapper>
+
+
+

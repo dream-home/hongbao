@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.EpRecordMapper">
+
+	<sql id="fields">
+        id,userType,orderNo,sendUserId,receiveUserId,ep,recordType,recordTypeDesc,createTime,updateTime,status,remark,province,city,county,addressId
+    </sql>
+    
+    <sql id="table">hb_ep_record</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+	  
+	<insert id="create" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.userType}, #{model.orderNo}, #{model.sendUserId}, #{model.receiveUserId},
+			#{model.ep}, #{model.recordType}, #{model.recordTypeDesc}, #{model.createTime}, #{model.updateTime},
+			#{model.status}, #{model.remark}, #{model.province}, #{model.city}, #{model.county},
+			#{model.addressId})
+    </insert>
+	
+	<update id="update">
+        UPDATE <include refid="table"/>
+        <set>
+            <if test="model.userType != null">userType= #{model.userType},</if>
+            <if test="model.orderNo != null">orderNo= #{model.orderNo},</if>
+            <if test="model.sendUserId != null">sendUserId= #{model.sendUserId},</if>
+            <if test="model.receiveUserId != null">receiveUserId= #{model.receiveUserId},</if>
+            <if test="model.ep != null">ep= #{model.ep},</if>
+            <if test="model.recordType != null">recordType= #{model.recordType},</if>
+            <if test="model.recordTypeDesc != null">recordTypeDesc= #{model.recordTypeDesc},</if>
+            <if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+            <if test="model.province != null">province= #{model.province},</if>
+            <if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+            <if test="model.city != null">city= #{model.city},</if>
+            <if test="model.county != null">county= #{model.county},</if>
+            <if test="model.addressId != null">addressId= #{model.addressId},</if>
+        </set>
+		WHERE id = #{id}
+    </update>
+
+    
+    <select id="getById" resultType="com.mall.model.EpRecord">
+		<include refid="selector"/>
+		WHERE id = #{id}
+		LIMIT 1;
+	</select>
+
+
+    <select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+	</select>
+
+	<select id="getList" resultType="com.mall.model.EpRecord">
+		<include refid="selector"/>
+        ORDER BY createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+
+    <!-- EP赠送记录列表(加盟赠送，代理转入，转赠代理，转赠会员) -->
+    <select id="getSendRecordList" resultType="com.mall.model.EpRecord">
+        <include refid="selector"/>
+        <where>
+            1=1
+            <if test="userId !=null and userId !=''">
+                AND ((sendUserId =#{userId}) OR (receiveUserId =#{userId}))
+            </if>
+            AND (recordType=10 OR recordType=11 OR recordType=9)
+        </where>
+        ORDER BY createTime DESC
+        LIMIT #{page.startRow}, #{page.pageSize}
+    </select>
+    <select id="countSendRecordList" resultType="Integer">
+        SELECT COUNT(id)
+        FROM <include refid="table"/>
+        <where>
+            1=1
+            <if test="userId !=null and userId !=''">
+                AND ((sendUserId =#{userId}) OR (receiveUserId =#{userId}))
+            </if>
+            AND (recordType=10 OR recordType=11 OR recordType=9)
+        </where>
+    </select>
+
+    <!-- 业绩结算EP业绩提成，根据userId进行分类(加入合伙人,面对面扫码，商家二维码，直接购买,包含会员和商家的消费ep) -->
+    <select id="getEpList" resultType="com.yanbao.vo.StoreExchangeRecord">
+        SELECT e.sendUserId AS userId,e.ep AS score,e.orderNo,u.areaId,u.storeId,e.createTime,e.updateTime FROM hb_ep_record e LEFT JOIN hb_sys_user u ON e.sendUserId = u.id
+        WHERE e.status=1
+        AND e.ep &lt; 0
+        AND (e.recordType = 13 OR e.recordType=1 OR e.recordType = 16 OR e.recordType = 17 OR e.recordType = 19)
+        AND (e.userType=1 or e.userType=2)
+        AND e.createTime>#{starttime}
+        AND e.createTime&lt;=#{endtime}
+    </select>
+	
+	
+        <!-- AND userType=2 
+        AND (recordType=1 OR recordType=3 OR recordType=4 OR recordType=5 OR recordType=8)-->
+	<select id="getByStoreIds" resultType="com.mall.model.EpRecord">
+        <include refid="selector" />
+        WHERE status=1
+        AND ep &lt; 0
+        AND recordType=1
+        AND sendUserId in
+        <foreach collection="storeIds" item="storeId" index="index" open="(" separator="," close=")">
+            #{storeId}
+        </foreach>
+    </select>
+    
+    <update id="deleteById">
+        delete from <include refid="table"/>  where id = #{id}
+    </update>
+</mapper>
+
+

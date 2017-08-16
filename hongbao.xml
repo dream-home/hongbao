@@ -1,0 +1,835 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hongbao" default="all">
+  
+  
+  <property file="hongbao.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.swc"/>
+    <include name="*.apk"/>
+    <include name="*.zip"/>
+    <include name="*.egg"/>
+    <include name="*.ane"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  
+  <!-- Application Server Libraries -->
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  <import file="${basedir}/module_hongbao.xml"/>
+  
+  <import file="${basedir}/hongbao-agent-service/module_hongbao-agent-service.xml"/>
+  
+  <import file="${basedir}/hongbao-agent-web/module_hongbao-agent-web.xml"/>
+  
+  <import file="${basedir}/hongbao-api-service/module_hongbao-api-service.xml"/>
+  
+  <import file="${basedir}/hongbao-api-web/module_hongbao-api-web.xml"/>
+  
+  <import file="${basedir}/hongbao-core/module_hongbao-core.xml"/>
+  
+  <import file="${basedir}/hongbao-h5/module_hongbao-h5.xml"/>
+  
+  <import file="${basedir}/hongbao-manage-service/module_hongbao-manage-service.xml"/>
+  
+  <import file="${basedir}/hongbao-manage-web/module_hongbao-manage-web.xml"/>
+  
+  <import file="${basedir}/hongbao-model/module_hongbao-model.xml"/>
+  
+  <import file="${basedir}/hongbao-task/module_hongbao-task.xml"/>
+  
+  <import file="${basedir}/hongbao-test-web/module_hongbao-test-web.xml"/>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.hongbao, clean.module.hongbao-agent-service, clean.module.hongbao-agent-web, clean.module.hongbao-api-service, clean.module.hongbao-api-web, clean.module.hongbao-core, clean.module.hongbao-h5, clean.module.hongbao-manage-service, clean.module.hongbao-manage-web, clean.module.hongbao-model, clean.module.hongbao-task, clean.module.hongbao-test-web, clean.artifact.hongbao-agent-web:war_exploded, clean.artifact.hongbao-api-web:war_exploded, clean.artifact.hongbao-h5:war_exploded, clean.artifact.hongbao-manage-web:war_exploded, clean.artifact.hongbao-task:war_exploded, clean.artifact.hongbao-test-web:war_exploded" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.hongbao, compile.module.hongbao-agent-service, compile.module.hongbao-agent-web, compile.module.hongbao-api-service, compile.module.hongbao-api-web, compile.module.hongbao-core, compile.module.hongbao-h5, compile.module.hongbao-manage-service, compile.module.hongbao-manage-web, compile.module.hongbao-model, compile.module.hongbao-task, compile.module.hongbao-test-web" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.hongbao-agent-web:war" value="${basedir}/hongbao-agent-web/target"/>
+    <property name="artifact.output.hongbao-agent-web:war_exploded" value="${basedir}/hongbao-agent-web/target/agent"/>
+    <property name="artifact.output.hongbao-api-web:war" value="${basedir}/hongbao-api-web/target"/>
+    <property name="artifact.output.hongbao-api-web:war_exploded" value="${basedir}/hongbao-api-web/target/api"/>
+    <property name="artifact.output.hongbao-h5:war" value="${basedir}/hongbao-h5/target"/>
+    <property name="artifact.output.hongbao-h5:war_exploded" value="${basedir}/hongbao-h5/target/m"/>
+    <property name="artifact.output.hongbao-manage-web:war" value="${basedir}/hongbao-manage-web/target"/>
+    <property name="artifact.output.hongbao-manage-web:war_exploded" value="${basedir}/hongbao-manage-web/target/manage"/>
+    <property name="artifact.output.hongbao-task:war" value="${basedir}/hongbao-task/target"/>
+    <property name="artifact.output.hongbao-task:war_exploded" value="${basedir}/hongbao-task/target/test"/>
+    <property name="artifact.output.hongbao-test-web:war" value="${basedir}/hongbao-test-web/target"/>
+    <property name="artifact.output.hongbao-test-web:war_exploded" value="${basedir}/hongbao-test-web/target/test"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.agent.war" value="${artifacts.temp.dir}/agent.war"/>
+    <property name="temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar" value="${artifacts.temp.dir}/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.hongbao-agent-service-1.0.1-SNAPSHOT.jar" value="${artifacts.temp.dir}/hongbao-agent-service-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar" value="${artifacts.temp.dir}/hongbao-model-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.api.war" value="${artifacts.temp.dir}/api.war"/>
+    <property name="temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar2" value="${artifacts.temp.dir}/1/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <mkdir dir="${artifacts.temp.dir}/1"/>
+    <property name="temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar" value="${artifacts.temp.dir}/hongbao-api-service-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.m.war" value="${artifacts.temp.dir}/m.war"/>
+    <property name="temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar3" value="${artifacts.temp.dir}/2/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <mkdir dir="${artifacts.temp.dir}/2"/>
+    <property name="temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar2" value="${artifacts.temp.dir}/1/hongbao-api-service-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar2" value="${artifacts.temp.dir}/1/hongbao-model-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.manage.war" value="${artifacts.temp.dir}/manage.war"/>
+    <property name="temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar4" value="${artifacts.temp.dir}/3/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <mkdir dir="${artifacts.temp.dir}/3"/>
+    <property name="temp.jar.path.hongbao-manage-service-1.0.1-SNAPSHOT.jar" value="${artifacts.temp.dir}/hongbao-manage-service-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar3" value="${artifacts.temp.dir}/2/hongbao-model-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.test.war" value="${artifacts.temp.dir}/test.war"/>
+    <property name="temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar5" value="${artifacts.temp.dir}/4/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <mkdir dir="${artifacts.temp.dir}/4"/>
+    <property name="temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar3" value="${artifacts.temp.dir}/2/hongbao-api-service-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar4" value="${artifacts.temp.dir}/3/hongbao-model-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.hongbao-agent-service-1.0.1-SNAPSHOT.jar2" value="${artifacts.temp.dir}/1/hongbao-agent-service-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.test.war2" value="${artifacts.temp.dir}/1/test.war"/>
+    <property name="temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar6" value="${artifacts.temp.dir}/5/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <mkdir dir="${artifacts.temp.dir}/5"/>
+    <property name="temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar4" value="${artifacts.temp.dir}/3/hongbao-api-service-1.0.1-SNAPSHOT.jar"/>
+    <property name="temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar5" value="${artifacts.temp.dir}/4/hongbao-model-1.0.1-SNAPSHOT.jar"/>
+  </target>
+  
+  <target name="clean.artifact.hongbao-agent-web:war_exploded" description="clean hongbao-agent-web:war exploded artifact output">
+    <delete dir="${artifact.output.hongbao-agent-web:war_exploded}"/>
+  </target>
+  
+  <target name="clean.artifact.hongbao-api-web:war_exploded" description="clean hongbao-api-web:war exploded artifact output">
+    <delete dir="${artifact.output.hongbao-api-web:war_exploded}"/>
+  </target>
+  
+  <target name="clean.artifact.hongbao-h5:war_exploded" description="clean hongbao-h5:war exploded artifact output">
+    <delete dir="${artifact.output.hongbao-h5:war_exploded}"/>
+  </target>
+  
+  <target name="clean.artifact.hongbao-manage-web:war_exploded" description="clean hongbao-manage-web:war exploded artifact output">
+    <delete dir="${artifact.output.hongbao-manage-web:war_exploded}"/>
+  </target>
+  
+  <target name="clean.artifact.hongbao-task:war_exploded" description="clean hongbao-task:war exploded artifact output">
+    <delete dir="${artifact.output.hongbao-task:war_exploded}"/>
+  </target>
+  
+  <target name="clean.artifact.hongbao-test-web:war_exploded" description="clean hongbao-test-web:war exploded artifact output">
+    <delete dir="${artifact.output.hongbao-test-web:war_exploded}"/>
+  </target>
+  
+  <target name="artifact.hongbao-agent-web:war" depends="init.artifacts, artifact.hongbao-agent-web:war_exploded" description="Build &#39;hongbao-agent-web:war&#39; artifact">
+    <property name="artifact.temp.output.hongbao-agent-web:war" value="${artifacts.temp.dir}/hongbao_agent_web_war"/>
+    <mkdir dir="${artifact.temp.output.hongbao-agent-web:war}"/>
+    <zip destfile="${temp.jar.path.agent.war}">
+      <zipfileset dir="${artifact.temp.output.hongbao-agent-web:war_exploded}"/>
+    </zip>
+    <copy file="${temp.jar.path.agent.war}" tofile="${artifact.temp.output.hongbao-agent-web:war}/agent.war"/>
+  </target>
+  
+  <target name="artifact.hongbao-agent-web:war_exploded" depends="init.artifacts, compile.module.hongbao-agent-web, compile.module.hongbao-core, compile.module.hongbao-agent-service, compile.module.hongbao-model" description="Build &#39;hongbao-agent-web:war exploded&#39; artifact">
+    <mkdir dir="${artifact.output.hongbao-agent-web:war_exploded}"/>
+    <jar destfile="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-core.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-agent-service-1.0.1-SNAPSHOT.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-agent-service.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-model.output.dir}"/>
+    </jar>
+    <mkdir dir="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF"/>
+    <mkdir dir="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/classes"/>
+    <copy todir="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/classes">
+      <fileset dir="${hongbao-agent-web.output.dir}"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib"/>
+    <copy file="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar}" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/org/jdom/jdom/1.1/jdom-1.1.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jdom-1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/qiniu/qiniu-java-sdk/7.2.6/qiniu-java-sdk-7.2.6.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/qiniu-java-sdk-7.2.6.jar"/>
+    <copy file="${path.variable.maven_repository}/com/qiniu/happy-dns-java/0.1.4/happy-dns-java-0.1.4.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/happy-dns-java-0.1.4.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/code/gson/gson/2.3/gson-2.3.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/gson-2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okhttp3/okhttp/3.3.1/okhttp-3.3.1.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/okhttp-3.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okio/okio/1.8.0/okio-1.8.0.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/okio-1.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-core-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-web-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-webmvc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-test/4.0.0.RELEASE/spring-test-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-test-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context-support/4.0.0.RELEASE/spring-context-support-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-context-support-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/quartz-2.2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/druid/1.0.26/druid-1.0.26.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/druid-1.0.26.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-jdbc/4.0.0.RELEASE/spring-jdbc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-jdbc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-tx-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/mysql-connector-java-5.1.39.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis/3.4.1/mybatis-3.4.1.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/mybatis-3.4.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis-spring/1.3.1/mybatis-spring-1.3.1.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/mybatis-spring-1.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/redis/clients/jedis/2.9.0/jedis-2.9.0.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jedis-2.9.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/fastjson/1.2.9/fastjson-1.2.9.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/fastjson-1.2.9.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/json-lib/json-lib/2.4/json-lib-2.4-jdk15.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/json-lib-2.4-jdk15.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jackson-core-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jackson-mapper-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-beanutils/commons-beanutils/1.9.3/commons-beanutils-1.9.3.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-fileupload/commons-fileupload/1.3.2/commons-fileupload-1.3.2.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/commons-fileupload-1.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-io/commons-io/2.5/commons-io-2.5.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/commons-io-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/servlet-api-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jstl-1.1.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/commons-lang3-3.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/httpclient-4.5.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/poi/poi/3.9/poi-3.9.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/poi-3.9.jar"/>
+    <copy file="${path.variable.maven_repository}/org/dom4j/dom4j/2.0.0/dom4j-2.0.0.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/dom4j-2.0.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/belerweb/pinyin4j/2.5.1/pinyin4j-2.5.1.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/pinyin4j-2.5.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/github/stuxuhai/jpinyin/1.1.8/jpinyin-1.1.8.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jpinyin-1.1.8.jar"/>
+    <copy file="${path.variable.maven_repository}/junit/junit/4.12/junit-4.12.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/junit-4.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-api/1.7.9/slf4j-api-1.7.9.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/slf4j-api-1.7.9.jar"/>
+    <copy file="${path.variable.maven_repository}/log4j/log4j/1.2.12/log4j-1.2.12.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/log4j-1.2.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-log4j12/1.7.21/slf4j-log4j12-1.7.21.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/slf4j-log4j12-1.7.21.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/zxing/core/3.3.0/core-3.3.0.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/core-3.3.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/thoughtworks/xstream/xstream/1.4.8/xstream-1.4.8.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/xstream-1.4.8.jar"/>
+    <copy file="${path.variable.maven_repository}/com/yanbao/taobao-sdk/1.0.0/taobao-sdk-1.0.0.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/taobao-sdk-1.0.0.jar"/>
+    <copy file="${temp.jar.path.hongbao-agent-service-1.0.1-SNAPSHOT.jar}" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/hongbao-agent-service-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar}" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/hongbao-model-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/mail/mail/1.4.7/mail-1.4.7.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/mail-1.4.7.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/activation/activation/1.1/activation-1.1.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/activation-1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jpush-client/3.2.15/jpush-client-3.2.15.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jpush-client-3.2.15.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jiguang-common/1.0.1/jiguang-common-1.0.1.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jiguang-common-1.0.1.jar"/>
+    <copy file="${path.variable.maven_repository}/io/netty/netty-all/4.1.6.Final/netty-all-4.1.6.Final.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/netty-all-4.1.6.Final.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-websocket/4.0.0.RELEASE/spring-websocket-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-websocket-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-context-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-aop/4.0.0.RELEASE/spring-aop-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-aop-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-beans-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-expression/4.0.0.RELEASE/spring-expression-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-expression-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-messaging/4.0.0.RELEASE/spring-messaging-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/spring-messaging-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/javax.servlet-api-3.1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-databind/2.8.0/jackson-databind-2.8.0.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jackson-databind-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-annotations/2.8.0/jackson-annotations-2.8.0.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jackson-annotations-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-core/2.8.0/jackson-core-2.8.0.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jackson-core-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/aopalliance/aopalliance/1.0/aopalliance-1.0.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/aopalliance-1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/c3p0-0.9.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/commons-pool2-2.4.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-lang/commons-lang/2.5/commons-lang-2.5.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/commons-lang-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/ezmorph/ezmorph/1.0.6/ezmorph-1.0.6.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/ezmorph-1.0.6.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpcore/4.4.4/httpcore-4.4.4.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/httpcore-4.4.4.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-codec/commons-codec/1.9/commons-codec-1.9.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/commons-codec-1.9.jar"/>
+    <copy file="${path.variable.maven_repository}/jaxen/jaxen/1.1.6/jaxen-1.1.6.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/jaxen-1.1.6.jar"/>
+    <copy file="${path.variable.maven_repository}/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/hamcrest-core-1.3.jar"/>
+    <copy file="${path.variable.maven_repository}/xmlpull/xmlpull/1.1.3.1/xmlpull-1.1.3.1.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/xmlpull-1.1.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/lib/xpp3_min-1.1.4c.jar"/>
+    <mkdir dir="${artifact.output.hongbao-agent-web:war_exploded}/META-INF"/>
+    <copy file="${basedir}/hongbao-agent-web/target/agent/META-INF/MANIFEST.MF" tofile="${artifact.output.hongbao-agent-web:war_exploded}/META-INF/MANIFEST.MF"/>
+    <copy todir="${artifact.output.hongbao-agent-web:war_exploded}">
+      <fileset dir="${basedir}/hongbao-agent-web/src/main/webapp"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF"/>
+    <copy file="${basedir}/hongbao-agent-web/src/main/webapp/WEB-INF/web.xml" tofile="${artifact.output.hongbao-agent-web:war_exploded}/WEB-INF/web.xml"/>
+  </target>
+  
+  <target name="artifact.hongbao-api-web:war" depends="init.artifacts, artifact.hongbao-api-web:war_exploded" description="Build &#39;hongbao-api-web:war&#39; artifact">
+    <property name="artifact.temp.output.hongbao-api-web:war" value="${artifacts.temp.dir}/hongbao_api_web_war"/>
+    <mkdir dir="${artifact.temp.output.hongbao-api-web:war}"/>
+    <zip destfile="${temp.jar.path.api.war}">
+      <zipfileset dir="${artifact.output.hongbao-api-web:war_exploded}"/>
+    </zip>
+    <copy file="${temp.jar.path.api.war}" tofile="${artifact.temp.output.hongbao-api-web:war}/api.war"/>
+  </target>
+  
+  <target name="artifact.hongbao-api-web:war_exploded" depends="init.artifacts, compile.module.hongbao-api-web, compile.module.hongbao-core, compile.module.hongbao-api-service" description="Build &#39;hongbao-api-web:war exploded&#39; artifact">
+    <mkdir dir="${artifact.output.hongbao-api-web:war_exploded}"/>
+    <jar destfile="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar2}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-core.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-api-service.output.dir}"/>
+    </jar>
+    <mkdir dir="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF"/>
+    <mkdir dir="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/classes"/>
+    <copy todir="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/classes">
+      <fileset dir="${hongbao-api-web.output.dir}"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib"/>
+    <copy file="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar2}" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/org/jdom/jdom/1.1/jdom-1.1.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/jdom-1.1.jar"/>
+    <copy file="${temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar}" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/hongbao-api-service-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/mail/mail/1.4.7/mail-1.4.7.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/mail-1.4.7.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/activation/activation/1.1/activation-1.1.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/activation-1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jpush-client/3.2.15/jpush-client-3.2.15.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/jpush-client-3.2.15.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jiguang-common/1.0.1/jiguang-common-1.0.1.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/jiguang-common-1.0.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okhttp3/okhttp/3.3.1/okhttp-3.3.1.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/okhttp-3.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okio/okio/1.8.0/okio-1.8.0.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/okio-1.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/io/netty/netty-all/4.1.6.Final/netty-all-4.1.6.Final.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/netty-all-4.1.6.Final.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/code/gson/gson/2.3/gson-2.3.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/gson-2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-websocket/4.0.0.RELEASE/spring-websocket-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-websocket-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-context-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-messaging/4.0.0.RELEASE/spring-messaging-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-messaging-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-beans-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/javax.servlet-api-3.1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-databind/2.8.0/jackson-databind-2.8.0.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/jackson-databind-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-annotations/2.8.0/jackson-annotations-2.8.0.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/jackson-annotations-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-core/2.8.0/jackson-core-2.8.0.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/jackson-core-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-core-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-web-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/aopalliance/aopalliance/1.0/aopalliance-1.0.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/aopalliance-1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-aop/4.0.0.RELEASE/spring-aop-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-aop-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-webmvc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-expression/4.0.0.RELEASE/spring-expression-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-expression-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-test/4.0.0.RELEASE/spring-test-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-test-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context-support/4.0.0.RELEASE/spring-context-support-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-context-support-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/quartz-2.2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/c3p0-0.9.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/druid/1.0.26/druid-1.0.26.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/druid-1.0.26.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-jdbc/4.0.0.RELEASE/spring-jdbc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-jdbc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/spring-tx-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/mysql-connector-java-5.1.39.jar"/>
+    <copy file="${path.variable.maven_repository}/redis/clients/jedis/2.9.0/jedis-2.9.0.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/jedis-2.9.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/commons-pool2-2.4.2.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/fastjson/1.2.9/fastjson-1.2.9.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/fastjson-1.2.9.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/json-lib/json-lib/2.4/json-lib-2.4-jdk15.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/json-lib-2.4-jdk15.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-lang/commons-lang/2.5/commons-lang-2.5.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/commons-lang-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/ezmorph/ezmorph/1.0.6/ezmorph-1.0.6.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/ezmorph-1.0.6.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/jackson-core-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/jackson-mapper-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-beanutils/commons-beanutils/1.9.3/commons-beanutils-1.9.3.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-fileupload/commons-fileupload/1.3.2/commons-fileupload-1.3.2.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/commons-fileupload-1.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-io/commons-io/2.5/commons-io-2.5.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/commons-io-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/servlet-api-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/commons-lang3-3.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/httpclient-4.5.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpcore/4.4.4/httpcore-4.4.4.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/httpcore-4.4.4.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-codec/commons-codec/1.9/commons-codec-1.9.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/commons-codec-1.9.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/poi/poi/3.9/poi-3.9.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/poi-3.9.jar"/>
+    <copy file="${path.variable.maven_repository}/org/dom4j/dom4j/2.0.0/dom4j-2.0.0.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/dom4j-2.0.0.jar"/>
+    <copy file="${path.variable.maven_repository}/jaxen/jaxen/1.1.6/jaxen-1.1.6.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/jaxen-1.1.6.jar"/>
+    <copy file="${path.variable.maven_repository}/com/belerweb/pinyin4j/2.5.1/pinyin4j-2.5.1.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/pinyin4j-2.5.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/github/stuxuhai/jpinyin/1.1.8/jpinyin-1.1.8.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/jpinyin-1.1.8.jar"/>
+    <copy file="${path.variable.maven_repository}/junit/junit/4.12/junit-4.12.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/junit-4.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/hamcrest-core-1.3.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-api/1.7.9/slf4j-api-1.7.9.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/slf4j-api-1.7.9.jar"/>
+    <copy file="${path.variable.maven_repository}/log4j/log4j/1.2.12/log4j-1.2.12.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/log4j-1.2.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-log4j12/1.7.21/slf4j-log4j12-1.7.21.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/slf4j-log4j12-1.7.21.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/zxing/core/3.3.0/core-3.3.0.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/core-3.3.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/thoughtworks/xstream/xstream/1.4.8/xstream-1.4.8.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/xstream-1.4.8.jar"/>
+    <copy file="${path.variable.maven_repository}/xmlpull/xmlpull/1.1.3.1/xmlpull-1.1.3.1.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/xmlpull-1.1.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/xpp3_min-1.1.4c.jar"/>
+    <copy file="${path.variable.maven_repository}/com/yanbao/taobao-sdk/1.0.0/taobao-sdk-1.0.0.jar" tofile="${artifact.output.hongbao-api-web:war_exploded}/WEB-INF/lib/taobao-sdk-1.0.0.jar"/>
+    <mkdir dir="${artifact.output.hongbao-api-web:war_exploded}/META-INF"/>
+    <copy file="${basedir}/hongbao-api-web/target/api/META-INF/MANIFEST.MF" tofile="${artifact.output.hongbao-api-web:war_exploded}/META-INF/MANIFEST.MF"/>
+  </target>
+  
+  <target name="artifact.hongbao-h5:war" depends="init.artifacts, artifact.hongbao-h5:war_exploded" description="Build &#39;hongbao-h5:war&#39; artifact">
+    <property name="artifact.temp.output.hongbao-h5:war" value="${artifacts.temp.dir}/hongbao_h5_war"/>
+    <mkdir dir="${artifact.temp.output.hongbao-h5:war}"/>
+    <zip destfile="${temp.jar.path.m.war}">
+      <zipfileset dir="${artifact.temp.output.hongbao-h5:war_exploded}"/>
+    </zip>
+    <copy file="${temp.jar.path.m.war}" tofile="${artifact.temp.output.hongbao-h5:war}/m.war"/>
+  </target>
+  
+  <target name="artifact.hongbao-h5:war_exploded" depends="init.artifacts, compile.module.hongbao-h5, compile.module.hongbao-core, compile.module.hongbao-api-service, compile.module.hongbao-model" description="Build &#39;hongbao-h5:war exploded&#39; artifact">
+    <mkdir dir="${artifact.output.hongbao-h5:war_exploded}"/>
+    <jar destfile="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar3}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-core.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar2}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-api-service.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar2}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-model.output.dir}"/>
+    </jar>
+    <mkdir dir="${artifact.output.hongbao-h5:war_exploded}/WEB-INF"/>
+    <mkdir dir="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/classes"/>
+    <copy todir="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/classes">
+      <fileset dir="${hongbao-h5.output.dir}"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib"/>
+    <copy file="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar3}" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/org/jdom/jdom/1.1/jdom-1.1.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jdom-1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/qiniu/qiniu-java-sdk/7.2.6/qiniu-java-sdk-7.2.6.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/qiniu-java-sdk-7.2.6.jar"/>
+    <copy file="${path.variable.maven_repository}/com/qiniu/happy-dns-java/0.1.4/happy-dns-java-0.1.4.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/happy-dns-java-0.1.4.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/code/gson/gson/2.3/gson-2.3.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/gson-2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okhttp3/okhttp/3.3.1/okhttp-3.3.1.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/okhttp-3.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okio/okio/1.8.0/okio-1.8.0.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/okio-1.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-core-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-web-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-webmvc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-test/4.0.0.RELEASE/spring-test-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-test-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context-support/4.0.0.RELEASE/spring-context-support-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-context-support-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/quartz-2.2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/druid/1.0.26/druid-1.0.26.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/druid-1.0.26.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-jdbc/4.0.0.RELEASE/spring-jdbc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-jdbc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-tx-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/mysql-connector-java-5.1.39.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis/3.4.1/mybatis-3.4.1.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/mybatis-3.4.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis-spring/1.3.1/mybatis-spring-1.3.1.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/mybatis-spring-1.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/redis/clients/jedis/2.9.0/jedis-2.9.0.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jedis-2.9.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/fastjson/1.2.9/fastjson-1.2.9.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/fastjson-1.2.9.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/json-lib/json-lib/2.4/json-lib-2.4-jdk15.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/json-lib-2.4-jdk15.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jackson-core-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jackson-mapper-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-beanutils/commons-beanutils/1.9.3/commons-beanutils-1.9.3.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-fileupload/commons-fileupload/1.3.2/commons-fileupload-1.3.2.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/commons-fileupload-1.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-io/commons-io/2.5/commons-io-2.5.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/commons-io-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/servlet-api-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jstl-1.1.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/commons-lang3-3.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/httpclient-4.5.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/poi/poi/3.9/poi-3.9.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/poi-3.9.jar"/>
+    <copy file="${path.variable.maven_repository}/org/dom4j/dom4j/2.0.0/dom4j-2.0.0.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/dom4j-2.0.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/belerweb/pinyin4j/2.5.1/pinyin4j-2.5.1.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/pinyin4j-2.5.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/github/stuxuhai/jpinyin/1.1.8/jpinyin-1.1.8.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jpinyin-1.1.8.jar"/>
+    <copy file="${path.variable.maven_repository}/junit/junit/4.12/junit-4.12.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/junit-4.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-api/1.7.9/slf4j-api-1.7.9.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/slf4j-api-1.7.9.jar"/>
+    <copy file="${path.variable.maven_repository}/log4j/log4j/1.2.12/log4j-1.2.12.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/log4j-1.2.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-log4j12/1.7.21/slf4j-log4j12-1.7.21.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/slf4j-log4j12-1.7.21.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/zxing/core/3.3.0/core-3.3.0.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/core-3.3.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/thoughtworks/xstream/xstream/1.4.8/xstream-1.4.8.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/xstream-1.4.8.jar"/>
+    <copy file="${path.variable.maven_repository}/com/yanbao/taobao-sdk/1.0.0/taobao-sdk-1.0.0.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/taobao-sdk-1.0.0.jar"/>
+    <copy file="${temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar2}" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/hongbao-api-service-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar2}" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/hongbao-model-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/mail/mail/1.4.7/mail-1.4.7.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/mail-1.4.7.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/activation/activation/1.1/activation-1.1.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/activation-1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jpush-client/3.2.15/jpush-client-3.2.15.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jpush-client-3.2.15.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jiguang-common/1.0.1/jiguang-common-1.0.1.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jiguang-common-1.0.1.jar"/>
+    <copy file="${path.variable.maven_repository}/io/netty/netty-all/4.1.6.Final/netty-all-4.1.6.Final.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/netty-all-4.1.6.Final.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-websocket/4.0.0.RELEASE/spring-websocket-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-websocket-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-context-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-aop/4.0.0.RELEASE/spring-aop-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-aop-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-beans-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-expression/4.0.0.RELEASE/spring-expression-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-expression-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-messaging/4.0.0.RELEASE/spring-messaging-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/spring-messaging-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/javax.servlet-api-3.1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-databind/2.8.0/jackson-databind-2.8.0.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jackson-databind-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-annotations/2.8.0/jackson-annotations-2.8.0.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jackson-annotations-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-core/2.8.0/jackson-core-2.8.0.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jackson-core-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/aopalliance/aopalliance/1.0/aopalliance-1.0.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/aopalliance-1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/c3p0-0.9.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/commons-pool2-2.4.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-lang/commons-lang/2.5/commons-lang-2.5.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/commons-lang-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/ezmorph/ezmorph/1.0.6/ezmorph-1.0.6.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/ezmorph-1.0.6.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpcore/4.4.4/httpcore-4.4.4.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/httpcore-4.4.4.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-codec/commons-codec/1.9/commons-codec-1.9.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/commons-codec-1.9.jar"/>
+    <copy file="${path.variable.maven_repository}/jaxen/jaxen/1.1.6/jaxen-1.1.6.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/jaxen-1.1.6.jar"/>
+    <copy file="${path.variable.maven_repository}/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/hamcrest-core-1.3.jar"/>
+    <copy file="${path.variable.maven_repository}/xmlpull/xmlpull/1.1.3.1/xmlpull-1.1.3.1.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/xmlpull-1.1.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/lib/xpp3_min-1.1.4c.jar"/>
+    <mkdir dir="${artifact.output.hongbao-h5:war_exploded}/META-INF"/>
+    <copy file="${basedir}/hongbao-h5/target/m/META-INF/MANIFEST.MF" tofile="${artifact.output.hongbao-h5:war_exploded}/META-INF/MANIFEST.MF"/>
+    <copy todir="${artifact.output.hongbao-h5:war_exploded}">
+      <fileset dir="${basedir}/hongbao-h5/src/main/webapp"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-h5:war_exploded}/WEB-INF"/>
+    <copy file="${basedir}/hongbao-h5/src/main/webapp/WEB-INF/web.xml" tofile="${artifact.output.hongbao-h5:war_exploded}/WEB-INF/web.xml"/>
+  </target>
+  
+  <target name="artifact.hongbao-manage-web:war" depends="init.artifacts, artifact.hongbao-manage-web:war_exploded" description="Build &#39;hongbao-manage-web:war&#39; artifact">
+    <property name="artifact.temp.output.hongbao-manage-web:war" value="${artifacts.temp.dir}/hongbao_manage_web_war"/>
+    <mkdir dir="${artifact.temp.output.hongbao-manage-web:war}"/>
+    <zip destfile="${temp.jar.path.manage.war}">
+      <zipfileset dir="${artifact.temp.output.hongbao-manage-web:war_exploded}"/>
+    </zip>
+    <copy file="${temp.jar.path.manage.war}" tofile="${artifact.temp.output.hongbao-manage-web:war}/manage.war"/>
+  </target>
+  
+  <target name="artifact.hongbao-manage-web:war_exploded" depends="init.artifacts, compile.module.hongbao-manage-web, compile.module.hongbao-core, compile.module.hongbao-manage-service, compile.module.hongbao-model" description="Build &#39;hongbao-manage-web:war exploded&#39; artifact">
+    <mkdir dir="${artifact.output.hongbao-manage-web:war_exploded}"/>
+    <jar destfile="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar4}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-core.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-manage-service-1.0.1-SNAPSHOT.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-manage-service.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar3}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-model.output.dir}"/>
+    </jar>
+    <mkdir dir="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF"/>
+    <mkdir dir="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/classes"/>
+    <copy todir="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/classes">
+      <fileset dir="${hongbao-manage-web.output.dir}"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib"/>
+    <copy file="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar4}" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/org/jdom/jdom/1.1/jdom-1.1.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/jdom-1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/qiniu/qiniu-java-sdk/7.2.6/qiniu-java-sdk-7.2.6.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/qiniu-java-sdk-7.2.6.jar"/>
+    <copy file="${path.variable.maven_repository}/com/qiniu/happy-dns-java/0.1.4/happy-dns-java-0.1.4.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/happy-dns-java-0.1.4.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/code/gson/gson/2.6.2/gson-2.6.2.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/gson-2.6.2.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okhttp3/okhttp/3.3.1/okhttp-3.3.1.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/okhttp-3.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okio/okio/1.8.0/okio-1.8.0.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/okio-1.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/spring-core-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/spring-web-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/spring-webmvc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-test/4.0.0.RELEASE/spring-test-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/spring-test-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context-support/4.0.0.RELEASE/spring-context-support-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/spring-context-support-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/quartz-2.2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/druid/1.0.26/druid-1.0.26.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/druid-1.0.26.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-jdbc/4.0.0.RELEASE/spring-jdbc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/spring-jdbc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/spring-tx-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/mysql-connector-java-5.1.39.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis/3.4.1/mybatis-3.4.1.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/mybatis-3.4.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis-spring/1.3.1/mybatis-spring-1.3.1.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/mybatis-spring-1.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/redis/clients/jedis/2.9.0/jedis-2.9.0.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/jedis-2.9.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/fastjson/1.2.9/fastjson-1.2.9.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/fastjson-1.2.9.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/json-lib/json-lib/2.4/json-lib-2.4-jdk15.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/json-lib-2.4-jdk15.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/jackson-core-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/jackson-mapper-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-beanutils/commons-beanutils/1.9.3/commons-beanutils-1.9.3.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-fileupload/commons-fileupload/1.3.2/commons-fileupload-1.3.2.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/commons-fileupload-1.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-io/commons-io/2.5/commons-io-2.5.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/commons-io-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/servlet-api-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/jstl-1.1.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/commons-lang3-3.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/httpclient-4.5.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/poi/poi/3.9/poi-3.9.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/poi-3.9.jar"/>
+    <copy file="${path.variable.maven_repository}/org/dom4j/dom4j/2.0.0/dom4j-2.0.0.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/dom4j-2.0.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/belerweb/pinyin4j/2.5.1/pinyin4j-2.5.1.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/pinyin4j-2.5.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/github/stuxuhai/jpinyin/1.1.8/jpinyin-1.1.8.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/jpinyin-1.1.8.jar"/>
+    <copy file="${path.variable.maven_repository}/junit/junit/4.12/junit-4.12.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/junit-4.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-api/1.7.9/slf4j-api-1.7.9.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/slf4j-api-1.7.9.jar"/>
+    <copy file="${path.variable.maven_repository}/log4j/log4j/1.2.12/log4j-1.2.12.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/log4j-1.2.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-log4j12/1.7.21/slf4j-log4j12-1.7.21.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/slf4j-log4j12-1.7.21.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/zxing/core/3.3.0/core-3.3.0.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/core-3.3.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/thoughtworks/xstream/xstream/1.4.8/xstream-1.4.8.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/xstream-1.4.8.jar"/>
+    <copy file="${path.variable.maven_repository}/com/yanbao/taobao-sdk/1.0.0/taobao-sdk-1.0.0.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/taobao-sdk-1.0.0.jar"/>
+    <copy file="${temp.jar.path.hongbao-manage-service-1.0.1-SNAPSHOT.jar}" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/hongbao-manage-service-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar3}" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/hongbao-model-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jpush-client/3.2.15/jpush-client-3.2.15.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/jpush-client-3.2.15.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jiguang-common/1.0.1/jiguang-common-1.0.1.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/jiguang-common-1.0.1.jar"/>
+    <copy file="${path.variable.maven_repository}/io/netty/netty-all/4.1.6.Final/netty-all-4.1.6.Final.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/netty-all-4.1.6.Final.jar"/>
+    <copy file="${path.variable.maven_repository}/taglibs/standard/1.1.2/standard-1.1.2.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/standard-1.1.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/aopalliance/aopalliance/1.0/aopalliance-1.0.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/aopalliance-1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-aop/4.0.0.RELEASE/spring-aop-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/spring-aop-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/spring-beans-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/spring-context-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-expression/4.0.0.RELEASE/spring-expression-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/spring-expression-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/c3p0-0.9.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/commons-pool2-2.4.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-lang/commons-lang/2.5/commons-lang-2.5.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/commons-lang-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/ezmorph/ezmorph/1.0.6/ezmorph-1.0.6.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/ezmorph-1.0.6.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpcore/4.4.4/httpcore-4.4.4.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/httpcore-4.4.4.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-codec/commons-codec/1.9/commons-codec-1.9.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/commons-codec-1.9.jar"/>
+    <copy file="${path.variable.maven_repository}/jaxen/jaxen/1.1.6/jaxen-1.1.6.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/jaxen-1.1.6.jar"/>
+    <copy file="${path.variable.maven_repository}/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/hamcrest-core-1.3.jar"/>
+    <copy file="${path.variable.maven_repository}/xmlpull/xmlpull/1.1.3.1/xmlpull-1.1.3.1.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/xmlpull-1.1.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/lib/xpp3_min-1.1.4c.jar"/>
+    <mkdir dir="${artifact.output.hongbao-manage-web:war_exploded}/META-INF"/>
+    <copy file="${basedir}/hongbao-manage-web/target/manage/META-INF/MANIFEST.MF" tofile="${artifact.output.hongbao-manage-web:war_exploded}/META-INF/MANIFEST.MF"/>
+    <copy todir="${artifact.output.hongbao-manage-web:war_exploded}">
+      <fileset dir="${basedir}/hongbao-manage-web/src/main/webapp"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF"/>
+    <copy file="${basedir}/hongbao-manage-web/src/main/webapp/WEB-INF/web.xml" tofile="${artifact.output.hongbao-manage-web:war_exploded}/WEB-INF/web.xml"/>
+  </target>
+  
+  <target name="artifact.hongbao-task:war" depends="init.artifacts, artifact.hongbao-task:war_exploded" description="Build &#39;hongbao-task:war&#39; artifact">
+    <property name="artifact.temp.output.hongbao-task:war" value="${artifacts.temp.dir}/hongbao_task_war"/>
+    <mkdir dir="${artifact.temp.output.hongbao-task:war}"/>
+    <zip destfile="${temp.jar.path.test.war}">
+      <zipfileset dir="${artifact.temp.output.hongbao-task:war_exploded}"/>
+    </zip>
+    <copy file="${temp.jar.path.test.war}" tofile="${artifact.temp.output.hongbao-task:war}/test.war"/>
+  </target>
+  
+  <target name="artifact.hongbao-task:war_exploded" depends="init.artifacts, compile.module.hongbao-task, compile.module.hongbao-core, compile.module.hongbao-api-service, compile.module.hongbao-model, compile.module.hongbao-agent-service" description="Build &#39;hongbao-task:war exploded&#39; artifact">
+    <mkdir dir="${artifact.output.hongbao-task:war_exploded}"/>
+    <jar destfile="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar5}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-core.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar3}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-api-service.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar4}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-model.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-agent-service-1.0.1-SNAPSHOT.jar2}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-agent-service.output.dir}"/>
+    </jar>
+    <mkdir dir="${artifact.output.hongbao-task:war_exploded}/WEB-INF"/>
+    <mkdir dir="${artifact.output.hongbao-task:war_exploded}/WEB-INF/classes"/>
+    <copy todir="${artifact.output.hongbao-task:war_exploded}/WEB-INF/classes">
+      <fileset dir="${hongbao-task.output.dir}"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib"/>
+    <copy file="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar5}" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/org/jdom/jdom/1.1/jdom-1.1.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/jdom-1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/qiniu/qiniu-java-sdk/7.2.6/qiniu-java-sdk-7.2.6.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/qiniu-java-sdk-7.2.6.jar"/>
+    <copy file="${path.variable.maven_repository}/com/qiniu/happy-dns-java/0.1.4/happy-dns-java-0.1.4.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/happy-dns-java-0.1.4.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/code/gson/gson/2.3/gson-2.3.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/gson-2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okhttp3/okhttp/3.3.1/okhttp-3.3.1.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/okhttp-3.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okio/okio/1.8.0/okio-1.8.0.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/okio-1.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/spring-core-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/spring-web-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/spring-webmvc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-test/4.0.0.RELEASE/spring-test-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/spring-test-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context-support/4.0.0.RELEASE/spring-context-support-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/spring-context-support-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/quartz-2.2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/druid/1.0.26/druid-1.0.26.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/druid-1.0.26.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-jdbc/4.0.0.RELEASE/spring-jdbc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/spring-jdbc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/spring-tx-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/mysql-connector-java-5.1.39.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis/3.4.1/mybatis-3.4.1.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/mybatis-3.4.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis-spring/1.3.1/mybatis-spring-1.3.1.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/mybatis-spring-1.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/redis/clients/jedis/2.9.0/jedis-2.9.0.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/jedis-2.9.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/fastjson/1.2.9/fastjson-1.2.9.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/fastjson-1.2.9.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/json-lib/json-lib/2.4/json-lib-2.4-jdk15.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/json-lib-2.4-jdk15.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/jackson-core-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/jackson-mapper-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-beanutils/commons-beanutils/1.9.3/commons-beanutils-1.9.3.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-fileupload/commons-fileupload/1.3.2/commons-fileupload-1.3.2.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/commons-fileupload-1.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-io/commons-io/2.5/commons-io-2.5.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/commons-io-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/servlet-api-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/jstl-1.1.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/commons-lang3-3.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/httpclient-4.5.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/poi/poi/3.9/poi-3.9.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/poi-3.9.jar"/>
+    <copy file="${path.variable.maven_repository}/org/dom4j/dom4j/2.0.0/dom4j-2.0.0.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/dom4j-2.0.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/belerweb/pinyin4j/2.5.1/pinyin4j-2.5.1.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/pinyin4j-2.5.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/github/stuxuhai/jpinyin/1.1.8/jpinyin-1.1.8.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/jpinyin-1.1.8.jar"/>
+    <copy file="${path.variable.maven_repository}/junit/junit/4.12/junit-4.12.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/junit-4.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-api/1.7.9/slf4j-api-1.7.9.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/slf4j-api-1.7.9.jar"/>
+    <copy file="${path.variable.maven_repository}/log4j/log4j/1.2.12/log4j-1.2.12.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/log4j-1.2.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-log4j12/1.7.21/slf4j-log4j12-1.7.21.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/slf4j-log4j12-1.7.21.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/zxing/core/3.3.0/core-3.3.0.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/core-3.3.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/thoughtworks/xstream/xstream/1.4.8/xstream-1.4.8.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/xstream-1.4.8.jar"/>
+    <copy file="${path.variable.maven_repository}/com/yanbao/taobao-sdk/1.0.0/taobao-sdk-1.0.0.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/taobao-sdk-1.0.0.jar"/>
+    <copy file="${temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar3}" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/hongbao-api-service-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar4}" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/hongbao-model-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/mail/mail/1.4.7/mail-1.4.7.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/mail-1.4.7.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/activation/activation/1.1/activation-1.1.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/activation-1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jpush-client/3.2.15/jpush-client-3.2.15.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/jpush-client-3.2.15.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jiguang-common/1.0.1/jiguang-common-1.0.1.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/jiguang-common-1.0.1.jar"/>
+    <copy file="${path.variable.maven_repository}/io/netty/netty-all/4.1.6.Final/netty-all-4.1.6.Final.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/netty-all-4.1.6.Final.jar"/>
+    <copy file="${temp.jar.path.hongbao-agent-service-1.0.1-SNAPSHOT.jar2}" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/hongbao-agent-service-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/aopalliance/aopalliance/1.0/aopalliance-1.0.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/aopalliance-1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-aop/4.0.0.RELEASE/spring-aop-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/spring-aop-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/spring-beans-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/spring-context-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-expression/4.0.0.RELEASE/spring-expression-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/spring-expression-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/c3p0-0.9.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/commons-pool2-2.4.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-lang/commons-lang/2.5/commons-lang-2.5.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/commons-lang-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/ezmorph/ezmorph/1.0.6/ezmorph-1.0.6.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/ezmorph-1.0.6.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpcore/4.4.4/httpcore-4.4.4.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/httpcore-4.4.4.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-codec/commons-codec/1.9/commons-codec-1.9.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/commons-codec-1.9.jar"/>
+    <copy file="${path.variable.maven_repository}/jaxen/jaxen/1.1.6/jaxen-1.1.6.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/jaxen-1.1.6.jar"/>
+    <copy file="${path.variable.maven_repository}/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/hamcrest-core-1.3.jar"/>
+    <copy file="${path.variable.maven_repository}/xmlpull/xmlpull/1.1.3.1/xmlpull-1.1.3.1.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/xmlpull-1.1.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/lib/xpp3_min-1.1.4c.jar"/>
+    <mkdir dir="${artifact.output.hongbao-task:war_exploded}/META-INF"/>
+    <copy file="${basedir}/hongbao-task/target/test/META-INF/MANIFEST.MF" tofile="${artifact.output.hongbao-task:war_exploded}/META-INF/MANIFEST.MF"/>
+    <copy todir="${artifact.output.hongbao-task:war_exploded}">
+      <fileset dir="${basedir}/hongbao-task/src/main/webapp"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-task:war_exploded}/WEB-INF"/>
+    <copy file="${basedir}/hongbao-task/src/main/webapp/WEB-INF/web.xml" tofile="${artifact.output.hongbao-task:war_exploded}/WEB-INF/web.xml"/>
+  </target>
+  
+  <target name="artifact.hongbao-test-web:war" depends="init.artifacts, artifact.hongbao-test-web:war_exploded" description="Build &#39;hongbao-test-web:war&#39; artifact">
+    <property name="artifact.temp.output.hongbao-test-web:war" value="${artifacts.temp.dir}/hongbao_test_web_war"/>
+    <mkdir dir="${artifact.temp.output.hongbao-test-web:war}"/>
+    <zip destfile="${temp.jar.path.test.war2}">
+      <zipfileset dir="${artifact.temp.output.hongbao-test-web:war_exploded}"/>
+    </zip>
+    <copy file="${temp.jar.path.test.war2}" tofile="${artifact.temp.output.hongbao-test-web:war}/test.war"/>
+  </target>
+  
+  <target name="artifact.hongbao-test-web:war_exploded" depends="init.artifacts, compile.module.hongbao-test-web, compile.module.hongbao-core, compile.module.hongbao-api-service, compile.module.hongbao-model" description="Build &#39;hongbao-test-web:war exploded&#39; artifact">
+    <mkdir dir="${artifact.output.hongbao-test-web:war_exploded}"/>
+    <jar destfile="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar6}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-core.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar4}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-api-service.output.dir}"/>
+    </jar>
+    <jar destfile="${temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar5}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${hongbao-model.output.dir}"/>
+    </jar>
+    <mkdir dir="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF"/>
+    <mkdir dir="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/classes"/>
+    <copy todir="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/classes">
+      <fileset dir="${hongbao-test-web.output.dir}"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib"/>
+    <copy file="${temp.jar.path.hongbao-core-1.0.1-SNAPSHOT.jar6}" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/hongbao-core-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/org/jdom/jdom/1.1/jdom-1.1.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jdom-1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/qiniu/qiniu-java-sdk/7.2.6/qiniu-java-sdk-7.2.6.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/qiniu-java-sdk-7.2.6.jar"/>
+    <copy file="${path.variable.maven_repository}/com/qiniu/happy-dns-java/0.1.4/happy-dns-java-0.1.4.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/happy-dns-java-0.1.4.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/code/gson/gson/2.3/gson-2.3.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/gson-2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okhttp3/okhttp/3.3.1/okhttp-3.3.1.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/okhttp-3.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/squareup/okio/okio/1.8.0/okio-1.8.0.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/okio-1.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-core-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-web-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-webmvc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-test/4.0.0.RELEASE/spring-test-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-test-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context-support/4.0.0.RELEASE/spring-context-support-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-context-support-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/quartz-2.2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/druid/1.0.26/druid-1.0.26.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/druid-1.0.26.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-jdbc/4.0.0.RELEASE/spring-jdbc-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-jdbc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-tx-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/mysql-connector-java-5.1.39.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis/3.4.1/mybatis-3.4.1.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/mybatis-3.4.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis-spring/1.3.1/mybatis-spring-1.3.1.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/mybatis-spring-1.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/redis/clients/jedis/2.9.0/jedis-2.9.0.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jedis-2.9.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/alibaba/fastjson/1.2.9/fastjson-1.2.9.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/fastjson-1.2.9.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/json-lib/json-lib/2.4/json-lib-2.4-jdk15.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/json-lib-2.4-jdk15.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jackson-core-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jackson-mapper-asl-1.9.13.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-beanutils/commons-beanutils/1.9.3/commons-beanutils-1.9.3.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-fileupload/commons-fileupload/1.3.2/commons-fileupload-1.3.2.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/commons-fileupload-1.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-io/commons-io/2.5/commons-io-2.5.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/commons-io-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/servlet-api-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jstl-1.1.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/commons-lang3-3.3.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/httpclient-4.5.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/poi/poi/3.9/poi-3.9.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/poi-3.9.jar"/>
+    <copy file="${path.variable.maven_repository}/org/dom4j/dom4j/2.0.0/dom4j-2.0.0.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/dom4j-2.0.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/belerweb/pinyin4j/2.5.1/pinyin4j-2.5.1.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/pinyin4j-2.5.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/github/stuxuhai/jpinyin/1.1.8/jpinyin-1.1.8.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jpinyin-1.1.8.jar"/>
+    <copy file="${path.variable.maven_repository}/junit/junit/4.12/junit-4.12.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/junit-4.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-api/1.7.9/slf4j-api-1.7.9.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/slf4j-api-1.7.9.jar"/>
+    <copy file="${path.variable.maven_repository}/log4j/log4j/1.2.12/log4j-1.2.12.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/log4j-1.2.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-log4j12/1.7.21/slf4j-log4j12-1.7.21.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/slf4j-log4j12-1.7.21.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/zxing/core/3.3.0/core-3.3.0.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/core-3.3.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/thoughtworks/xstream/xstream/1.4.8/xstream-1.4.8.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/xstream-1.4.8.jar"/>
+    <copy file="${path.variable.maven_repository}/com/yanbao/taobao-sdk/1.0.0/taobao-sdk-1.0.0.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/taobao-sdk-1.0.0.jar"/>
+    <copy file="${temp.jar.path.hongbao-api-service-1.0.1-SNAPSHOT.jar4}" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/hongbao-api-service-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${temp.jar.path.hongbao-model-1.0.1-SNAPSHOT.jar5}" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/hongbao-model-1.0.1-SNAPSHOT.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/mail/mail/1.4.7/mail-1.4.7.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/mail-1.4.7.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/activation/activation/1.1/activation-1.1.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/activation-1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jpush-client/3.2.15/jpush-client-3.2.15.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jpush-client-3.2.15.jar"/>
+    <copy file="${path.variable.maven_repository}/cn/jpush/api/jiguang-common/1.0.1/jiguang-common-1.0.1.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jiguang-common-1.0.1.jar"/>
+    <copy file="${path.variable.maven_repository}/io/netty/netty-all/4.1.6.Final/netty-all-4.1.6.Final.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/netty-all-4.1.6.Final.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-websocket/4.0.0.RELEASE/spring-websocket-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-websocket-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-context-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-aop/4.0.0.RELEASE/spring-aop-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-aop-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-beans-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-expression/4.0.0.RELEASE/spring-expression-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-expression-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-messaging/4.0.0.RELEASE/spring-messaging-4.0.0.RELEASE.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/spring-messaging-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/javax.servlet-api-3.1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-databind/2.8.0/jackson-databind-2.8.0.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jackson-databind-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-annotations/2.8.0/jackson-annotations-2.8.0.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jackson-annotations-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-core/2.8.0/jackson-core-2.8.0.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jackson-core-2.8.0.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/aopalliance/aopalliance/1.0/aopalliance-1.0.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/aopalliance-1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/c3p0-0.9.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/commons-pool2-2.4.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-lang/commons-lang/2.5/commons-lang-2.5.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/commons-lang-2.5.jar"/>
+    <copy file="${path.variable.maven_repository}/net/sf/ezmorph/ezmorph/1.0.6/ezmorph-1.0.6.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/ezmorph-1.0.6.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/httpcomponents/httpcore/4.4.4/httpcore-4.4.4.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/httpcore-4.4.4.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-codec/commons-codec/1.9/commons-codec-1.9.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/commons-codec-1.9.jar"/>
+    <copy file="${path.variable.maven_repository}/jaxen/jaxen/1.1.6/jaxen-1.1.6.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/jaxen-1.1.6.jar"/>
+    <copy file="${path.variable.maven_repository}/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/hamcrest-core-1.3.jar"/>
+    <copy file="${path.variable.maven_repository}/xmlpull/xmlpull/1.1.3.1/xmlpull-1.1.3.1.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/xmlpull-1.1.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/lib/xpp3_min-1.1.4c.jar"/>
+    <mkdir dir="${artifact.output.hongbao-test-web:war_exploded}/META-INF"/>
+    <copy file="${basedir}/hongbao-test-web/target/test/META-INF/MANIFEST.MF" tofile="${artifact.output.hongbao-test-web:war_exploded}/META-INF/MANIFEST.MF"/>
+    <copy todir="${artifact.output.hongbao-test-web:war_exploded}">
+      <fileset dir="${basedir}/hongbao-test-web/src/main/webapp"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF"/>
+    <copy file="${basedir}/hongbao-test-web/src/main/webapp/WEB-INF/web.xml" tofile="${artifact.output.hongbao-test-web:war_exploded}/WEB-INF/web.xml"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.hongbao-agent-web:war, artifact.hongbao-agent-web:war_exploded, artifact.hongbao-api-web:war, artifact.hongbao-api-web:war_exploded, artifact.hongbao-h5:war, artifact.hongbao-h5:war_exploded, artifact.hongbao-manage-web:war, artifact.hongbao-manage-web:war_exploded, artifact.hongbao-task:war, artifact.hongbao-task:war_exploded, artifact.hongbao-test-web:war, artifact.hongbao-test-web:war_exploded" description="Build all artifacts">
+    <mkdir dir="${artifact.output.hongbao-agent-web:war}"/>
+    <copy todir="${artifact.output.hongbao-agent-web:war}">
+      <fileset dir="${artifact.temp.output.hongbao-agent-web:war}"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-api-web:war}"/>
+    <copy todir="${artifact.output.hongbao-api-web:war}">
+      <fileset dir="${artifact.temp.output.hongbao-api-web:war}"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-h5:war}"/>
+    <copy todir="${artifact.output.hongbao-h5:war}">
+      <fileset dir="${artifact.temp.output.hongbao-h5:war}"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-manage-web:war}"/>
+    <copy todir="${artifact.output.hongbao-manage-web:war}">
+      <fileset dir="${artifact.temp.output.hongbao-manage-web:war}"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-task:war}"/>
+    <copy todir="${artifact.output.hongbao-task:war}">
+      <fileset dir="${artifact.temp.output.hongbao-task:war}"/>
+    </copy>
+    <mkdir dir="${artifact.output.hongbao-test-web:war}"/>
+    <copy todir="${artifact.output.hongbao-test-web:war}">
+      <fileset dir="${artifact.temp.output.hongbao-test-web:war}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.GoodsSortMapper">
+
+	<sql id="fields">
+        id, name, icon, rank, createTime, 
+		updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_mall_goods_sort</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<select id="getList" resultType="GoodsSort">
+		<include refid="selector"/>
+		WHERE status = 1 AND  goodSortType ='COMMON'
+		ORDER BY rank ASC
+		LIMIT 100
+	</select>
+	
+	<select id="getEpList" resultType="GoodsSort">
+		<include refid="selector"/>
+		WHERE status = 1 AND goodSortType='EP'
+	</select>
+	
+	
+	
+</mapper>
+
+

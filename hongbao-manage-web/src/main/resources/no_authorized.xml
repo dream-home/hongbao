@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 登录接口，免登录验证的接口 -->
+<no_authorized>
+	<url>/manage/admin/login</url>
+	<url>/manage/picCode</url>
+	<url>/manage/city/list</url>
+	<url>/manage/common/uptoken</url>
+	<url>/manage/select/selectPage</url>
+	<url>/manage/select/selectBySQL</url>
+</no_authorized>

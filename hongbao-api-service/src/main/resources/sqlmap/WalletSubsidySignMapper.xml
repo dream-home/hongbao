@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.WalletSubsidySignMapper">
+
+	<sql id="fields">
+        orderNo,id, userId, donateUserId, donateUid, score,confirmScore,poundage,createTime, updateTime, status, remark,subsidyNo,grade,signTime,signCount
+    </sql>
+    
+    <sql id="table">hb_wallet_subsidy_sign</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<insert id="add" keyProperty="id">
+		INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.orderNo}, #{model.id}, #{model.userId}, #{model.donateUserId}, #{model.donateUid}, #{model.score},#{model.confirmScore},#{model.poundage},
+		#{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark}, #{model.subsidyNo}, #{model.grade},#{model.signTime},#{model.signCount})
+	</insert>
+
+
+	<update id="update">
+		UPDATE
+		<include refid="table" />
+		<set>
+			<if test="model.orderNo != null">orderNo= #{model.orderNo},</if>
+			<if test="model.userId != null">userId= #{model.userId},</if>
+			<if test="model.donateUserId != null">donateUserId= #{model.donateUserId},</if>
+			<if test="model.donateUid != null">donateUid= #{model.donateUid},</if>
+			<if test="model.score != null">score= #{model.score},</if>
+			<if test="model.confirmScore != null">confirmScore= #{model.confirmScore},</if>
+			<if test="model.poundage != null">poundage= #{model.poundage},</if>
+			<if test="model.createTime != null">createTime= #{model.createTime},</if>
+			<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null">remark= #{model.remark},</if>
+			<if test="model.subsidyNo != null">subsidyNo= #{model.subsidyNo},</if>
+			<if test="model.grade != null">grade= #{model.grade},</if>
+			<if test="model.signTime != null">signTime= #{model.signTime},</if>
+			<if test="model.signCount != null">signCount= #{model.signCount},</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	<!-- 获取用户签到列表 -->
+	<select id="getList" resultType="WalletSubsidySign">
+		<include refid="selector"/>
+		WHERE status = #{status} and userId = #{userid}
+		ORDER BY createTime desc
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select> 
+	
+	<select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE status = #{status} and userId = #{userid}
+	</select>
+
+	<!-- 获取用户信息 -->
+	<select id="getByUserId" resultType="WalletSubsidySign">
+		<include refid="selector"/>
+		WHERE userId = #{userid} and status = #{status}
+	</select>
+</mapper>
+
+

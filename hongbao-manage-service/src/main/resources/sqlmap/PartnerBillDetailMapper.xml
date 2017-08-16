@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.PartnerBillDetailDao">
+
+    <sql id="fields">
+		id,partnerId,userId,userGrade,userStoreId,type,orderNo,scale,amount,userName,phone,areaId,province,city,country,grade,createTime,updateTime,status,remark
+	</sql>
+
+    <sql id="fields_id">
+        id,
+        <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_partner_bill_detail</sql>
+
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.partnerId != null and model.partnerId != ''">partnerId=#{model.partnerId}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.userGrade != null">and userGrade=#{model.userGrade}</if>
+            <if test="model.userStoreId != null and model.userStoreId != ''">and userStoreId=#{model.userStoreId}</if>
+            <if test="model.type != null and model.type != ''">and type=#{model.type}</if>
+            <if test="model.orderNo != null and model.orderNo != ''">and orderNo=#{model.orderNo}</if>
+            <if test="model.scale != null">and scale=#{model.scale}</if>
+            <if test="model.amount != null">and amount=#{model.amount}</if>
+            <if test="model.userName != null and model.userName != ''">and userName=#{model.userName}</if>
+            <if test="model.phone != null and model.phone != ''">and phone=#{model.phone}</if>
+            <if test="model.areaId != null and model.areaId != ''">and areaId=#{model.areaId}</if>
+            <if test="model.province != null and model.province != ''">and province=#{model.province}</if>
+            <if test="model.city != null and model.city != ''">and city=#{model.city}</if>
+            <if test="model.country != null and model.country != ''">and country=#{model.country}</if>
+            <if test="model.grade != null">and grade=#{model.grade}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(
+        <trim suffixOverrides=",">
+            <if test="model.id!= null  and model.id!=''">
+                id,
+            </if>
+            <if test="model.partnerId!= null  and model.partnerId!=''">
+                partnerId,
+            </if>
+            <if test="model.userId!= null  and model.userId!=''">
+                userId,
+            </if>
+            <if test="model.userGrade!= null  and model.userGrade!=''">
+                userGrade,
+            </if>
+            <if test="model.userStoreId!= null  and model.userStoreId!=''">
+                userStoreId,
+            </if>
+            <if test="model.type!= null  and model.type!=''">
+                type,
+            </if>
+            <if test="model.orderNo!= null  and model.orderNo!=''">
+                orderNo,
+            </if>
+            <if test="model.scale!= null  and model.scale!=''">
+                scale,
+            </if>
+            <if test="model.amount!= null  and model.amount!=''">
+                amount,
+            </if>
+            <if test="model.userName!= null  and model.userName!=''">
+                userName,
+            </if>
+            <if test="model.phone!= null  and model.phone!=''">
+                phone,
+            </if>
+            <if test="model.areaId!= null  and model.areaId!=''">
+                areaId,
+            </if>
+            <if test="model.province!= null  and model.province!=''">
+                province,
+            </if>
+            <if test="model.city!= null  and model.city!=''">
+                city,
+            </if>
+            <if test="model.country!= null  and model.country!=''">
+                country,
+            </if>
+            <if test="model.grade!= null  and model.grade!=''">
+                grade,
+            </if>
+            <if test="model.createTime!= null">
+                createTime,
+            </if>
+            <if test="model.updateTime!= null">
+                updateTime,
+            </if>
+            <if test="model.status!= null  and model.status!=''">
+                status,
+            </if>
+            <if test="model.remark!= null  and model.remark!=''">
+                remark,
+            </if>
+        </trim>
+        )
+        values(
+        <trim suffixOverrides=",">
+
+            <if test="model.id!= null  and model.id!=''">
+                #{model.id},
+            </if>
+            <if test="model.partnerId!= null  and model.partnerId!=''">
+                #{model.partnerId},
+            </if>
+            <if test="model.userId!= null  and model.userId!=''">
+                #{model.userId},
+            </if>
+            <if test="model.userGrade!= null  and model.userGrade!=''">
+                #{model.userGrade},
+            </if>
+            <if test="model.userStoreId!= null  and model.userStoreId!=''">
+                #{model.userStoreId},
+            </if>
+            <if test="model.type!= null  and model.type!=''">
+                #{model.type},
+            </if>
+            <if test="model.orderNo!= null  and model.orderNo!=''">
+                #{model.orderNo},
+            </if>
+            <if test="model.scale!= null  and model.scale!=''">
+                #{model.scale},
+            </if>
+            <if test="model.amount!= null  and model.amount!=''">
+                #{model.amount},
+            </if>
+            <if test="model.userName!= null  and model.userName!=''">
+                #{model.userName},
+            </if>
+            <if test="model.phone!= null  and model.phone!=''">
+                #{model.phone},
+            </if>
+            <if test="model.areaId!= null  and model.areaId!=''">
+                #{model.areaId},
+            </if>
+            <if test="model.province!= null  and model.province!=''">
+                #{model.province},
+            </if>
+            <if test="model.city!= null  and model.city!=''">
+                #{model.city},
+            </if>
+            <if test="model.country!= null  and model.country!=''">
+                #{model.country},
+            </if>
+            <if test="model.grade!= null  and model.grade!=''">
+                #{model.grade},
+            </if>
+            <if test="model.createTime!= null">
+                #{model.createTime},
+            </if>
+            <if test="model.updateTime!= null">
+                #{model.updateTime},
+            </if>
+            <if test="model.status!= null  and model.status!=''">
+                #{model.status},
+            </if>
+            <if test="model.remark!= null  and model.remark!=''">
+                #{model.remark},
+            </if>
+        </trim>
+        );
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.PartnerBillDetail">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.PartnerBillDetail">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.PartnerBillDetail">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.partnerId != null and model.partnerId !=''">partnerId= #{model.partnerId},</if>
+            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+            <if test="model.userGrade != null">userGrade= #{model.userGrade},</if>
+            <if test="model.userStoreId != null and model.userStoreId !=''">userStoreId= #{model.userStoreId},</if>
+            <if test="model.type != null and model.type !=''">type= #{model.type},</if>
+            <if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+            <if test="model.scale != null">scale= #{model.scale},</if>
+            <if test="model.amount != null">amount= #{model.amount},</if>
+            <if test="model.userName != null and model.userName !=''">userName= #{model.userName},</if>
+            <if test="model.phone != null and model.phone !=''">phone= #{model.phone},</if>
+            <if test="model.areaId != null and model.areaId !=''">areaId= #{model.areaId},</if>
+            <if test="model.province != null and model.province !=''">province= #{model.province},</if>
+            <if test="model.city != null and model.city !=''">city= #{model.city},</if>
+            <if test="model.country != null and model.country !=''">country= #{model.country},</if>
+            <if test="model.grade != null">grade= #{model.grade},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
+</mapper>

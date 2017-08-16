@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.SysAdminMenuDao">
+
+    <sql id="fields">
+        roleId,menuId,createTime,updateTime,status,lastNo,remark
+    </sql>
+
+	
+	
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_sys_admin_menu</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.roleId != null">and roleId=#{model.roleId}</if>
+            <if test="model.menuId != null and model.menuId != ''">and menuId=#{model.menuId}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.lastNo != null">and lastNo=#{model.lastNo}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.roleId},#{model.menuId},now(),#{model.status},#{model.lastNo},#{model.remark});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.SysAdminMenu">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.SysAdminMenu">
+        <include refid="selector"/> <include refid="condition"/>  order by lastNo limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.SysAdminMenu">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+    
+    <select id="readAllData" resultType="com.mall.model.SysAdminMenu">
+    	<include refid="selector"/> where roleId=#{id} and status  = 1  order by lastNo;
+    </select>
+    
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+           <if test="model.roleId != null and model.roleId != ''">roleId=#{model.roleId},</if>
+            <if test="model.menuId != null and model.menuId != ''">menuId=#{model.menuId},</if>
+            <if test="model.status != null"> status=#{model.status},</if>
+            <if test="model.remark != null and model.remark != ''">remark=#{model.remark}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,createTime=now() where menuId = #{id}
+    </update>
+</mapper>
+
+

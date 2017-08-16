@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.ConsumeEPRecordMapper">
+
+	<sql id="fields">
+        id, userId, orderNo, consumeEp, grade,
+		createTime, updateTime, status, remark,type
+    </sql>
+    
+    <sql id="table">hb_consumeEP_record</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+    <insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+        VALUES (#{model.id}, #{model.userId}, #{model.orderNo}, #{model.consumeEp}, #{model.grade},
+                 #{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark}, #{model.type})
+    </insert>
+    
+    <select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE userId = #{userId}
+	</select>
+
+	<select id="getList" resultType="ConsumeEPRecord">
+		<include refid="selector"/>
+		WHERE userId = #{userId}
+		ORDER BY createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	
+	
+</mapper>
+
+

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.GoodsWinDao">
+
+    <sql id="fields">
+    	orderNo, userId, goodsId, saleSwitch, goodsName, icon, issueId, issueNo, price, drawPrice, score, expressNo, expressName, userName, phone, addr, createTime, updateTime, status, remark,storeId,storeName,issueNo,issueId,num
+    </sql>
+
+    <sql id="fields_id">
+        id,
+        <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_user_goods_win</sql>
+
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.goodsId != null and model.goodsId != ''">and goodsId=#{model.goodsId}</if>
+            <if test="model.goodsName != null and model.goodsName != ''">and goodsName=#{model.goodsName}</if>
+            <if test="model.icon != null and model.icon != ''">and icon=#{model.icon}</if>
+            <if test="model.price != null">and price=#{model.price}</if>
+            <if test="model.drawPrice != null">and drawPrice=#{model.drawPrice}</if>
+            <if test="model.score != null">and score=#{model.score}</if>
+            <if test="model.expressNo != null and model.expressNo != ''">and expressNo=#{model.expressNo}</if>
+            <if test="model.expressName != null and model.expressName != ''">and expressName=#{model.expressName}</if>
+            <if test="model.userName != null and model.userName != ''">and userName=#{model.userName}</if>
+            <if test="model.phone != null and model.phone != ''">and phone=#{model.phone}</if>
+            <if test="model.addr != null and model.addr != ''">and addr=#{model.addr}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.num != null">and num=#{model.num}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.orderNo},#{model.userId},#{model.price},#{model.drawPrice},#{model.score},#{model.goodsName},#{model.expressNo},#{model.expressName},#{model.userName},#{model.phone},#{model.addr},now(),now(),1,#{model.remark},#{model.storeId},#{model.storeName},#{model.issueNo},${model.issueId});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.GoodsWin">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.GoodsWin">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readListWithTime" resultType="com.yanbao.vo.GoodsWinVo">
+        SELECT w.*,u.uid FROM hb_user_goods_win w LEFT JOIN hb_sys_user u on w.userId=u.id
+        <where>
+        	1=1
+            <if test="model.userId != null and model.userId != ''">and w.userId=#{model.userId}</if>
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>
+            <if test="model.orderType != null ">and w.orderType=#{model.orderType}</if>
+            <if test="model.storeName != null and model.storeName != ''">and w.storeName=#{model.storeName}</if>
+            <if test="model.status != null ">and w.status=#{model.status}</if>
+            <if test="model.issueNo != null ">and w.issueNo=#{model.issueNo}</if>
+            <if test="model.goodsName != null and model.goodsName != ''">and w.goodsName LIKE CONCAT('%',#{model.goodsName}, '%')</if>
+            <if test="model.phone != null and model.phone != ''">and w.phone=#{model.phone}</if>
+            <if test="model.issueId != null and model.issueId != ''">and w.phone=#{model.issueId}</if>
+            <if test="model.fromTime != null and model.fromTime !=''">and w.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null  and model.stopTime !=''">and #{model.stopTime}>=w.createTime</if>
+        	AND w.storeId IS NULL or w.storeId=""
+        </where>
+        order by updateTime  desc
+        limit #{page.startRow}, #{page.pageSize};
+    </select>
+    
+    <!-- 委托出售count -->
+    <select id="readSaleCount" resultType="int">
+        SELECT COUNT(*) FROM hb_user_goods_win w LEFT JOIN hb_sys_user u on w.userId=u.id
+        <where>
+        	1=1
+            <if test="model.userId != null and model.userId != ''">and w.userId=#{model.userId}</if>
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>         
+            <if test="model.status != null ">and  case when #{model.status} != 4 then w.status in(2,3) else w.status=#{model.status} end</if>
+            <if test="model.saleSwitch != null ">and w.saleSwitch=#{model.saleSwitch}</if>
+            <if test="model.issueNo != null ">and w.issueNo=#{model.issueNo}</if>
+            <if test="model.goodsName != null and model.goodsName != ''">and w.goodsName LIKE CONCAT('%',#{model.goodsName}, '%')</if>
+            <if test="model.phone != null and model.phone != ''">and w.phone=#{model.phone}</if>
+            <if test="model.issueId != null and model.issueId != ''">and w.phone=#{model.issueId}</if>
+            <if test="model.fromTime != null and model.fromTime !=''">and w.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null  and model.stopTime !=''">and #{model.stopTime}>=w.createTime</if>
+           AND w.storeId IS NOT NULL and w.storeId!=""
+        </where>
+    </select>
+    
+    
+    
+    
+    <!-- 委托出售 -->
+    <select id="comSaleList" resultType="com.yanbao.vo.GoodsWinVo">
+        SELECT w.*,u.uid FROM hb_user_goods_win w LEFT JOIN hb_sys_user u on w.userId=u.id
+        <where>
+        	1=1
+            <if test="model.userId != null and model.userId != ''">and w.userId=#{model.userId}</if>
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>
+            <if test="model.orderType != null ">and w.orderType=#{model.orderType}</if>
+            <if test="model.saleSwitch != null ">and w.saleSwitch=#{model.saleSwitch}</if>
+            <if test="model.storeName != null and model.storeName != ''">and w.storeName=#{model.storeName}</if>
+            <if test="model.status != null ">and  case when #{model.status} != 4 then w.status in(2,3) else w.status=#{model.status} end</if>
+            <if test="model.issueNo != null ">and w.issueNo=#{model.issueNo}</if>
+            <if test="model.goodsName != null and model.goodsName != ''">and w.goodsName LIKE CONCAT('%',#{model.goodsName}, '%')</if>
+            <if test="model.phone != null and model.phone != ''">and w.phone=#{model.phone}</if>
+            <if test="model.issueId != null and model.issueId != ''">and w.phone=#{model.issueId}</if>
+            <if test="model.fromTime != null and model.fromTime !=''">and w.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null  and model.stopTime !=''">and #{model.stopTime}>=w.createTime</if>
+        	AND w.storeId IS NOT NULL and w.storeId!=""
+        </where>
+        order by updateTime  desc
+        limit #{page.startRow}, #{page.pageSize};
+    </select>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   <select id="readListWithTimeByStore" resultType="com.yanbao.vo.GoodsWinVo">
+        SELECT w.*,u.uid FROM hb_user_goods_win w LEFT JOIN hb_sys_user u on w.userId=u.id
+        <where>
+        	1=1
+            <if test="model.userId != null and model.userId != ''">and w.userId=#{model.userId}</if>
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>
+            <if test="model.orderType != null ">and w.orderType=#{model.orderType}</if>
+            <if test="model.storeName != null and model.storeName != ''">and w.storeName=#{model.storeName}</if>
+            <if test="model.status != null ">and w.status=#{model.status}</if>
+            <if test="model.issueNo != null ">and w.issueNo=#{model.issueNo}</if>
+            <if test="model.goodsName != null and model.goodsName != ''">and w.goodsName LIKE CONCAT('%',#{model.goodsName}, '%')</if>
+            <if test="model.phone != null and model.phone != ''">and w.phone=#{model.phone}</if>
+            <if test="model.issueId != null and model.issueId != ''">and w.phone=#{model.issueId}</if>
+            <if test="model.fromTime != null and model.fromTime !=''">and w.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null  and model.stopTime !=''">and #{model.stopTime}>=w.createTime</if>
+        	AND w.storeId IS NOT NULL and w.storeId!="" 
+        </where>
+        order by createTime desc
+        limit #{page.startRow}, #{page.pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.GoodsWin">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+
+    <select id="readCountWithTime" resultType="int">
+        SELECT COUNT(*) FROM hb_user_goods_win w LEFT JOIN hb_sys_user u on w.userId=u.id
+        <where>
+        	1=1
+            <if test="model.userId != null and model.userId != ''">and w.userId=#{model.userId}</if>
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>
+            
+            <if test="model.status != null ">and w.status=#{model.status}</if>
+            <if test="model.saleSwitch != null ">and w.saleSwitch=#{model.saleSwitch}</if>
+            <if test="model.issueNo != null ">and w.issueNo=#{model.issueNo}</if>
+            <if test="model.goodsName != null and model.goodsName != ''">and w.goodsName LIKE CONCAT('%',#{model.goodsName}, '%')</if>
+            <if test="model.phone != null and model.phone != ''">and w.phone=#{model.phone}</if>
+            <if test="model.issueId != null and model.issueId != ''">and w.phone=#{model.issueId}</if>
+            <if test="model.fromTime != null and model.fromTime !=''">and w.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null  and model.stopTime !=''">and #{model.stopTime}>=w.createTime</if>
+           AND w.storeId IS NULL or w.storeId=""
+        </where>
+    </select>
+    
+    <select id="readCountWithTimeByStore" resultType="int">
+        SELECT COUNT(*) FROM hb_user_goods_win w LEFT JOIN hb_sys_user u on w.userId=u.id
+        <where>
+        	1=1
+            <if test="model.userId != null and model.userId != ''">and w.userId=#{model.userId}</if>
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>
+            <if test="model.saleSwitch != null ">and w.saleSwitch=#{model.saleSwitch}</if>
+            <if test="model.status != null ">and w.status=#{model.status}</if>
+            <if test="model.issueNo != null ">and w.issueNo=#{model.issueNo}</if>
+            <if test="model.goodsName != null and model.goodsName != ''">and w.goodsName LIKE CONCAT('%',#{model.goodsName}, '%')</if>
+            <if test="model.phone != null and model.phone != ''">and w.phone=#{model.phone}</if>
+            <if test="model.issueId != null and model.issueId != ''">and w.phone=#{model.issueId}</if>
+            <if test="model.fromTime != null and model.fromTime !=''">and w.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null  and model.stopTime !=''">and #{model.stopTime}>=w.createTime</if>
+            AND w.storeId IS NOT NULL and w.storeId!="" 
+        </where>
+    </select>
+
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+            <if test="model.goodsId != null and model.goodsId !=''">goodsId= #{model.goodsId},</if>
+            <if test="model.goodsName != null and model.goodsName !=''">goodsName= #{model.goodsName},</if>
+            <if test="model.icon != null and model.icon !=''">icon= #{model.icon},</if>
+            <if test="model.price != null">price= #{model.price},</if>
+            <if test="model.drawPrice != null">drawPrice= #{model.drawPrice},</if>
+            <if test="model.score != null">score= #{model.score},</if>
+            <if test="model.expressNo != null and model.expressNo !=''">expressNo= #{model.expressNo},</if>
+            <if test="model.expressName != null and model.expressName !=''">expressName= #{model.expressName},</if>
+            <if test="model.userName != null and model.userName !=''">userName= #{model.userName},</if>
+            <if test="model.phone != null and model.phone !=''">phone= #{model.phone},</if>
+            <if test="model.addr != null and model.addr !=''">addr= #{model.addr},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <select id="getIncome" resultType="java.lang.Double">
+    	SELECT SUM(gw.price) countPrice FROM hb_user_goods_win gw INNER JOIN hb_mall_goods g on gw.goodsId=g.id and g.goodsType=0
+       <!-- SELECT SUM(gw.price-gw.score) countPrice FROM hb_user_goods_win gw LEFT JOIN hb_mall_goods g on gw.goodsId=g.id and g.goodsType=0 WHERE g.`status`=2 or g.`status`=3 -->
+    </select>
+    <!-- 购物车获取到当前订单的信息 -->
+    <select id="shoppGoodsList"  resultType="com.mall.model.GoodsWinDetail">
+    	select * from hb_user_goods_win_detail where orderNo = #{orderNo}
+    			
+    
+    
+    </select>
+    
+    
+    <select id="count" resultType="java.lang.Integer">
+    	SELECT SUM(num) FROM <include refid="table_name"/> WHERE 1=1
+    	<if test="type != null">AND orderType=#{type} </if>
+    	AND STATUS IN  (2,3);
+	</select>
+
+</mapper>
+
+

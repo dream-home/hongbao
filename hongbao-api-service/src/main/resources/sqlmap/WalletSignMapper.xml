@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.WalletSignMapper">
+
+	<sql id="fields">
+        orderNo,id, userId, donateUserId, donateUid, score,confirmScore,poundage
+        ,createTime, updateTime, status, remark,signNo,grade,signTime,signCount
+        ,type,scale,doudou
+    </sql>
+    
+    <sql id="table">hb_wallet_sign</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<insert id="add" keyProperty="id">
+		INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.orderNo}, #{model.id}, #{model.userId}, #{model.donateUserId}, #{model.donateUid}, #{model.score},#{model.confirmScore},#{model.poundage},
+		#{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark}, #{model.signNo}, #{model.grade},now(), #{model.signCount}
+		, #{model.type}, #{model.scale}, #{model.doudou})
+	</insert>
+
+
+	<!-- 获取用户签到列表 -->
+	<select id="getList" resultType="WalletSign">
+		<include refid="selector"/>
+		WHERE status = 1 and userId = #{userid} AND  type=2
+		ORDER BY createTime desc
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select> 
+	
+	<select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE status = 1 and userId = #{userid}
+	</select>
+	
+	<select id="signTotal" resultType="Double">
+	    SELECT SUM(sign.confirmScore) FROM
+		(SELECT confirmScore
+		FROM <include refid="table"/>
+		WHERE status = 1 and donateUserId = #{model.donateUserId}  AND  type=2 ORDER BY createTime DESC LIMIT #{countNo}) sign;
+	</select>
+
+
+	<select id="getSubsidyCount" resultType="Integer">
+		select count(*) from <include refid="table"/>
+         where userId = #{userId} and grade = #{grade}
+		 group by signCount
+		 order by signCount desc limit 1
+	</select>
+
+	<select id="getSignCount" resultType="Integer">
+		select max(signCount) from <include refid="table"/>
+		 where userId = #{userId} and type=2
+	</select>
+
+	<!-- 获取用户斗斗交易列表 -->
+	<select id="getMyDoudouList" resultType="WalletSign">
+		select
+		createTime ,signTime,type 	,case type when 1 then -confirmScore when 2 then -confirmScore when 3 then confirmScore when 4 then confirmScore else confirmScore end as confirmScore
+		from <include refid="table"/>
+		WHERE status = 1 and userId = #{userId} and IFNULL(type,5) !=5
+		ORDER BY createTime desc
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	<!-- 获取会员领取万三 万四斗斗签到列表 -->
+	<select id="getCommonSignList" resultType="WalletSign">
+		select
+		createTime ,signTime,type ,confirmScore
+		from <include refid="table"/>
+		WHERE status = 1 and userId = #{userId}  and type=1
+		ORDER BY createTime desc
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	<!-- 获取用户所有斗斗交易列表总数 -->
+	<select id="countMyDoudouListSize" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE status = 1 and userId = #{userId}
+	</select>
+	<!-- 获取会员领取万三 万四斗斗签到列表  -->
+	<select id="countCommonSignListSize" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE status = 1 and userId = #{userId}  and type=1
+	</select>
+</mapper>
+
+

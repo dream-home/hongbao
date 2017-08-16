@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.IndexBannerMapper">
+
+	<sql id="fields">
+        id, type,title, img, href, rank,
+		createTime, updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_index_banner</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<!-- 获取首页功能菜单列表 -->
+	<select id="getList" resultType="IndexBanner">
+		<include refid="selector"/>
+		WHERE status = 1
+		ORDER BY rank ASC
+	</select>
+	
+	
+</mapper>
+
+

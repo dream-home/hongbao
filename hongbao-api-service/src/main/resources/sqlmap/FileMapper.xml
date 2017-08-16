@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.FileMapper">
+
+	<sql id="fields">
+        id, filename, suffix, path, fileType, 
+		uploadUserId, createTime, updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_sys_file</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+	
+	<insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.filename}, #{model.suffix}, #{model.path}, #{model.fileType}, 
+			#{model.uploadUserId}, #{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark})
+    </insert> 
+
+    <select id="getById" resultType="SysFile">
+		<include refid="selector"/>
+		WHERE id = #{id}
+		LIMIT 1;
+	</select>
+	
+	<delete id="del">  
+        DELETE FROM <include refid="table"/>
+        WHERE id = #{id}
+    </delete>
+    
+    <update id="update">
+        UPDATE <include refid="table"/>
+        <set>
+            <if test="model.path != null">path= #{model.path},</if>
+            <if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            status = 0
+        </set>
+		WHERE id = #{id}
+    </update>
+	
+	<select id="getByIdIn" resultType="SysFile">
+       <include refid="selector"/>
+        where id in (${ids}) 
+    </select>
+
+    <select id="getListByFileIds" resultType="SysFile">
+        <include refid="selector" />
+        <choose>
+            <when test="fileList!=null">
+                where id in
+                <foreach collection="fileList" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+            </when>
+            <otherwise>
+                where 1 = 2
+            </otherwise>
+        </choose>
+    </select>
+
+</mapper>
+
+

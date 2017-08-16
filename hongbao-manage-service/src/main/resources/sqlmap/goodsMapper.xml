@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.GoodsDao">
+
+    <sql id="fields">
+        goodsSortId,name,icon,detail,goodsType,curIssueNo,curIssueId,isTop,isRecommend,createTime,updateTime,status,remark,price,drawPrice,drawNum,storeId,saleSwitch,stock,storeName
+    	,firstReferrerScale,secondReferrerScale,thirdReferrerScale,businessSendEp,originalPrice,discountEP,verify,sumSaleCount
+    </sql>
+
+    <sql id="fields_id">
+        id,
+        <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_mall_goods</sql>
+
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.storeId != null and model.storeId != ''">storeId=#{model.storeId}</if>
+            <if test="model.storeName != null and model.storeName != ''">and storeName=#{model.storeName}</if>
+            <if test="model.goodsSortId != null and model.goodsSortId != ''">and  goodsSortId=#{model.goodsSortId}</if>
+            <if test="model.name != null and model.name != ''">and name LIKE CONCAT(CONCAT('%', #{model.name}), '%')</if>
+            <if test="model.icon != null and model.icon != ''">and icon=#{model.icon}</if>
+            <if test="model.detail != null and model.detail != ''">and detail=#{model.detail}</if>
+            <if test="model.goodsType != null">and goodsType=#{model.goodsType}</if>
+            <if test="model.curIssueNo != null">and curIssueNo=#{model.curIssueNo}</if>
+            <if test="model.curIssueId != null and model.curIssueId != ''">and curIssueId=#{model.curIssueId}</if>
+            <if test="model.isTop != null">and isTop=#{model.isTop}</if>
+            <if test="model.isRecommend != null">and isRecommend=#{model.isRecommend}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.stock != null">and stock=#{model.stock}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.price != null ">and price=#{model.price}</if>
+            <if test="model.drawPrice != null ">and drawPrice=#{model.drawPrice}</if>
+            <if test="model.drawNum != null ">and drawNum=#{model.drawNum}</if>
+            <if test="model.fromTime != null and model.fromTime !=''">and createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null  and model.stopTime !=''">and #{model.stopTime}>=createTime</if>
+            <if test="model.firstReferrerScale != null and model.firstReferrerScale >= 0">and firstReferrerScale= #{model.firstReferrerScale}</if>
+			<if test="model.secondReferrerScale != null  and model.secondReferrerScale >= 0">and secondReferrerScale= #{model.secondReferrerScale}</if>
+			<if test="model.thirdReferrerScale != null  and model.thirdReferrerScale >= 0">and thirdReferrerScale= #{model.thirdReferrerScale}</if>
+			<if test="model.businessSendEp != null  and model.businessSendEp >= 0">and businessSendEp= #{model.businessSendEp}</if>
+			<if test="model.originalPrice != null">and originalPrice= #{model.originalPrice}</if>
+			<if test="model.discountEP != null">and discountEP= #{model.discountEP}</if>
+			<if test="model.verify != null">and verify= #{model.verify}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+    
+        insert into<include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.goodsSortId},#{model.name},#{model.icon},#{model.detail},#{model.goodsType},#{model.curIssueNo},#{model.curIssueId},#{model.isTop},#{model.isRecommend},now(),now(),1,#{model.remark},#{model.price},#{model.drawPrice},#{model.drawNum},#{model.storeId},#{model.saleSwitch},#{model.stock},#{model.storeName},#{model.firstReferrerScale},#{model.secondReferrerScale},#{model.thirdReferrerScale},#{model.businessSendEp},#{model.originalPrice},#{model.discountEP},#{model.verify},#{model.sumSaleCount});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.Goods">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.Goods">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        ORDER BY createTime DESC
+        limit #{startRow}, #{pageSize};
+    </select>
+    
+    <select id="readListWithTime" resultType="com.mall.model.Goods">
+        <include refid="selector"/>
+        <where>
+        	
+        	 <if test="model.storeId != null and model.storeId != ''">storeId=#{model.storeId}</if>
+            <if test="model.storeName != null and model.storeName != ''">and storeName=#{model.storeName}</if>
+            <if test="model.goodsSortId != null and model.goodsSortId != ''">and goodsSortId=#{model.goodsSortId}</if>
+            <if test="model.name != null and model.name != ''">and name LIKE CONCAT(CONCAT('%', #{model.name}), '%')</if>
+            <if test="model.icon != null and model.icon != ''">and icon=#{model.icon}</if>
+            <if test="model.detail != null and model.detail != ''">and detail=#{model.detail}</if>
+            <if test="model.goodsType != null">and goodsType=#{model.goodsType}</if>
+            <if test="model.curIssueNo != null">and curIssueNo=#{model.curIssueNo}</if>
+            <if test="model.curIssueId != null and model.curIssueId != ''">and curIssueId=#{model.curIssueId}</if>
+            <if test="model.isTop != null">and isTop=#{model.isTop}</if>
+            <if test="model.isRecommend != null">and isRecommend=#{model.isRecommend}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.stock != null">and stock=#{model.stock}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.price != null ">and price=#{model.price}</if>
+            <if test="model.drawPrice != null ">and drawPrice=#{model.drawPrice}</if>
+            <if test="model.drawNum != null ">and drawNum=#{model.drawNum}</if>
+            <if test="model.fromTime != null and model.fromTime !=''">and createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null  and model.stopTime !=''">and #{model.stopTime}>=createTime</if>
+            <if test="model.firstReferrerScale != null and model.firstReferrerScale >= 0">and firstReferrerScale= #{model.firstReferrerScale}</if>
+			<if test="model.secondReferrerScale != null  and model.secondReferrerScale >= 0">and secondReferrerScale= #{model.secondReferrerScale}</if>
+			<if test="model.thirdReferrerScale != null  and model.thirdReferrerScale >= 0">and thirdReferrerScale= #{model.thirdReferrerScale}</if>
+			<if test="model.businessSendEp != null  and model.businessSendEp >= 0">and businessSendEp= #{model.businessSendEp}</if>
+			<if test="model.originalPrice != null">and originalPrice= #{model.originalPrice}</if>
+			<if test="model.discountEP != null">and discountEP= #{model.discountEP}</if>
+			<if test="model.verify != null">and verify= #{model.verify}</if>
+				
+        </where>
+
+        ORDER BY createTime DESC
+        limit #{page.startRow}, #{page.pageSize};
+    </select>
+    
+    
+
+    <select id="readOne" resultType="com.mall.model.Goods">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.goodsSortId != null and model.goodsSortId !=''">goodsSortId= #{model.goodsSortId},</if>
+            <if test="model.storeId != null and model.storeId !=''">storeId= #{model.storeId},</if>
+            <if test="model.name != null and model.name !=''">name= #{model.name},</if>
+            <if test="model.icon != null and model.icon !=''">icon= #{model.icon},</if>
+            <if test="model.detail != null and model.detail !=''">detail= #{model.detail},</if>
+            <if test="model.goodsType != null">goodsType= #{model.goodsType},</if>
+            <if test="model.curIssueNo != null">curIssueNo= #{model.curIssueNo},</if>
+            <if test="model.curIssueId != null and model.curIssueId !=''">curIssueId= #{model.curIssueId},</if>
+            <if test="model.isTop != null">isTop= #{model.isTop},</if>
+            <if test="model.saleSwitch != null">saleSwitch= #{model.saleSwitch},</if>
+            <if test="model.isRecommend != null">isRecommend= #{model.isRecommend},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.stock != null">stock= #{model.stock},</if>
+            <if test="model.price != null">price= #{model.price},</if>
+            <if test="model.drawPrice != null">drawPrice= #{model.drawPrice},</if>
+            <if test="model.drawNum != null">drawNum= #{model.drawNum},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+           
+            <if test="model.firstReferrerScale != null and model.firstReferrerScale >= 0">firstReferrerScale= #{model.firstReferrerScale},</if>
+			<if test="model.secondReferrerScale != null  and model.secondReferrerScale >= 0">secondReferrerScale= #{model.secondReferrerScale},</if>
+			<if test="model.thirdReferrerScale != null  and model.thirdReferrerScale >= 0">thirdReferrerScale= #{model.thirdReferrerScale},</if>
+			<if test="model.businessSendEp != null  and model.businessSendEp >= 0">businessSendEp= #{model.businessSendEp},</if>
+			<if test="model.originalPrice != null">originalPrice= #{model.originalPrice},</if>
+			<if test="model.discountEP != null">discountEP= #{model.discountEP},</if>
+			<if test="model.verify != null">verify= #{model.verify},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 1,updateTime=now() where id = #{id}
+    </update>
+    
+    
+     <update id="proDown">
+        UPDATE hb_mall_goods
+         <set> 
+            <if test="model.status != null">status= #{model.status},</if>
+         	updateTime=now()
+         </set>
+         <where>
+         		1=1
+        	 <if test="model.storeId != null and model.storeId != ''">and storeId=#{model.storeId}</if>
+             and status !=2
+         </where>
+    </update>
+    
+    <update id="updateSort">
+        UPDATE hb_mall_goods
+         <set> 
+            <if test="newType != null and newType != ''">goodsSortId=#{newType},</if>
+         	updateTime=now()
+         </set>
+         <where>
+         		1=1
+        	 <if test="originalType != null and originalType != ''">and goodsSortId=#{originalType}</if>
+        	 <if test="goodsids != null">
+        	 	AND id in
+        	 	<foreach item="idItem" collection="goodsids" index="index" open="(" separator="," close=")"> 
+				#{idItem}
+				</foreach>
+        	 </if>
+         </where>
+    </update>
+    
+</mapper>
+
+

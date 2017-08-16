@@ -1,0 +1,15 @@
+.logo {
+	margin: 0px auto;
+	width:102px;
+	height:102px;
+	background:url(img/logo.png);
+	background-size:cover;
+}
+
+.arrow {
+	margin: 0px 30px 0px auto;
+	width:200px;
+	height:200px;
+	background:url(img/arrow.png);
+	background-size:cover;
+}

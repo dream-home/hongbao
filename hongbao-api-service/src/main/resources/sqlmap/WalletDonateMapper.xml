@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.WalletDonateMapper">
+
+	<sql id="fields">
+        id, orderNo, userId, donateUserId, donateUid, 
+        score, confirmScore, poundage, createTime, updateTime, 
+		status, remark
+    </sql>
+    
+    <sql id="table">hb_wallet_donate</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<select id="getByOrderNo" resultType="WalletDonate">
+		<include refid="selector"/>
+		WHERE orderNo = #{orderNo}
+		AND userId = #{userId}
+		LIMIT 1;
+	</select>
+
+	<select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE userId = #{userId}
+	</select>
+
+	<select id="getList" resultType="WalletDonate">
+		<include refid="selector"/>
+		WHERE userId = #{userId}
+		ORDER BY createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	
+	<insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.orderNo}, #{model.userId}, #{model.donateUserId}, #{model.donateUid}, 
+			#{model.score}, #{model.confirmScore}, #{model.poundage}, #{model.createTime}, #{model.updateTime}, 
+			#{model.status}, #{model.remark})
+    </insert> 
+	
+</mapper>
+
+

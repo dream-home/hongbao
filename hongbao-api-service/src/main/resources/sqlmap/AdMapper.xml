@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.AdMapper">
+
+	<sql id="fields">
+        id, title, adImg, href, rank,type,
+		createTime, updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_sys_ad</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<!-- 获取首页广告列表 -->
+	<select id="getList" resultType="Ad">
+		<include refid="selector"/>
+		WHERE status = 1
+        <if test="type!=null">AND type=#{type}</if>
+        <if test="remark!=null and remark!=''">AND remark=#{remark}</if>
+		ORDER BY rank ASC
+	</select>
+</mapper>
+
+

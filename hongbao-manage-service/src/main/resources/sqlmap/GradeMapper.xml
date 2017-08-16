@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.GradeDao">
+
+    <sql id="fields">
+        grade,EP,performanceOne,performanceTwo,performanceThree,daily,createTime,updateTime,totalSignNo,remark
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_sys_grade</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.grade != null and model.grade != ''">grade=#{model.grade}</if>
+            <if test="model.EP != null and model.EP != ''">and EP=#{model.EP}</if>
+            <if test="model.performanceOne != null and model.performanceOne != ''">and performanceOne=#{model.performanceOne}</if>
+            <if test="model.performanceTwo != null and model.performanceTwo != ''">and performanceTwo=#{model.performanceTwo}</if>
+            <if test="model.performanceThree != null and model.performanceThree != ''">and performanceThree=#{model.performanceThree}</if>
+            <if test="model.daily != null">and daily=#{model.daily}</if>
+            <if test="model.fromTime != null">and createTime &gt;=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and createTime &lt;=#{model.stopTime}</if>
+            <if test="model.totalSignNo != null and model.totalSignNo != ''">and totalSignNo=#{model.totalSignNo}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            
+        </where>
+    </sql>
+	
+	 <select id="readById" resultType="com.mall.model.Grade">
+        <include refid="selector"/> where id=#{id}  limit 1;
+     </select>
+	
+    <select id="readList" resultType="com.mall.model.Grade">
+        <include refid="selector"/> <include refid="condition"/> ORDER BY grade  limit #{startRow}, #{pageSize};
+    </select>
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.grade != null and model.grade !=''">grade= #{model.grade},</if>
+            <if test="model.EP != null"> EP=#{model.EP},</if>
+            <if test="model.performanceOne != null ">performanceOne=#{model.performanceOne},</if>
+            <if test="model.performanceTwo != null ">performanceTwo=#{model.performanceTwo},</if>
+            <if test="model.performanceThree != null ">performanceThree=#{model.performanceThree},</if>
+            <if test="model.daily != null">daily=#{model.daily},</if>
+            <if test="model.totalSignNo != null and model.totalSignNo != ''">totalSignNo=#{model.totalSignNo},</if>
+            <if test="model.remark != null and model.remark != ''">remark=#{model.remark},</if>
+
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+</mapper>

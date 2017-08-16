@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanbao.mapper.AgentMessageMapper" >
+
+<!-- hb_agent_message table all fields -->
+<sql id="Po_Column_List" >
+	 id,userId,title,type,detail,createTime,updateTime,status,remark,agentId,areaId
+</sql>
+
+<!-- 查询条件 -->
+<sql id="Po_Where_Clause">
+<where>
+	<if test="model.id != null  and model.id != '' ">
+		 and id = #{model.id}
+	</if>
+	<if test="model.userId != null  and model.userId != '' ">
+		 and userId =#{model.userId}
+	</if>
+	<if test="model.title != null  and model.title != '' ">
+		 and title like '%${model.title}%'
+	</if>
+	<if test="model.type != null  ">
+		 and type=#{model.type}
+	</if>
+	<if test="model.detail != null  and model.detail != '' ">
+		 and detail = #{model.detail}
+	</if>
+	<if test="model.createTime != null  ">
+		 and createTime=#{model.createTime}
+	</if>
+	<if test="model.updateTime != null  ">
+		 and updateTime=#{model.updateTime}
+	</if>
+	<if test="model.status != null  ">
+		 and status=#{model.status}
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		 and remark like '%${model.remark}%'
+	</if>
+	<if test="model.agentId != null  and model.agentId != '' ">
+		 and agentId =#{model.agentId}
+	</if>
+	<if test="model.areaId != null  and model.areaId != '' ">
+		 and areaId = #{model.areaId}
+	</if>
+</where>
+</sql>
+   
+<!-- 插入记录 [说明：如果要返回当前对象，需要如下配置：<insert id="addVo" parameterType="Object" useGeneratedKeys="true" keyProperty="id">] -->
+<insert id="create">
+  insert into  hb_agent_message 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		id,
+	</if>
+	<if test="model.userId != null  ">
+		userId,
+	</if>
+	<if test="model.title != null  ">
+		title,
+	</if>
+	<if test="model.type != null  ">
+		type,
+	</if>
+	<if test="model.detail != null  ">
+		detail,
+	</if>
+	<if test="model.createTime != null  ">
+		createTime,
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime,
+	</if>
+	<if test="model.status != null  ">
+		status,
+	</if>
+	<if test="model.remark != null  ">
+		remark,
+	</if>
+	<if test="model.agentId != null ">
+		agentId,
+	</if>
+	<if test="model.areaId != null  ">
+		areaId,
+	</if>
+	</trim> 
+)
+ values 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		#{model.id},
+	</if>
+	<if test="model.userId != null  ">
+		#{model.userId},
+	</if>
+	<if test="model.title != null  ">
+		#{model.title},
+	</if>
+	<if test="model.type != null  ">
+		#{model.type},
+	</if>
+	<if test="model.detail != null  ">
+		#{model.detail},
+	</if>
+	<if test="model.createTime != null  ">
+		#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		#{model.status},
+	</if>
+	<if test="model.remark != null  ">
+		#{model.remark},
+	</if>
+	<if test="model.agentId != null ">
+		#{model.agentId},
+	</if>
+	<if test="model.areaId != null  ">
+		#{model.areaId},
+	</if>
+	</trim>
+)
+</insert>
+
+<!-- 多条件删除记录 -->
+<select id="delPo" resultType="java.lang.Integer"  >
+	delete from hb_agent_message 
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 删除记录 -->
+<delete id="deleteById">
+	delete 	 from hb_agent_message where id = #{id}
+</delete>
+
+<!--批量删除-->
+<delete id="delPoList">
+	delete 	 from hb_agent_message where id in 
+	<foreach item="idItem" collection="list" index="index" open="(" separator="," close=")"> 
+	#{idItem}
+	</foreach> 
+</delete>
+
+<!-- 根据id，修改记录-->  
+ <update id="modPo">
+  update hb_agent_message set userId=#{model.userId},title=#{model.title},type=#{model.type},detail=#{model.detail},createTime=#{model.createTime},updateTime=#{model.updateTime},status=#{model.status},remark=#{model.remark},agentId=#{model.agentId},areaId=#{model.areaId} where id=#{model.id}
+ </update>
+ <!-- 修改记录，只修改只不为空的字段 -->
+<update id="updateById">
+	update hb_agent_message set 
+	<trim  suffixOverrides="," >
+	<if test="model.userId != null  and model.userId != '' ">
+		userId=#{model.userId},
+	</if>
+	<if test="model.title != null  and model.title != '' ">
+		title=#{model.title},
+	</if>
+	<if test="model.type != null  ">
+		type=#{model.type},
+	</if>
+	<if test="model.detail != null  and model.detail != '' ">
+		detail=#{model.detail},
+	</if>
+	<if test="model.createTime != null  ">
+		createTime=#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime=#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		status=#{model.status},
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		remark=#{model.remark},
+	</if>
+	<if test="model.agentId != null  and model.agentId != '' ">
+		agentId =#{model.agentId},
+	</if>
+	<if test="model.areaId != null  and model.areaId != '' ">
+		areaId = #{model.areaId},
+	</if>
+	</trim> where id=#{id}
+</update>
+
+<!-- 根据id查询 消息表 -->
+<select id="readById"  resultType="com.mall.model.AgentMessage">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_agent_message  
+	where id = #{id}
+</select>
+
+<!-- 根据id查询 消息表 -->
+<select id="readOne"  resultType="com.mall.model.AgentMessage">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_agent_message  
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 消息表 列表总数-->
+<select id="readCount" resultType="java.lang.Long">
+	select count(1) from hb_agent_message  
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 查询消息表列表 -->
+<select id="getPoList" resultType="com.mall.model.AgentMessage">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_agent_message 
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 查询消息表列表 带分页-->
+<select id="readList" resultType="com.mall.model.AgentMessage">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_agent_message 
+	<include refid="Po_Where_Clause"/>
+	LIMIT #{startRow}, #{pageSize}
+</select>
+
+</mapper>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.ConSumeEPRecordDao">
+
+	<sql id="fields">
+        id, userId, orderNo, consumeEp, grade,
+		createTime, updateTime, status, remark,type
+    </sql>
+    
+    <sql id="table">hb_consumeEP_record</sql>
+    
+    <sql id="condition">
+        <where>
+          	1=1
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.fromTime != null and model.fromTime !=''">and createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null  and model.stopTime !=''">and #{model.stopTime}>=createTime</if>
+        </where>
+    </sql>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+    
+    
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table"/>(<include refid="fields"/>)
+        values(#{model.id},#{model.userId},#{model.orderNo},#{model.consumeEp},#{model.grade},now(),now(),#{model.status},#{model.remark},#{model.type});
+    </insert>
+    
+    <select id="count" resultType="java.lang.Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		where consumeEp &lt; 0
+		 <!-- <where>
+            <if test="model.consumeEp != null">consumeEp &lt; 0</if>
+         </where> -->
+	</select>
+	
+	<select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table"/>
+	       <where>
+	          	1=1
+	            <if test="model.status != null">and status=#{model.status}</if>
+	            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+	            and consumeEp= 800 and grade = 0
+	        </where>
+    </select>
+	
+	
+	<select id="readList" resultType="com.mall.model.ConsumeEPRecord">
+		SELECT r.*,u.uid,u.phone,u.userName FROM hb_consumeEP_record r inner join hb_sys_user u
+		<where>
+			1=1
+			<if test="model.uid != null and model.uid != '' ">and u.uid=#{model.uid}</if>
+			<if test="model.phone != null and model.phone != ''">and u.phone=#{model.phone}</if>
+            <if test="model.fromTime != null">and r.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and #{model.stopTime}>=r.createTime</if>
+            and r.consumeEp= 800 and r.grade = 0 and r.userId = u.id
+		</where>  
+		 ORDER BY r.createTime DESC
+		limit #{startRow}, #{pageSize};
+	</select>
+	
+	
+	
+	
+	<select id="ConsumeEPSUM" resultType="java.lang.Double">
+		SELECT  IFNULL(SUM(ABS(consumeEp)),0)
+		FROM <include refid="table"/>
+	</select>
+	
+	
+	
+
+	<!-- <select id="getList" resultType="ConsumeEPRecord">
+		<include refid="selector"/>
+		WHERE userId = #{userId}
+		ORDER BY createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select> -->
+	
+	
+</mapper>
+
+

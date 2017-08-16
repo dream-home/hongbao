@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanbao.mapper.AgentStaffMapper" >
+
+<!-- hb_agent_staff table all fields -->
+<sql id="Po_Column_List" >
+	 id,uid,agentId,nickName,sex,headImgUrl,loginName,password,payPassWord,salt,phone,email,userName,menuPermissions,address,cardIconId,loginTime,errorCount,createTime,updateTime,status,remark
+</sql>
+
+<!-- 查询条件 -->
+<sql id="Po_Where_Clause">
+<where>
+	<if test="model.id != null  and model.id != '' ">
+		 and id = #{model.id}
+	</if>
+	<if test="model.uid != null  ">
+		 and uid=#{model.uid}
+	</if>
+	<if test="model.agentId != null  and model.agentId != '' ">
+		 and agentId = #{model.agentId}
+	</if>
+	<if test="model.nickName != null  and model.nickName != '' ">
+		 and nickName = #{model.nickName}
+	</if>
+	<if test="model.sex != null  ">
+		 and sex=#{model.sex}
+	</if>
+	<if test="model.headImgUrl != null  and model.headImgUrl != '' ">
+		 and headImgUrl = #{model.headImgUrl}
+	</if>
+	<if test="model.loginName != null  and model.loginName != '' ">
+		 and loginName = #{model.loginName}
+	</if>
+	<if test="model.password != null  and model.password != '' ">
+		 and password = #{model.password}
+	</if>
+	<if test="model.payPassWord != null  and model.payPassWord != '' ">
+		 and payPassWord = #{payPassWord}
+	</if>
+	<if test="model.salt != null  and model.salt != '' ">
+		 and salt = #{model.salt}
+	</if>
+	<if test="model.phone != null  and model.phone != '' ">
+		 and phone = #{model.phone}
+	</if>
+	<if test="model.email != null  and model.email != '' ">
+		 and email = #{model.email}
+	</if>
+	<if test="model.userName != null  and model.userName != '' ">
+		 and userName = #{model.userName}
+	</if>
+	<if test="model.menuPermissions != null  and model.menuPermissions != '' ">
+		 and menuPermissions = #{model.menuPermissions}
+	</if>
+	<if test="model.address != null  and model.address != '' ">
+		 and address like '%${model.address}%'
+	</if>
+	<if test="model.cardIconId != null  and model.cardIconId != '' ">
+		 and cardIconId = #{model.cardIconId}
+	</if>
+	<if test="model.loginTime != null  ">
+		 and loginTime=#{model.loginTime}
+	</if>
+	<if test="model.errorCount != null  ">
+		 and errorCount=#{model.errorCount}
+	</if>
+	<if test="model.createTime != null  ">
+		 and createTime=#{model.createTime}
+	</if>
+	<if test="model.updateTime != null  ">
+		 and updateTime=#{model.updateTime}
+	</if>
+	<if test="model.status != null  ">
+		 and status=#{model.status}
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		 and remark like '%${model.remark}%'
+	</if>
+
+</where>
+</sql>
+   
+<!-- 插入记录 [说明：如果要返回当前对象，需要如下配置：<insert id="addVo" parameterType="Object" useGeneratedKeys="true" keyProperty="id">] -->
+<insert id="create" >
+  insert into  hb_agent_staff 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		id,
+	</if>
+	<if test="model.uid != null  ">
+		uid,
+	</if>
+	<if test="model.agentId != null  ">
+		agentId,
+	</if>
+	<if test="model.nickName != null  ">
+		nickName,
+	</if>
+	<if test="model.sex != null  ">
+		sex,
+	</if>
+	<if test="model.headImgUrl != null  ">
+		headImgUrl,
+	</if>
+	<if test="model.loginName != null  ">
+		loginName,
+	</if>
+	<if test="model.password != null  ">
+		password,
+	</if>
+	<if test="model.payPassWord != null  ">
+		payPassWord,
+	</if>
+	<if test="model.salt != null  ">
+		salt,
+	</if>
+	<if test="model.phone != null  ">
+		phone,
+	</if>
+	<if test="model.email != null  ">
+		email,
+	</if>
+	<if test="model.userName != null  ">
+		userName,
+	</if>
+	<if test="model.menuPermissions != null  ">
+		menuPermissions,
+	</if>
+	<if test="model.address != null  ">
+		address,
+	</if>
+	<if test="model.cardIconId != null  ">
+		cardIconId,
+	</if>
+	<if test="model.loginTime != null  ">
+		loginTime,
+	</if>
+	<if test="model.errorCount != null  ">
+		errorCount,
+	</if>
+	<if test="model.createTime != null  ">
+		createTime,
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime,
+	</if>
+	<if test="model.status != null  ">
+		status,
+	</if>
+	<if test="model.remark != null  ">
+		remark,
+	</if>
+	</trim> 
+)
+ values 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		#{model.id},
+	</if>
+	<if test="model.uid != null  ">
+		#{model.uid},
+	</if>
+	<if test="model.agentId != null  ">
+		#{model.agentId},
+	</if>
+	<if test="model.nickName != null  ">
+		#{model.nickName},
+	</if>
+	<if test="model.sex != null  ">
+		#{model.sex},
+	</if>
+	<if test="model.headImgUrl != null  ">
+		#{model.headImgUrl},
+	</if>
+	<if test="model.loginName != null  ">
+		#{model.loginName},
+	</if>
+	<if test="model.password != null  ">
+		#{model.password},
+	</if>
+	<if test="model.payPassWord != null  ">
+		#{model.payPassWord},
+	</if>
+	<if test="model.salt != null  ">
+		#{model.salt},
+	</if>
+	<if test="model.phone != null  ">
+		#{model.phone},
+	</if>
+	<if test="model.email != null  ">
+		#{model.email},
+	</if>
+	<if test="model.userName != null  ">
+		#{model.userName},
+	</if>
+	<if test="model.menuPermissions != null  ">
+		#{model.menuPermissions},
+	</if>
+	<if test="model.address != null  ">
+		#{model.address},
+	</if>
+	<if test="model.cardIconId != null  ">
+		#{model.cardIconId},
+	</if>
+	<if test="model.loginTime != null  ">
+		#{model.loginTime},
+	</if>
+	<if test="model.errorCount != null  ">
+		#{model.errorCount},
+	</if>
+	<if test="model.createTime != null  ">
+		#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		#{model.status},
+	</if>
+	<if test="model.remark != null  ">
+		#{model.remark},
+	</if>
+	</trim>
+)
+</insert>
+
+<!-- 多条件删除记录 -->
+<select id="delPo" resultType="java.lang.Integer">
+	delete from hb_agent_staff 
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 删除记录 -->
+<delete id="delPoByPk">
+	delete 	 from hb_agent_staff where id = #{id}
+</delete>
+
+<!--批量删除-->
+<delete id="delPoList">
+	delete 	 from hb_agent_staff where id in 
+	<foreach item="idItem" collection="list" index="index" open="(" separator="," close=")"> 
+	#{idItem}
+	</foreach> 
+</delete>
+
+<!-- 根据id，修改记录-->  
+ <update id="modPo">
+  update hb_agent_staff set uid=#{model.uid},agentId=#{model.agentId},nickName=#{model.nickName},sex=#{model.sex},headImgUrl=#{model.headImgUrl},loginName=#{model.loginName},password=#{model.password},payPassWord=#{model.payPassWord},salt=#{model.salt},phone=#{model.phone},email=#{model.email},userName=#{model.userName},menuPermissions=#{model.menuPermissions},address=#{model.address},cardIconId=#{model.cardIconId},loginTime=#{model.loginTime},errorCount=#{model.errorCount},createTime=#{model.createTime},updateTime=#{model.updateTime},status=#{model.status},remark=#{model.remark} where id=#{model.id}
+ </update>
+ <!-- 修改记录，只修改只不为空的字段 -->
+<update id="modPoNotNull">
+	update hb_agent_staff set 
+	<trim  suffixOverrides="," >
+	<if test="model.uid != null  ">
+		uid=#{model.uid},
+	</if>
+	<if test="model.agentId != null  and model.agentId != '' ">
+		agentId=#{model.agentId},
+	</if>
+	<if test="model.nickName != null  and model.nickName != '' ">
+		nickName=#{model.nickName},
+	</if>
+	<if test="model.sex != null  ">
+		sex=#{model.sex},
+	</if>
+	<if test="model.headImgUrl != null  and model.headImgUrl != '' ">
+		headImgUrl=#{model.headImgUrl},
+	</if>
+	<if test="model.loginName != null  and model.loginName != '' ">
+		loginName=#{model.loginName},
+	</if>
+	<if test="model.password != null  and model.password != '' ">
+		password=#{model.password},
+	</if>
+	<if test="model.payPassWord != null  and model.payPassWord != '' ">
+		payPassWord=#{model.payPassWord},
+	</if>
+	<if test="model.salt != null  and model.salt != '' ">
+		salt=#{model.salt},
+	</if>
+	<if test="model.phone != null  and model.phone != '' ">
+		phone=#{model.phone},
+	</if>
+	<if test="model.email != null  and model.email != '' ">
+		email=#{model.email},
+	</if>
+	<if test="model.userName != null  and model.userName != '' ">
+		userName=#{model.userName},
+	</if>
+	<if test="model.menuPermissions != null">
+		menuPermissions=#{model.menuPermissions},
+	</if>
+	<if test="model.address != null  and model.address != '' ">
+		address=#{model.address},
+	</if>
+	<if test="model.cardIconId != null  and model.cardIconId != '' ">
+		cardIconId=#{model.cardIconId},
+	</if>
+	<if test="model.loginTime != null  ">
+		loginTime=#{model.loginTime},
+	</if>
+	<if test="model.errorCount != null  ">
+		errorCount=#{model.errorCount},
+	</if>
+	<if test="model.createTime != null  ">
+		createTime=#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime=#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		status=#{model.status},
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		remark=#{model.remark},
+	</if>
+	</trim> where id=#{model.id}
+</update>
+
+<update id="updateById">
+	update hb_agent_staff set
+	<trim  suffixOverrides="," > 
+		<if test="model.uid != null  ">
+			uid=#{model.uid},
+		</if>
+		<if test="model.agentId != null  and model.agentId != '' ">
+			agentId=#{model.agentId},
+		</if>
+		<if test="model.nickName != null  and model.nickName != '' ">
+			nickName=#{model.nickName},
+		</if>
+		<if test="model.sex != null  ">
+			sex=#{model.sex},
+		</if>
+		<if test="model.headImgUrl != null  and model.headImgUrl != '' ">
+			headImgUrl=#{model.headImgUrl},
+		</if>
+		<if test="model.loginName != null  and model.loginName != '' ">
+			loginName=#{model.loginName},
+		</if>
+		<if test="model.password != null  and model.password != '' ">
+			password=#{model.password},
+		</if>
+		<if test="model.payPassWord != null  and model.payPassWord != '' ">
+			payPassWord=#{model.payPassWord},
+		</if>
+		<if test="model.salt != null  and model.salt != '' ">
+			salt=#{model.salt},
+		</if>
+		<if test="model.phone != null  and model.phone != '' ">
+			phone=#{model.phone},
+		</if>
+		<if test="model.email != null  and model.email != '' ">
+			email=#{model.email},
+		</if>
+		<if test="model.userName != null  and model.userName != '' ">
+			userName=#{model.userName},
+		</if>
+		<if test="model.menuPermissions != null  and model.menuPermissions != '' ">
+			menuPermissions=#{model.menuPermissions},
+		</if>
+		<if test="model.address != null  and model.address != '' ">
+			address=#{model.address},
+		</if>
+		<if test="model.cardIconId != null  and model.cardIconId != '' ">
+			cardIconId=#{model.cardIconId},
+		</if>
+		<if test="model.loginTime != null  ">
+			loginTime=#{model.loginTime},
+		</if>
+		<if test="model.errorCount != null  ">
+			errorCount=#{model.errorCount},
+		</if>
+		<if test="model.createTime != null  ">
+			createTime=#{model.createTime},
+		</if>
+		<if test="model.updateTime != null  ">
+			updateTime=#{model.updateTime},
+		</if>
+		<if test="model.status != null  ">
+			status=#{model.status},
+		</if>
+		<if test="model.remark != null  and model.remark != '' ">
+			remark=#{model.remark},
+		</if>
+	</trim> where id=#{id}
+</update>
+
+<!-- 根据id查询 员工表 -->
+<select id="readById"  resultType="com.mall.model.AgentStaff">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_agent_staff  
+	where id = #{id}
+</select>
+
+<!-- 员工表 列表总数-->
+<select id="getPoCount" resultType="java.lang.Long" >
+	select count(1) from hb_agent_staff  
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 查询员工表列表 -->
+<select id="getPoList" resultType="com.mall.model.AgentStaff">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_agent_staff 
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<select id="readList" resultType="com.mall.model.AgentStaff">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_agent_staff 
+	<include refid="Po_Where_Clause"/>
+	limit #{startRow},#{pageSize}
+</select>
+
+	<select id="getPoListByPage" resultType="com.mall.model.AgentStaff">
+		select
+		<include refid="Po_Column_List"/>
+		from hb_agent_staff
+		<include refid="Po_Where_Clause"/>
+		limit #{page.startRow},#{page.pageSize}
+	</select>
+
+	<select id="countPoListByPage" resultType="Integer">
+		select count(1) from hb_agent_staff
+		<include refid="Po_Where_Clause"/>
+	</select>
+
+</mapper>

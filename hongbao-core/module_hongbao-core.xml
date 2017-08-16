@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_hongbao-core" default="compile.module.hongbao-core">
+  <dirname property="module.hongbao-core.basedir" file="${ant.file.module_hongbao-core}"/>
+  
+  <property name="module.jdk.home.hongbao-core" value=""/>
+  <property name="module.jdk.bin.hongbao-core" value=""/>
+  <property name="module.jdk.classpath.hongbao-core" value=""/>
+  
+  <property name="compiler.args.hongbao-core" value="-encoding UTF-8 -source 8 -target 1.7 ${compiler.args}"/>
+  
+  <property name="hongbao-core.output.dir" value="undefined"/>
+  <property name="hongbao-core.testoutput.dir" value="undefined"/>
+  
+  <path id="hongbao-core.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="hongbao-core.module.production.classpath"/>
+  
+  <path id="hongbao-core.runtime.production.module.classpath"/>
+  
+  <path id="hongbao-core.module.classpath"/>
+  
+  <path id="hongbao-core.runtime.module.classpath"/>
+  
+  
+  <patternset id="excluded.from.module.hongbao-core">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.hongbao-core">
+    <patternset refid="excluded.from.module.hongbao-core"/>
+  </patternset>
+  
+  
+  <target name="compile.module.hongbao-core" depends="compile.module.hongbao-core.production,compile.module.hongbao-core.tests" description="Compile module hongbao-core"/>
+  
+  <target name="compile.module.hongbao-core.production" depends="register.custom.compilers" description="Compile module hongbao-core; production classes"/>
+  
+  <target name="compile.module.hongbao-core.tests" depends="register.custom.compilers,compile.module.hongbao-core.production" description="compile module hongbao-core; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.hongbao-core" description="cleanup module">
+    <delete dir="${hongbao-core.output.dir}"/>
+    <delete dir="${hongbao-core.testoutput.dir}"/>
+  </target>
+</project>

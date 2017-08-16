@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.WalletExchangeDao">
+
+    <sql id="fields">
+        orderNo,bankName,cardType,cardNo,userId,score,confirmScore,poundage,createTime,updateTime,status,remark,bankId
+    </sql>
+
+    <sql id="fields_id">
+        id, <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_wallet_exchange</sql>
+
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.score != null">and score=#{model.score}</if>
+            <if test="model.confirmScore != null">and confirmScore=#{model.confirmScore}</if>
+            <if test="model.poundage != null">and poundage=#{model.poundage}</if>
+            <if test="model.bankName != null and model.bankName != ''">and bankName=#{model.bankName}</if>
+            <if test="model.cardType != null">and cardType=#{model.cardType}</if>
+            <if test="model.cardNo != null and model.cardNo != ''">and cardNo=#{model.cardNo}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.orderNo},,#{model.bankName},#{model.cardType},#{model.cardNo}#{model.userId},#{model.score},#{model.confirmScore},#{model.poundage},now(),now(),1,#{model.remark},#{model.bankId});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.WalletExchange">
+        <include refid="selector"/>
+        where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.WalletExchange">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.WalletExchange">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.orderNo != null and model.orderNo !=''">orderNo= #{model.orderNo},</if>
+            <if test="model.userId != null and model.userId !=''">userId= #{model.userId},</if>
+            <if test="model.score != null">score= #{model.score},</if>
+            <if test="model.confirmScore != null">confirmScore= #{model.confirmScore},</if>
+            <if test="model.poundage != null">poundage= #{model.poundage},</if>
+            <if test="model.bankName != null and model.bankName !=''">bankName= #{model.bankName},</if>
+            <if test="model.cardType != null">cardType= #{model.cardType},</if>
+            <if test="model.cardNo != null and model.cardNo !=''">cardNo= #{model.cardNo},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <select id="getIncome" resultType="java.lang.Double">
+        SELECT SUM(poundage) ct FROM
+        <include refid="table_name"/>
+        WHERE `status`=3;
+    </select>
+
+    <select id="getExchangeVoList" resultType="com.yanbao.vo.ExchangeVo">
+        SELECT e.*,u.uid,u.phone,u.userName FROM hb_wallet_exchange e LEFT JOIN hb_sys_user u on u.id=e.userId
+        <where>
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>
+            <if test="model.phone != null and model.phone!=''">and u.phone=#{model.phone}</if>
+            <if test="model.userName != null and model.userName!=''">and u.userName LIKE CONCAT('%',#{model.userName},'%')</if>
+            <if test="model.fromTime != null">and e.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and #{model.stopTime}>=e.createTime</if>
+            <if test="model.status != null">and e.status=#{model.status}</if>
+        </where> ORDER BY updateTime DESC
+        limit #{pageNo},#{pageSize}
+    </select>
+    <select id="getExchangeVoCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM hb_wallet_exchange e LEFT JOIN hb_sys_user u on u.id=e.userId
+        <where>
+            <if test="model.uid != null ">and u.uid=#{model.uid}</if>
+            <if test="model.phone != null and model.phone!=''">and u.phone=#{model.phone}</if>
+            <if test="model.userName != null and model.userName!=''">and u.userName LIKE CONCAT('%',#{model.userName},'%')</if>
+            <if test="model.fromTime != null">and e.createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and #{model.stopTime}>=e.createTime</if>
+            <if test="model.status != null">and e.status=#{model.status}</if>
+        </where>
+    </select>
+
+    <select id="getSomeSum" resultType="double">
+        SELECT SUM(confirmScore) FROM `hb_wallet_exchange`
+        <where>
+            <if test="model.orderNo != null and model.orderNo != ''">orderNo=#{model.orderNo}</if>
+            <if test="model.userId != null and model.userId != ''">and userId=#{model.userId}</if>
+            <if test="model.score != null">and score=#{model.score}</if>
+            <if test="model.confirmScore != null">and confirmScore=#{model.confirmScore}</if>
+            <if test="model.poundage != null">and poundage=#{model.poundage}</if>
+            <if test="model.bankName != null and model.bankName != ''">and bankName=#{model.bankName}</if>
+            <if test="model.cardType != null">and cardType=#{model.cardType}</if>
+            <if test="model.cardNo != null and model.cardNo != ''">and cardNo=#{model.cardNo}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </select>
+</mapper>
+
+

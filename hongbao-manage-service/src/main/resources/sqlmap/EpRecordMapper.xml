@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanbao.mapper.EpRecordMapper" >
+
+<!-- hb_ep_record table all fields -->
+<sql id="Po_Column_List" >
+	 id,userType,orderNo,sendUserId,receiveUserId,ep,recordType,recordTypeDesc,createTime,updateTime,status,remark,province,city,county,addressId
+</sql>
+
+<!-- 查询条件 -->
+<sql id="Po_Where_Clause">
+<where>
+	<if test="model.id != null  and model.id != '' ">
+		 and id =#{id}
+	</if>
+	<if test="model.userType != null  ">
+		 and userType=#{model.userType}
+	</if>
+	<if test="model.orderNo != null  and model.orderNo != '' ">
+		 and orderNo =#{orderNo}
+	</if>
+	<if test="model.sendUserId != null  and model.sendUserId != '' ">
+		 and sendUserId=#{sendUserId}
+	</if>
+	<if test="model.receiveUserId != null  and model.receiveUserId != '' ">
+		 and receiveUserId =#{receiveUserId}
+	</if>
+	<if test="model.ep != null  ">
+		 and ep=#{model.ep}
+	</if>
+	<if test="model.recordType != null  ">
+		 and recordType=#{model.recordType}
+	</if>
+	<if test="model.recordTypeDesc != null  and model.recordTypeDesc != '' ">
+		 and recordTypeDesc=#{recordTypeDesc}
+	</if>
+	<if test="model.createTime != null  ">
+		 and createTime=#{model.createTime}
+	</if>
+	<if test="model.updateTime != null  ">
+		 and updateTime=#{model.updateTime}
+	</if>
+	<if test="model.status != null  ">
+		 and status=#{model.status}
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		 and remark like '%${model.remark}%'
+	</if>
+	<if test="model.province != null  and model.province != '' ">
+		 and province = #{model.province}
+	</if>
+	<if test="model.city != null  and model.city != '' ">
+		 and city =#{model.city}
+	</if>
+	<if test="model.county != null  and model.county != '' ">
+		 and county = #{model.county}
+	</if>
+	<if test="model.addressId != null  and model.addressId != '' ">
+		 and addressId = #{model.addressId}
+	</if>
+
+</where>
+</sql>
+   
+<!-- 插入记录 [说明：如果要返回当前对象，需要如下配置：<insert id="addVo" parameterType="Object" useGeneratedKeys="true" keyProperty="id">] -->
+<insert id="create">
+  insert into  hb_ep_record 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		id,
+	</if>
+	<if test="model.userType != null  ">
+		userType,
+	</if>
+	<if test="model.orderNo != null  ">
+		orderNo,
+	</if>
+	<if test="model.sendUserId != null  ">
+		sendUserId,
+	</if>
+	<if test="model.receiveUserId != null  ">
+		receiveUserId,
+	</if>
+	<if test="model.ep != null  ">
+		ep,
+	</if>
+	<if test="model.recordType != null  ">
+		recordType,
+	</if>
+	<if test="model.recordTypeDesc != null  ">
+		recordTypeDesc,
+	</if>
+	<if test="model.createTime != null  ">
+		createTime,
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime,
+	</if>
+	<if test="model.status != null  ">
+		status,
+	</if>
+	<if test="model.remark != null  ">
+		remark,
+	</if>
+	<if test="model.province != null  ">
+		province,
+	</if>
+	<if test="model.city != null  ">
+		city,
+	</if>
+	<if test="model.county != null  ">
+		county,
+	</if>
+	<if test="model.addressId != null  ">
+		addressId,
+	</if>
+	</trim> 
+)
+ values 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		#{model.id},
+	</if>
+	<if test="model.userType != null  ">
+		#{model.userType},
+	</if>
+	<if test="model.orderNo != null  ">
+		#{model.orderNo},
+	</if>
+	<if test="model.sendUserId != null  ">
+		#{model.sendUserId},
+	</if>
+	<if test="model.receiveUserId != null  ">
+		#{model.receiveUserId},
+	</if>
+	<if test="model.ep != null  ">
+		#{model.ep},
+	</if>
+	<if test="model.recordType != null  ">
+		#{model.recordType},
+	</if>
+	<if test="model.recordTypeDesc != null  ">
+		#{model.recordTypeDesc},
+	</if>
+	<if test="model.createTime != null  ">
+		#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		#{model.status},
+	</if>
+	<if test="model.remark != null  ">
+		#{model.remark},
+	</if>
+	<if test="model.province != null  ">
+		#{model.province},
+	</if>
+	<if test="model.city != null  ">
+		#{model.city},
+	</if>
+	<if test="model.county != null  ">
+		#{model.county},
+	</if>
+	<if test="model.addressId != null  ">
+		#{model.addressId},
+	</if>
+	</trim>
+)
+</insert>
+
+<!-- 多条件删除记录 -->
+<select id="delPo" resultType="java.lang.Integer"  >
+	delete from hb_ep_record 
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 删除记录 -->
+<delete id="deleteById">
+	delete 	 from hb_ep_record where id = #{id}
+</delete>
+
+<!--批量删除-->
+<delete id="delPoList">
+	delete 	 from hb_ep_record where id in 
+	<foreach item="idItem" collection="list" index="index" open="(" separator="," close=")"> 
+	#{idItem}
+	</foreach> 
+</delete>
+
+ <!-- 修改记录，只修改只不为空的字段 -->
+<update id="updateById">
+	update hb_ep_record set 
+	<trim  suffixOverrides="," >
+	<if test="model.userType != null  ">
+		userType=#{model.userType},
+	</if>
+	<if test="model.orderNo != null  and model.orderNo != '' ">
+		orderNo=#{model.orderNo},
+	</if>
+	<if test="model.sendUserId != null  and model.sendUserId != '' ">
+		sendUserId=#{model.sendUserId},
+	</if>
+	<if test="model.receiveUserId != null  and model.receiveUserId != '' ">
+		receiveUserId=#{model.receiveUserId},
+	</if>
+	<if test="model.ep != null  ">
+		ep=#{model.ep},
+	</if>
+	<if test="model.recordType != null  ">
+		recordType=#{model.recordType},
+	</if>
+	<if test="model.recordTypeDesc != null  and model.recordTypeDesc != '' ">
+		recordTypeDesc=#{model.recordTypeDesc},
+	</if>
+	<if test="model.createTime != null  ">
+		createTime=#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime=#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		status=#{model.status},
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		remark=#{model.remark},
+	</if>
+	<if test="model.province != null  and model.province != '' ">
+		province=#{model.province},
+	</if>
+	<if test="model.city != null  and model.city != '' ">
+		city=#{model.city},
+	</if>
+	<if test="model.county != null  and model.county != '' ">
+		county=#{model.county},
+	</if>
+	<if test="model.addressId != null  and model.addressId != '' ">
+		addressId=#{model.addressId},
+	</if>
+	</trim> where id=#{id}
+</update>
+
+<!-- 根据id查询 EP流水表 -->
+<select id="readById"  resultType="com.mall.model.EpRecord">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_ep_record  
+	where id = #{id}
+</select>
+
+<!-- 根据id查询 EP流水表 -->
+<select id="readOne"  resultType="com.mall.model.EpRecord">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_ep_record  
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- EP流水表 列表总数-->
+<select id="readCount" resultType="java.lang.Long">
+	select count(1) from hb_ep_record  
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 查询EP流水表列表 -->
+<select id="getPoList" resultType="com.mall.model.EpRecord">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_ep_record 
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 查询EP流水表列表 带分页-->
+<select id="readList" resultType="com.mall.model.EpRecord">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_ep_record 
+	WHERE recordType in (9,10,11)
+	<if test="page !=null and page.fromTimeOne != null and page.stopTimeOne != null">
+        	 <![CDATA[AND updateTime > #{page.fromTimeOne} AND updateTime <= #{page.stopTimeOne}]]>
+    </if>
+    ORDER BY createTime DESC
+	<if test="page !=null and page.pageSize != null and page.startRow != null">
+         LIMIT #{page.startRow}, #{page.pageSize}
+    </if>
+</select>
+
+	<select id="getByUserids" resultType="com.mall.model.EpRecord">
+        select 
+		<include refid="Po_Column_List"/>
+		from hb_ep_record where 1=1
+        <if test="ids!=null">
+            AND receiveUserId in
+            <foreach collection="ids" index="index" item="item" open="(" separator="," close=")"> #{item} </foreach>
+        </if>
+        <if test="page !=null and page.fromTimeOne != null and page.stopTimeOne != null">
+        	 <![CDATA[AND updateTime > #{page.fromTimeOne} AND updateTime <= #{page.stopTimeOne}]]>
+        </if>
+         ORDER BY createTime DESC
+        <if test="page !=null and page.pageSize != null and page.startRow != null">
+         LIMIT #{page.startRow}, #{page.pageSize}
+        </if>
+    </select>
+
+</mapper>

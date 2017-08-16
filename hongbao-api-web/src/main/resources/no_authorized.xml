@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 幸运积分项目，免登录验证的接口 -->
+<no_authorized>
+	<!-- 微信登录 -->
+	<url>/user/login/weixin</url>
+	<url>/user/login/loginIn</url>
+	<!-- 首页广告 -->
+	<url>/home/ad</url>
+	<url>/home/guide</url>
+	<!-- 最佳人气 -->
+	<url>/home/hot</url>
+	<!-- 累计参与人数 -->
+	<url>/home/players</url>
+	<!-- 竞价排行榜 -->
+	<url>/home/top</url>
+	<!-- 生肖列表 -->
+	<url>/mall/goods/sorts</url>
+	<!-- 商品列表 -->
+	<url>/mall/goods/page</url>
+	<!-- 商品详情 -->
+	<url>/mall/goods/detail</url>
+	<!-- 斗拍联盟 -->
+	<url>/mall/store/</url>
+	<!-- 关于系统 -->
+	<url>/system/about</url>
+	<!-- 系统更新检查 -->
+	<url>/system/update</url>
+	<!-- 获取系统设置 -->
+	<url>/system/setting</url>
+	<!-- 协议 -->
+	<url>/agreement/about</url>
+	<!-- 微信分享-->
+	<url>/user/share</url>
+	<!-- websocket -->
+	<url>/hello</url>
+	<!-- 静态资源-->
+	<url>/resources</url>
+	<url>/download</url>
+	<url>/MP_verify</url>
+	<url>/test.html</url> 
+	<!-- 登录图片验证码 -->
+	<url>/common/forgetLoginPic</url>
+	<!-- 获取手机短信验证码 -->
+	<url>/common/forgetLoginSmsCode</url>
+	<!-- 忘记密码 -->
+	<url>/forget/payPassword</url>
+	<url>/forget/loginPassword</url>
+	<url>/mypartner/partnerinfo</url>
+	<url>/sign/signlist</url>
+	<url>/goods/eplist</url>
+	<url>/goods/list</url>
+	<url>/goods/indexlist</url>
+	<url>/goods/getNesGoods</url>
+	<url>/mall/store/getNewStore</url>
+	<url>/mall/store/list</url>
+	<url>/wallet/recharge/wxCallback</url>
+	<url>/wallet/recharge/wxStoreH5Callback</url>
+	<url>/wallet/handle/callback</url>
+	<url>/user/share/callback</url>
+	<url>/message/notice</url>
+	<url>/order/alipayCallback</url>
+	<url>/order/wxCallback</url>
+	<url>/order/wxStoreH5Callback</url>
+	<url>/mall/store/storeinfo</url>
+	<url>/mall/store/icons</url>
+	<url>/wallet/storeBuildPayOrder</url>
+	<url>/wallet/storeAlipayByAlipay/callback</url>
+	<url>/wallet/storeWxScanCallback</url>
+	<url>/wallet/query/storealipayscanorderbyaliapay</url>
+	<url>/common/delupimg</url>
+	<url>/common/uptoken</url>
+	<url>/common/uploadFile</url>
+	<url>/common/uploadFileWithBase64</url>
+	<url>/home/indexad</url>
+	<url>/home/banners</url>
+	<url>/goods/detaillist</url>
+	<url>/user/token</url>
+	<url>/user/phone</url>
+	<url>/payDistribution/getByUserId</url>
+	<url>/join/wxcallback</url>
+	<url>/join/wxStoreH5Callback</url>
+	<url>/order/wxStoreH5Callback</url>
+	<url>/recharge/wxStoreH5Callback</url>
+	<url>/eptrade/list</url>
+	<url>/system/feedback</url>
+	<url>/home/test</url>
+	<url>/sysCity/getCityByField</url>
+	<url>/mall/store/search</url>
+</no_authorized>
+
+
+

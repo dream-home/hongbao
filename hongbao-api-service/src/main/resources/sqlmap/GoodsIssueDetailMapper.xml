@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.GoodsIssueDetailMapper">
+
+	<sql id="fields">
+        id, orderNo, userId, nickName, storeId, storeName, goodsId, 
+        goodsName, icon, issueId, issueNo, price, 
+		drawPrice, score, isWinner, saleSwitch, createTime, updateTime, 
+		status, remark
+    </sql>
+    
+    <sql id="table">hb_mall_goods_issue_detail</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<select id="players" resultType="Long">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+	</select>
+	
+	<select id="getByOrderNo" resultType="GoodsIssueDetail">
+		<include refid="selector"/>
+		WHERE orderNo = #{orderNo}
+		AND userId = #{userId}
+		LIMIT 1;
+	</select>
+	
+	<select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE userId = #{userId}
+		AND status= 1
+	</select>
+
+	<select id="getList" resultType="GoodsIssueDetail">
+		<include refid="selector"/>
+		WHERE userId = #{userId}
+		AND status= 1
+		ORDER BY createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+	
+	<insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.orderNo}, #{model.userId}, #{model.nickName}, #{model.storeId}, #{model.storeName}, #{model.goodsId}, 
+			#{model.goodsName}, #{model.icon}, #{model.issueId}, #{model.issueNo}, #{model.price}, 
+			#{model.drawPrice}, #{model.score}, #{model.isWinner}, #{model.saleSwitch}, #{model.createTime}, #{model.updateTime}, 
+			#{model.status}, #{model.remark})
+    </insert> 
+    
+    <update id="update">
+        UPDATE <include refid="table"/>
+        <set>
+        	<if test="model.score != null">score= #{model.score},</if>
+        	<if test="model.isWinner != null">isWinner= #{model.isWinner},</if>
+        	<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+        </set>
+		WHERE id = #{id}
+    </update>
+    
+    <select id="getDrawList" resultType="GoodsIssueDetail">
+		<include refid="selector"/>
+		WHERE issueId = #{issueId}
+		AND status= #{status}
+		ORDER BY score DESC, createTime ASC
+	</select>
+	
+	<select id="getRollbackDrawList" resultType="GoodsIssueDetail">
+		<include refid="selector"/>
+		WHERE status = 0
+	</select>
+	
+	<select id="sumUserDrawScore" resultType="Double">
+		SELECT SUM(drawPrice)
+		FROM <include refid="table"/>
+		WHERE userId = #{userId}
+		AND status= 1
+	</select>
+	
+	<select id="countSumPersonByIssueId" resultType="Integer">
+		SELECT count(id)
+		FROM <include refid="table"/>
+		WHERE  issueId = #{issueId}
+		AND status= #{status}
+	</select>
+	
+</mapper>
+
+

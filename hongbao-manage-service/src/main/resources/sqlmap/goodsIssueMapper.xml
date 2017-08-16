@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.GoodsIssueDao">
+
+    <sql id="fields">
+        issueNo, goodsId, goodsName, icon, price, drawPrice, drawNum, curNum, saleSwitch, createTime, updateTime, status, remark
+    </sql>
+
+    <sql id="fields_id">
+        id,
+        <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_mall_goods_issue</sql>
+
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.issueNo != null">issueNo=#{model.issueNo}</if>
+            <if test="model.goodsId != null and model.goodsId != ''">and goodsId=#{model.goodsId}</if>
+            <if test="model.goodsName != null and model.goodsName != ''">and goodsName LIKE CONCAT(CONCAT('%', #{model.goodsName}), '%')</if>
+            <if test="model.icon != null and model.icon != ''">and icon=#{model.icon}</if>
+            <if test="model.price != null">and price=#{model.price}</if>
+            <if test="model.drawPrice != null">and drawPrice=#{model.drawPrice}</if>
+            <if test="model.drawNum != null">and drawNum=#{model.drawNum}</if>
+            <if test="model.curNum != null">and curNum=#{model.curNum}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.fromTime != null">and createTime>=#{model.fromTime}</if>
+            <if test="model.stopTime != null">and createTime &lt;=#{model.stopTime}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.issueNo},#{model.goodsId},#{model.goodsName},#{model.icon},#{model.price},#{model.drawPrice},#{model.drawNum},#{model.curNum},#{model.saleSwitch},now(),now(),#{model.status},#{model.remark})
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.GoodsIssue">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.GoodsIssue">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.GoodsIssue">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.issueNo != null">issueNo= #{model.issueNo},</if>
+            <if test="model.goodsId != null and model.goodsId !=''">goodsId= #{model.goodsId},</if>
+            <if test="model.goodsName != null and model.goodsName !=''">goodsName= #{model.goodsName},</if>
+            <if test="model.icon != null and model.icon !=''">icon= #{model.icon},</if>
+            <if test="model.price != null">price= #{model.price},</if>
+            <if test="model.drawPrice != null">drawPrice= #{model.drawPrice},</if>
+            <if test="model.drawNum != null">drawNum= #{model.drawNum},</if>
+            <if test="model.curNum != null">curNum= #{model.curNum},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+
+    <select id="getGoodsIssueListByUserCount" resultType="com.yanbao.vo.GoodsIssueVo">
+   SELECT  gi.id,gi.goodsId,g.name goodsName,gi.price,gi.drawPrice,gi.drawNum,gi.drawPrice,SUM(gi.drawNum) userCount
+FROM hb_mall_goods_issue gi RIGHT JOIN hb_mall_goods g on gi.goodsId=g.id WHERE g.status=1  and g.goodsType = 1 GROUP BY goodsId ORDER BY userCount DESC LIMIT 0,50
+    </select>
+</mapper>
+
+

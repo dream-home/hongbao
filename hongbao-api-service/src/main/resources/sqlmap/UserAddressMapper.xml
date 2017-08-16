@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.UserAddressMapper">
+
+	<sql id="fields">
+        id, userId, province, city, county, 
+		addr, isDefault, createTime, updateTime, status, 
+		remark,receiveName,receivePhone
+    </sql>
+    
+    <sql id="table">hb_user_address</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<select id="getList" resultType="UserAddress">
+		<include refid="selector"/>
+		WHERE userId = #{userId} and status = 1
+	</select>
+	
+	<insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.userId}, #{model.province}, #{model.city}, #{model.county}, 
+			#{model.addr}, #{model.isDefault}, #{model.createTime}, #{model.updateTime}, #{model.status}, 
+			#{model.remark},#{model.receiveName},#{model.receivePhone})
+    </insert>
+    
+    <update id="update">
+    	UPDATE <include refid="table"/>
+    	<set>
+            <if test="model.province != null">province= #{model.province},</if>
+            <if test="model.city != null">city= #{model.city},</if>
+            <if test="model.county != null">county= #{model.county},</if>
+            <if test="model.addr != null">addr= #{model.addr},</if>
+            <if test="model.isDefault != null">isDefault= #{model.isDefault},</if>
+            <if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+            <if test="model.receiveName != null">receiveName= #{model.receiveName},</if>
+            <if test="model.receivePhone != null">receivePhone= #{model.receivePhone},</if>
+        </set>
+		WHERE id = #{id}
+    </update>
+
+    <update id="updateDefaultAddr">
+    	UPDATE <include refid="table"/>
+    	<set>
+            isDefault= 0,updateTime=now()
+        </set>
+		WHERE userId = #{userId}
+    </update>
+	
+</mapper>
+
+

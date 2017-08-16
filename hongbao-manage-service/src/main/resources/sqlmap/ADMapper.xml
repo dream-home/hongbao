@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.ADDao">
+
+    <sql id="fields">
+        title,adImg,href,rank,type,createTime,updateTime,status,remark
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_sys_ad</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.title != null and model.title != ''">title=#{model.title}</if>
+            <if test="model.adImg != null and model.adImg != ''">and adImg=#{model.adImg}</if>
+            <if test="model.href != null and model.href != ''">and href=#{model.href}</if>
+            <if test="model.rank != null">and rank=#{model.rank}</if>
+            <if test="model.type != null">and type=#{model.type}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.title},#{model.adImg},#{model.href},#{model.rank},#{model.type},now(),now(),1,#{model.remark});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.Ad">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.Ad">
+        <include refid="selector"/> <include refid="condition"/>  ORDER BY  rank DESC ,updateTime DESC limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.Ad">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.title != null and model.title !=''">title= #{model.title},</if>
+            <if test="model.adImg != null and model.adImg !=''">adImg= #{model.adImg},</if>
+            <if test="model.href != null and model.href !=''">href= #{model.href},</if>
+            <if test="model.rank != null">rank= #{model.rank},</if>
+            <if test="model.type != null">type= #{model.type},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+    
+    
+     <!--查询启动页列表- 2017-06-02   0:轮播图 1：启动页-->
+    
+    <select id="readStartList" resultType="com.mall.model.Ad">
+        <include refid="selector"/> <include refid="condition"/>and type = 1  limit #{page.startRow}, #{page.pageSize};
+    </select> 
+    
+    
+    
+    
+    
+    <!--查询启动页数量- 2017-06-02 -->
+    <select id="readStartCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/> and type = 1
+    </select>
+    
+    
+    
+    
+</mapper>
+
+

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.GoodsIssueMapper">
+
+	<sql id="fields">
+        id, issueNo, storeId, storeName, goodsId, 
+        goodsName, icon, price, drawPrice, drawNum, 
+        curNum, saleSwitch, createTime, updateTime, status, remark,businessSendEp,firstReferrerScale,secondReferrerScale,thirdReferrerScale
+    </sql>
+    
+    <sql id="table">hb_mall_goods_issue</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+    
+    <select id="getById" resultType="GoodsIssue">
+		<include refid="selector"/>
+		WHERE id = #{id}
+		LIMIT 1;
+	</select>
+	
+	<insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+		VALUES (#{model.id}, #{model.issueNo}, #{model.storeId}, #{model.storeName}, #{model.goodsId}, 
+			#{model.goodsName}, #{model.icon}, #{model.price}, #{model.drawPrice}, #{model.drawNum}, 
+			#{model.curNum}, #{model.saleSwitch}, #{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark},#{model.businessSendEp},#{model.firstReferrerScale},#{model.secondReferrerScale},#{model.thirdReferrerScale})
+    </insert> 
+    
+    <update id="update">
+        UPDATE <include refid="table"/>
+        <set>
+            <if test="model.status != null">status= #{model.status},</if>
+        	<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+            <if test="model.remark != null">remark= #{model.remark},</if>
+        </set>
+		WHERE id = #{id}
+    </update>
+    
+    <update id="updateCurNum">
+        UPDATE <include refid="table"/>
+        SET curNum = curNum + 1
+		WHERE id = #{id}
+    </update>
+    
+    <select id="getTimeoutList" resultType="GoodsIssue">
+		<include refid="selector"/>
+		WHERE updateTime &lt;= #{time}
+		AND status = 0 
+		LIMIT 1000
+    </select>
+
+    <!--
+        退款条件
+        SELECT * FROM `hb_mall_goods_issue`   WHERE   `createTime` <'2017-05-1 18:26:20'   AND `curNum` >0  and `curNum` <`drawNum`  and `updateTime` IS NULL  and `status` =0 or  `updateTime` < '2017-03-1 18:26:21' ;
+    -->
+</mapper>
+
+

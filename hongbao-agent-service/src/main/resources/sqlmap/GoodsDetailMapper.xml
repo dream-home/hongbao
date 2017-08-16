@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.GoodsDetailMapper">
+
+	<sql id="fields">
+        id, type,goodsId, model, content, rank,
+		createTime, updateTime, status, remark
+    </sql>
+    
+    <sql id="table">hb_mall_goods_detail</sql>
+    
+    <!-- 查询条件 -->
+	<sql id="Po_Where_Clause">
+	<where>
+		<if test="model.id != null  and model.id != '' ">
+			 and id = #{model.id}
+		</if>
+		<if test="model.goodsId != null  and model.goodsId != '' ">
+			 and goodsId = #{model.goodsId}
+		</if>
+		<if test="model.model != null  and model.model != '' ">
+			 and model = #{model.model}
+		</if>
+		<if test="model.type != null  ">
+			 and type=#{model.type}
+		</if>
+		<if test="model.content != null  and model.content != '' ">
+			 and content like '%${model.content}%'
+		</if>
+		<if test="model.rank != null  ">
+			 and rank=#{model.rank}
+		</if>
+		<if test="model.createTime != null  ">
+			 and createTime=#{model.createTime}
+		</if>
+		<if test="model.updateTime != null  ">
+			 and updateTime=#{model.updateTime}
+		</if>
+		<if test="model.status != null  ">
+			 and status=#{model.status}
+		</if>
+		<if test="model.remark != null  and model.remark != '' ">
+			 and remark like '%${model.remark}%'
+		</if>
+	
+	</where>
+	</sql>
+    
+    <sql id="selector">
+        SELECT <include refid="fields"/>
+        FROM <include refid="table"/>
+    </sql>
+
+	<!-- 获取商品详情列表 -->
+	<select id="getList" resultType="com.mall.model.GoodsDetail">
+		<include refid="selector"/>
+		WHERE status = 1
+		ORDER BY rank ASC
+	</select>
+	
+	
+	<!-- 根据id查询 商品简介表 -->
+	<select id="getById" resultType="com.mall.model.GoodsDetail">
+		<include refid="selector"/> 
+		where id = #{id}
+	</select>
+	
+	<!-- 根据id查询 商品简介表 -->
+	<select id="getByGoodsId" resultType="com.mall.model.GoodsDetail">
+		<include refid="selector"/> 
+		where goodsId=#{id} 
+		<if test="status != null  ">
+			 and status=#{status}
+		</if>
+		ORDER BY rank ASC 
+	</select>
+	
+	<select id="getInLikeId" resultType="com.mall.model.GoodsDetail">
+		<include refid="selector"/> 
+		where id in
+		<foreach item="item" collection="ids" index="index" open="(" separator="," close=")"> 
+		#{item}
+		</foreach> 
+	</select>
+	
+	<delete id="delId">
+		delete 	from hb_mall_goods_detail where id = #{id}
+	</delete>
+	
+	<!--批量删除-->
+	<delete id="delInId">
+		delete from hb_mall_goods_detail where id in 
+		<foreach item="item" collection="ids" index="index" open="(" separator="," close=")"> 
+		#{item}
+		</foreach> 
+	</delete>
+	
+	<insert id="add">
+		  insert into  hb_mall_goods_detail 
+		(	<trim  suffixOverrides="," >
+			<if test="model.id != null  ">
+				id,
+			</if>
+			<if test="model.goodsId != null  ">
+				goodsId,
+			</if>
+			<if test="model.model != null  ">
+				model,
+			</if>
+			<if test="model.type != null  ">
+				type,
+			</if>
+			<if test="model.content != null  ">
+				content,
+			</if>
+			<if test="model.rank != null  ">
+				rank,
+			</if>
+			<if test="model.createTime != null  ">
+				createTime,
+			</if>
+			<if test="model.updateTime != null  ">
+				updateTime,
+			</if>
+			<if test="model.status != null  ">
+				status,
+			</if>
+			<if test="model.remark != null  ">
+				remark,
+			</if>
+			</trim> 
+		)
+		 values 
+		(	<trim  suffixOverrides="," >
+			<if test="model.id != null  ">
+				#{model.id},
+			</if>
+			<if test="model.goodsId != null  ">
+				#{model.goodsId},
+			</if>
+			<if test="model.model != null  ">
+				#{model.model},
+			</if>
+			<if test="model.type != null  ">
+				#{model.type},
+			</if>
+			<if test="model.content != null  ">
+				#{model.content},
+			</if>
+			<if test="model.rank != null  ">
+				#{model.rank},
+			</if>
+			<if test="model.createTime != null  ">
+				#{model.createTime},
+			</if>
+			<if test="model.updateTime != null  ">
+				#{model.updateTime},
+			</if>
+			<if test="model.status != null  ">
+				#{model.status},
+			</if>
+			<if test="model.remark != null  ">
+				#{model.remark},
+			</if>
+			</trim>
+		)
+		</insert>
+	
+	<!-- 查询商品简介表列表 -->
+	<select id="readList" resultType="com.mall.model.GoodsDetail">
+		<include refid="selector"/>
+		<include refid="Po_Where_Clause"/>
+		ORDER BY rank ASC 
+	</select>
+	
+</mapper>
+
+

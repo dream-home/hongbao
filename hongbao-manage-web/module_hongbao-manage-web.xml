@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_hongbao-manage-web" default="compile.module.hongbao-manage-web">
+  <dirname property="module.hongbao-manage-web.basedir" file="${ant.file.module_hongbao-manage-web}"/>
+  
+  <property name="module.jdk.home.hongbao-manage-web" value=""/>
+  <property name="module.jdk.bin.hongbao-manage-web" value=""/>
+  <property name="module.jdk.classpath.hongbao-manage-web" value=""/>
+  
+  <property name="compiler.args.hongbao-manage-web" value="-encoding UTF-8 -source 8 -target 1.7 ${compiler.args}"/>
+  
+  <property name="hongbao-manage-web.output.dir" value="undefined"/>
+  <property name="hongbao-manage-web.testoutput.dir" value="undefined"/>
+  
+  <path id="hongbao-manage-web.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="hongbao-manage-web.module.production.classpath"/>
+  
+  <path id="hongbao-manage-web.runtime.production.module.classpath"/>
+  
+  <path id="hongbao-manage-web.module.classpath"/>
+  
+  <path id="hongbao-manage-web.runtime.module.classpath"/>
+  
+  
+  <patternset id="excluded.from.module.hongbao-manage-web">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.hongbao-manage-web">
+    <patternset refid="excluded.from.module.hongbao-manage-web"/>
+  </patternset>
+  
+  
+  <target name="compile.module.hongbao-manage-web" depends="compile.module.hongbao-manage-web.production,compile.module.hongbao-manage-web.tests" description="Compile module hongbao-manage-web"/>
+  
+  <target name="compile.module.hongbao-manage-web.production" depends="register.custom.compilers" description="Compile module hongbao-manage-web; production classes"/>
+  
+  <target name="compile.module.hongbao-manage-web.tests" depends="register.custom.compilers,compile.module.hongbao-manage-web.production" description="compile module hongbao-manage-web; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.hongbao-manage-web" description="cleanup module">
+    <delete dir="${hongbao-manage-web.output.dir}"/>
+    <delete dir="${hongbao-manage-web.testoutput.dir}"/>
+  </target>
+</project>

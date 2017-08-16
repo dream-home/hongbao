@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_hongbao-api-web" default="compile.module.hongbao-api-web">
+  <dirname property="module.hongbao-api-web.basedir" file="${ant.file.module_hongbao-api-web}"/>
+  
+  <property name="module.jdk.home.hongbao-api-web" value=""/>
+  <property name="module.jdk.bin.hongbao-api-web" value=""/>
+  <property name="module.jdk.classpath.hongbao-api-web" value=""/>
+  
+  <property name="compiler.args.hongbao-api-web" value="-encoding UTF-8 -source 8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="hongbao-api-web.output.dir" value="undefined"/>
+  <property name="hongbao-api-web.testoutput.dir" value="undefined"/>
+  
+  <path id="hongbao-api-web.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="hongbao-api-web.module.production.classpath"/>
+  
+  <path id="hongbao-api-web.runtime.production.module.classpath"/>
+  
+  <path id="hongbao-api-web.module.classpath"/>
+  
+  <path id="hongbao-api-web.runtime.module.classpath"/>
+  
+  
+  <patternset id="excluded.from.module.hongbao-api-web">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.hongbao-api-web">
+    <patternset refid="excluded.from.module.hongbao-api-web"/>
+  </patternset>
+  
+  
+  <target name="compile.module.hongbao-api-web" depends="compile.module.hongbao-api-web.production,compile.module.hongbao-api-web.tests" description="Compile module hongbao-api-web"/>
+  
+  <target name="compile.module.hongbao-api-web.production" depends="register.custom.compilers" description="Compile module hongbao-api-web; production classes"/>
+  
+  <target name="compile.module.hongbao-api-web.tests" depends="register.custom.compilers,compile.module.hongbao-api-web.production" description="compile module hongbao-api-web; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.hongbao-api-web" description="cleanup module">
+    <delete dir="${hongbao-api-web.output.dir}"/>
+    <delete dir="${hongbao-api-web.testoutput.dir}"/>
+  </target>
+</project>

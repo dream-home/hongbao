@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.StoreCollectMapper">
+
+	<sql id="fields">
+		id, userId, storeId, createTime, updateTime, status, remark
+	</sql>
+
+	<sql id="table">hb_mall_user_store_collect</sql>
+
+	<sql id="selector">
+		SELECT <include refid="fields" />
+		FROM <include refid="table" />
+	</sql>
+
+	<insert id="add" keyProperty="id">
+		INSERT INTO <include refid="table" /> (<include refid="fields" />)
+		VALUES (#{model.id}, #{model.userId}, #{model.storeId}, #{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark})
+	</insert>
+
+	<update id="update">
+		UPDATE
+		<include refid="table" />
+		<set>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+			<if test="model.remark != null">remark= #{model.remark},</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+
+	<select id="get" resultType="StoreCollect">
+		<include refid="selector" />
+		WHERE userId = #{userId}
+		AND storeId = #{storeId}
+		LIMIT 1;
+	</select>
+
+	<select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table" />
+		WHERE userId = #{userId}
+		AND status = 1
+	</select>
+
+	<select id="getList" resultType="String">
+		SELECT storeId
+		FROM <include refid="table" />
+		WHERE userId = #{userId}
+		AND status = 1
+		ORDER BY updateTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+
+</mapper>
+
+

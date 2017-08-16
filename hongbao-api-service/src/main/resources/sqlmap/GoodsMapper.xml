@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.GoodsMapper">
+
+	<sql id="fields">
+		id, goodsSortId, storeId, storeName, name,
+		icon, price, drawPrice, drawNum, detail,
+		goodsType, stock, curIssueNo, curIssueId, isTop, isRecommend,
+		saleSwitch, createTime, updateTime, status, remark,firstReferrerScale,
+		secondReferrerScale,thirdReferrerScale,businessSendEp,originalPrice,discountEP,verify,sumSaleCount
+	</sql>
+
+	<sql id="table">hb_mall_goods</sql>
+
+	<sql id="selector">
+		SELECT
+		<include refid="fields" />
+		FROM
+		<include refid="table" />
+	</sql>
+
+	<!-- 获取首页最佳人气列表 -->
+	<select id="getRecommendList" resultType="Goods">
+		<include refid="selector" />
+		WHERE isRecommend = 1
+		AND status = 1
+		LIMIT 0, #{num}
+	</select>
+
+	<select id="getById" resultType="Goods">
+		<include refid="selector" />
+		WHERE id = #{id}
+		LIMIT 1;
+	</select>
+
+	<select id="count" resultType="Integer">
+		SELECT COUNT(id)
+		FROM
+		<include refid="table" />
+		<where>
+			status = 1 AND     `storeId` IS NOT NULL
+			<if test="goodsSortId !=null and goodsSortId !=''">
+				AND goodsSortId= #{goodsSortId}
+			</if>
+		</where>
+	</select>
+
+	<select id="getList" resultType="Goods">
+		<include refid="selector" />
+		<where>
+			status = 1 AND    `storeId` IS NOT NULL
+			<if test="goodsSortId !=null and goodsSortId !=''">
+				AND goodsSortId= #{goodsSortId}
+			</if>
+			<if test="page.timeSort==1000 and page.priceSort==1000">AND LENGTH(icon)>2000</if>
+		</where>
+		<if test="page.timeSort==2 and page.priceSort==0">ORDER BY createTime ASC </if>
+		<if test="page.timeSort==1 and page.priceSort==0">ORDER BY createTime DESC </if>
+		<if test="page.timeSort==0 and page.priceSort==2">ORDER BY price DESC</if>
+		<if test="page.timeSort==0 and  page.priceSort==1">ORDER BY price ASC</if>
+		<if test="page.priceSort==0 and page.timeSort==0">ORDER BY businessSendEp DESC</if>
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+
+
+	<select id="getIndexEpList" resultType="Goods">
+		<include refid="selector" />
+		WHERE   status = 1  and IFNULL(storeId,'') != ''  ORDER BY businessSendEp desc LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+
+	<select id="countEp" resultType="Integer">
+		SELECT COUNT(id)
+		FROM
+		<include refid="table" />
+		WHERE goodsSortId= #{goodsSortId}
+		AND status = 1
+	</select>
+
+	<select id="getEpList" resultType="Goods">
+		<include refid="selector" />
+		WHERE goodsSortId= #{goodsSortId}
+		AND status = 1
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+
+
+	<insert id="add" keyProperty="id">
+		INSERT INTO
+		<include refid="table" />
+		(
+		<include refid="fields" />
+		)
+		VALUES (#{model.id}, #{model.goodsSortId}, #{model.storeId},
+		#{model.storeName}, #{model.name},
+		#{model.icon}, #{model.price}, #{model.drawPrice}, #{model.drawNum},
+		#{model.detail},
+		#{model.goodsType}, #{model.stock}, #{model.curIssueNo}, #{model.curIssueId},
+		#{model.isTop}, #{model.isRecommend},
+		#{model.saleSwitch}, #{model.createTime}, #{model.updateTime}, #{model.status},
+		#{model.remark},
+		#{model.firstReferrerScale},#{model.secondReferrerScale},#{model.thirdReferrerScale},#{model.businessSendEp},#{model.originalPrice},#{model.discountEP},#{model.verify},0)
+	</insert>
+
+	<update id="update">
+		UPDATE
+		<include refid="table" />
+		<set>
+			<if test="model.name != null">name= #{model.name},</if>
+			<if test="model.goodsSortId != null">goodsSortId= #{model.goodsSortId},</if>
+			<if test="model.icon != null">icon= #{model.icon},</if>
+			<if test="model.price != null">price= #{model.price},</if>
+			<if test="model.drawPrice != null">drawPrice= #{model.drawPrice},</if>
+			<if test="model.drawNum != null">drawNum= #{model.drawNum},</if>
+			<if test="model.detail != null">detail= #{model.detail},</if>
+			<if test="model.stock != null">stock= #{model.stock},</if>
+			<if test="model.curIssueNo != null">curIssueNo= #{model.curIssueNo},</if>
+			<if test="model.curIssueId != null">curIssueId= #{model.curIssueId},</if>
+			<if test="model.saleSwitch != null">saleSwitch= #{model.saleSwitch},</if>
+			<if test="model.updateTime != null">updateTime= #{model.updateTime},</if>
+			<if test="model.verify != null">verify= #{model.verify},</if>
+			<if test="model.status != null">status= #{model.status},</if>
+			<if test="model.remark != null">remark= #{model.remark},</if>
+			<if test="model.firstReferrerScale != null and model.firstReferrerScale >= 0">firstReferrerScale= #{model.firstReferrerScale},</if>
+			<if test="model.secondReferrerScale != null  and model.secondReferrerScale >= 0">secondReferrerScale= #{model.secondReferrerScale},</if>
+			<if test="model.thirdReferrerScale != null  and model.thirdReferrerScale >= 0">thirdReferrerScale= #{model.thirdReferrerScale},</if>
+			<if test="model.businessSendEp != null  and model.businessSendEp >= 0">businessSendEp= #{model.businessSendEp},</if>
+			<if test="model.originalPrice != null">originalPrice= #{model.originalPrice},</if>
+			<if test="model.discountEP != null">discountEP= #{model.discountEP},</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateStock">
+		UPDATE
+		<include refid="table" />
+		SET stock = stock + #{stock}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateSaleCount">
+		UPDATE
+		<include refid="table" />
+		SET sumSaleCount = IFNULL(sumSaleCount,0) + #{sumSaleCount}
+		WHERE id = #{id}
+	</update>
+
+	<select id="countStoreGoods" resultType="Integer">
+		SELECT COUNT(id)
+		FROM
+		<include refid="table" />
+		WHERE storeId= #{storeId}
+		<if test="status != null">AND status= #{status}</if>
+		<if test="status == null">AND status!= 2</if>
+	</select>
+
+	<select id="getStoreGoodsList" resultType="Goods">
+		<include refid="selector" />
+		WHERE storeId= #{storeId}
+		<if test="status != null">AND status= #{status}</if>
+		<if test="status == null">AND status!= 2</if>
+		ORDER BY createTime DESC
+		LIMIT #{page.startRow}, #{page.pageSize}
+	</select>
+
+
+	<select id="getNesGoodsList" resultType="Goods">
+		<include refid="selector" />
+		WHERE   status = 1  and IFNULL(storeId,'') != ''  ORDER BY createTime desc LIMIT #{maxRow}
+	</select>
+</mapper>
+
+

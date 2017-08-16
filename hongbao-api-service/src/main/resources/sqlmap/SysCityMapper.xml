@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.SysCityMapper">
+
+    <sql id="fields">
+        code,name,parentCode,shortName,level,areaCode,zipCode,zhName
+    </sql>
+
+    <sql id="fields_id">
+        <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_sys_city</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.code != null and model.code != ''">code=#{model.code}</if>
+            <if test="model.name != null and model.name != ''">and name=#{model.name}</if>
+            <if test="model.parentCode != null and model.parentCode != ''">and parentCode=#{model.parentCode}</if>
+            <if test="model.shortName != null and model.shortName != ''">and shortName=#{model.shortName}</if>
+            <if test="model.level != null and model.level != ''">and level=#{model.level}</if>
+            <if test="model.zipCode != null and model.zipCode != ''">and zipCode=#{model.zipCode}</if>
+            <if test="model.zhName != null and model.zhName != ''">and zhName=#{model.zhName}</if>
+            
+        </where>
+    </sql>
+
+
+    <select id="readById" resultType="com.mall.model.City">
+        <include refid="selector"/> where code=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.City">
+        <include refid="selector"/> <include refid="condition"/> ORDER BY zhName asc limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.City">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <select id="getAllCity" resultType="com.mall.model.City">
+        <include refid="selector"/> where (zhName like CONCAT(#{field},'%') or shortName like CONCAT(#{field},'%')) and level = 2 ORDER BY zhName asc
+    </select>
+
+</mapper>
+
+

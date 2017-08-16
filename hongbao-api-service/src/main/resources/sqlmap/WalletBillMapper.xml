@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yanbao.mapper.WalletBillMapper" >
+
+<sql id="Po_Column_List" >
+	 id,userId,storeId,type,orderNo,EP,EPScale,balanceScale,balance,createTime,updateTime,status,remark,billday
+</sql>
+
+<!-- 查询条件 -->
+<sql id="Po_Where_Clause">
+<where>
+	<if test="model.id != null  and model.id != '' ">
+		 and id = '#{model.id}'
+	</if>
+	<if test="model.userId != null  and model.userId != '' ">
+		 and userId = '#{model.userId}'
+	</if>
+	<if test="model.storeId != null  ">
+		 and storeId=#{model.storeId}
+	</if>
+	<if test="model.type != null  and model.type != '' ">
+		 and type like '#{model.type}'
+	</if>
+	<if test="model.orderNo != null  and model.orderNo != '' ">
+		 and orderNo = '#{model.orderNo}'
+	</if>
+	<if test="model.EP != null  ">
+		 and EP=#{model.EP}
+	</if>
+	<if test="model.EPScale != null  ">
+		 and EPScale=#{model.EPScale}
+	</if>
+	<if test="model.balanceScale != null  ">
+		 and balanceScale=#{model.balanceScale}
+	</if>
+	<if test="model.balance != null  ">
+		 and balance=#{model.balance}
+	</if>
+	<if test="model.createTime != null  ">
+		 and createTime=#{model.createTime}
+	</if>
+	<if test="model.updateTime != null  ">
+		 and updateTime=#{model.updateTime}
+	</if>
+	<if test="model.status != null  ">
+		 and status=#{model.status}
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		 and remark like '%${model.remark}%'
+	</if>
+	<if test="model.billday != null  and model.billday != '' ">
+		 and billday like '%${model.billday}%'
+	</if>
+
+</where>
+</sql>
+   
+<!-- 插入记录 [说明：如果要返回当前对象，需要如下配置：<insert id="addVo" parameterType="Object" useGeneratedKeys="true" keyProperty="id">] -->
+<insert id="add" keyProperty="id">
+  insert into  hb_wallet_bill 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		id,
+	</if>
+	<if test="model.userId != null  ">
+		userId,
+	</if>
+	<if test="model.storeId != null  ">
+		storeId,
+	</if>
+	<if test="model.type != null  ">
+		type,
+	</if>
+	<if test="model.orderNo != null  ">
+		orderNo,
+	</if>
+	<if test="model.EP != null  ">
+		EP,
+	</if>
+	<if test="model.EPScale != null  ">
+		EPScale,
+	</if>
+	<if test="model.balanceScale != null  ">
+		balanceScale,
+	</if>
+	<if test="model.balance != null  ">
+		balance,
+	</if>
+	<if test="model.createTime != null  ">
+		createTime,
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime,
+	</if>
+	<if test="model.status != null  ">
+		status,
+	</if>
+	<if test="model.remark != null  ">
+		remark,
+	</if>
+	<if test="model.billday != null  and model.billday != '' ">
+		billday,
+	</if>
+	</trim> 
+)
+ values 
+(	<trim  suffixOverrides="," >
+	<if test="model.id != null  ">
+		#{model.id},
+	</if>
+	<if test="model.userId != null  ">
+		#{model.userId},
+	</if>
+	<if test="model.storeId != null  ">
+		#{model.storeId},
+	</if>
+	<if test="model.type != null  ">
+		#{model.type},
+	</if>
+	<if test="model.orderNo != null  ">
+		#{model.orderNo},
+	</if>
+	<if test="model.EP != null  ">
+		#{model.EP},
+	</if>
+	<if test="model.EPScale != null  ">
+		#{model.EPScale},
+	</if>
+	<if test="model.balanceScale != null  ">
+		#{model.balanceScale},
+	</if>
+	<if test="model.balance != null  ">
+		#{model.balance},
+	</if>
+	<if test="model.createTime != null  ">
+		#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		#{model.status},
+	</if>
+	<if test="model.remark != null  ">
+		#{model.remark},
+	</if>
+	<if test="model.billday != null  and model.billday != '' ">
+		#{model.billday},
+	</if>
+	</trim>
+)
+</insert>
+
+<!-- 多条件删除记录 -->
+<select id="delPo" resultType="java.lang.Integer" >
+	delete from hb_wallet_bill 
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 删除记录 -->
+<delete id="delById">
+	delete 	 from hb_wallet_bill where id = #{id}
+</delete>
+
+<!--批量删除-->
+<delete id="delInId">
+	delete 	 from hb_wallet_bill where id in 
+	<foreach item="idItem" collection="ids" index="index" open="(" separator="," close=")"> 
+	#{idItem}
+	</foreach> 
+</delete>
+
+<!-- 根据id，修改记录-->  
+ <update id="modPo">
+  update hb_wallet_bill set userId=#{model.userId},storeId=#{model.storeId},type=#{model.type},orderNo=#{model.orderNo},EP=#{model.EP},EPScale=#{model.EPScale},balanceScale=#{model.balanceScale},balance=#{model.balance},createTime=#{model.createTime},updateTime=#{model.updateTime},status=#{model.status},remark=#{model.remark},billday=#{model.billday} where id=#{model.id}
+ </update>
+ <!-- 修改记录，只修改只不为空的字段 -->
+<update id="modPoNotNull">
+	update hb_wallet_bill set 
+	<trim  suffixOverrides="," >
+	<if test="model.userId != null  and model.userId != '' ">
+		userId=#{model.userId},
+	</if>
+	<if test="model.storeId != null  ">
+		storeId=#{model.storeId},
+	</if>
+	<if test="model.type != null  and model.type != '' ">
+		type=#{model.type},
+	</if>
+	<if test="model.orderNo != null  and model.orderNo != '' ">
+		orderNo=#{model.orderNo},
+	</if>
+	<if test="model.EP != null  ">
+		EP=#{model.EP},
+	</if>
+	<if test="model.EPScale != null  ">
+		EPScale=#{model.EPScale},
+	</if>
+	<if test="model.balanceScale != null  ">
+		balanceScale=#{model.balanceScale},
+	</if>
+	<if test="model.balance != null  ">
+		balance=#{model.balance},
+	</if>
+	<if test="model.createTime != null  ">
+		createTime=#{model.createTime},
+	</if>
+	<if test="model.updateTime != null  ">
+		updateTime=#{model.updateTime},
+	</if>
+	<if test="model.status != null  ">
+		status=#{model.status},
+	</if>
+	<if test="model.remark != null  and model.remark != '' ">
+		remark=#{model.remark},
+	</if>
+	<if test="model.billday != null  and model.billday != '' ">
+		billday=#{model.billday},
+	</if>
+	</trim> where id=#{model.id}
+</update>
+
+<!-- 根据id查询 店铺收益 -->
+<select id="getById"  resultType="WalletBill">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_wallet_bill  
+	where id = #{id}
+</select>
+
+<!-- 店铺收益 列表总数-->
+<select id="getPoCount" resultType="java.lang.Long" >
+	select count(1) from hb_wallet_bill  
+	<include refid="Po_Where_Clause"/>
+</select>
+
+<!-- 查询店铺收益列表 -->
+<select id="getList" resultType="WalletBill">
+	select 
+	<include refid="Po_Column_List"/>
+	from hb_wallet_bill 
+	<include refid="Po_Where_Clause"/>
+</select>
+
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.AgentBillMapper">
+
+    <sql id="fields">
+        agentId,orderNo,scale,amount,company,userName,phone,bankCard,bankTypeCode,bankType,bankBranch,agentAreaId,agentProvince,agentCity,
+        agentCountry,address,agentLevel,totalAmount,EP,EPScale,balanceScale,balance,billday,createTime,updateTime,status,remark
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_agent_bill</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.agentId != null and model.agentId != ''">agentId=#{model.agentId}</if>
+            <if test="model.orderNo != null and model.orderNo != ''">and orderNo=#{model.orderNo}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.agentId},#{model.orderNo},#{model.scale},#{model.amount},#{model.company},#{model.userName},#{model.phone},#{model.bankCard},#{model.bankTypeCode},#{model.bankType},#{model.bankBranch},#{model.agentAreaId},#{model.agentProvince},#{model.agentCity},
+        #{model.agentCountry},#{model.address},#{model.agentLevel},#{model.totalAmount},#{model.EP},#{model.EPScale},#{model.balanceScale},#{model.balance},#{model.billday},now(),now(),#{model.status},#{model.remark});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.AgentBill">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.AgentBill">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.AgentBill">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.company != null and model.company !=''">company= #{model.company},</if>
+            <if test="model.userName != null and model.userName !=''">userName= #{model.userName},</if>
+            <if test="model.phone != null and model.phone !=''">phone= #{model.phone},</if>
+            <if test="model.totalAmount != null and model.totalAmount !=''">totalAmount= #{model.totalAmount},</if>
+            <if test="model.EP != null and model.EP !=''">EP= #{model.EP},</if>
+            <if test="model.EPScale != null and model.EPScale !=''">EPScale= #{model.EPScale},</if>
+            <if test="model.balanceScale != null and model.balanceScale !=''">balanceScale= #{model.balanceScale},</if>
+            <if test="model.balance != null and model.balance !=''">balance= #{model.balance},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <!-- 根据代理id查询代理业绩 -->
+    <select id="getAgentPerformance" resultType="com.mall.model.AgentBill">
+        <include refid="selector"/>
+        <where>
+            status = 2
+            <if test="model.agentId != null and model.agentId != ''">and agentId=#{model.agentId}</if>
+        </where>
+        ORDER BY createTime DESC
+        limit #{page.startRow}, #{page.pageSize};
+    </select>
+
+    <select id="readPerformanceCount" resultType="Integer">
+        select count(1) from <include refid="table_name"/>
+        <where>
+            status = 2
+            <if test="model.agentId != null and model.agentId != ''">and agentId=#{model.agentId}</if>
+        </where>
+    </select>
+
+    <!-- 根据手机号、姓名的信息精确匹配，公司名称模糊匹配查询代理业绩 -->
+    <select id="getAgentBillByTime" resultType="com.mall.model.AgentBill">
+        <include refid="selector"/>
+        <where>
+            1=1
+            <if test="agentId != null and agentId != ''">and agentId=#{agentId}</if>
+            <if test="fromTime != null">and createTime>=#{fromTime}</if>
+        </where>
+        limit 0, 1;
+    </select>
+
+</mapper>
+
+

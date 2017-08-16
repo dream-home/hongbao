@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.AgentBillDetailMapper">
+
+    <sql id="fields">
+        agentId,orderNo,scale,amount,company,userName,phone,bankCard,bankTypeCode,bankType,bankBranch,agentAreaId,agentProvince,agentCity,
+        agentCountry,address,agentLevel,billday,createTime,updateTime,status,remark,type
+    </sql>
+
+    <sql id="fields_id">
+        id,<include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_agent_bill_detail</sql>
+
+    <sql id="selector">
+        select <include refid="fields_id"/> from <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.agentId != null and model.agentId != ''">agentId=#{model.agentId}</if>
+            <if test="model.orderNo != null and model.orderNo != ''">and orderNo=#{model.orderNo}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into <include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.agentId},#{model.orderNo},#{model.scale},#{model.amount},#{model.company},#{model.userName},#{model.phone},#{model.bankCard},#{model.bankTypeCode},#{model.bankType},#{model.bankBranch},#{model.agentAreaId},#{model.agentProvince},#{model.agentCity},
+        #{model.agentCountry},#{model.address},#{model.agentLevel},#{model.billday},now(),now(),#{model.status},#{model.remark},#{model.type});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.AgentBillDetail">
+        <include refid="selector"/> where id=#{id}  limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.AgentBillDetail">
+        <include refid="selector"/> <include refid="condition"/> limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.AgentBillDetail">
+        <include refid="selector"/> <include refid="condition"/> limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from <include refid="table_name"/> <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update <include refid="table_name"/>
+        <set>
+            <if test="model.company != null and model.company !=''">company= #{model.company},</if>
+            <if test="model.userName != null and model.userName !=''">userName= #{model.userName},</if>
+            <if test="model.phone != null and model.phone !=''">phone= #{model.phone},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update <include refid="table_name"/> set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+</mapper>
+
+

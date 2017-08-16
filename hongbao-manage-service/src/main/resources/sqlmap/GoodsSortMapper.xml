@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yanbao.mapper.GoodsSortDao">
+
+    <sql id="fields">
+        name,icon,rank,createTime,updateTime,status,remark,goodSortType
+    </sql>
+
+    <sql id="fields_id">
+        id,
+        <include refid="fields"/>
+    </sql>
+
+    <sql id="table_name">hb_mall_goods_sort</sql>
+
+    <sql id="selector">
+        select
+        <include refid="fields_id"/>
+        from
+        <include refid="table_name"/>
+    </sql>
+
+    <sql id="condition">
+        <where>
+            <if test="model.name != null and model.name != ''">name=#{model.name}</if>
+            <if test="model.icon != null and model.icon != ''">and icon=#{model.icon}</if>
+            <if test="model.rank != null">and rank=#{model.rank}</if>
+            <if test="model.status != null">and status=#{model.status}</if>
+            <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.goodSortType != null and model.goodSortType != ''">and goodSortType=#{model.goodSortType}</if>
+        </where>
+    </sql>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into<include refid="table_name"/>(<include refid="fields_id"/>)
+        values(#{model.id},#{model.name},#{model.icon},#{model.rank},now(),now(),1,#{model.remark},#{model.goodSortType});
+    </insert>
+
+    <select id="readById" resultType="com.mall.model.GoodsSort">
+        <include refid="selector"/>
+        where id=#{id} limit 1;
+    </select>
+
+    <select id="readList" resultType="com.mall.model.GoodsSort">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        ORDER BY rank ASC, createTime DESC
+        limit #{startRow}, #{pageSize};
+    </select>
+
+    <select id="readOne" resultType="com.mall.model.GoodsSort">
+        <include refid="selector"/>
+        <include refid="condition"/>
+        limit 1;
+    </select>
+
+    <select id="readCount" resultType="int">
+        select count(1) from
+        <include refid="table_name"/>
+        <include refid="condition"/>
+    </select>
+
+    <update id="updateById">
+        update
+        <include refid="table_name"/>
+        <set>
+            <if test="model.name != null and model.name !=''">name= #{model.name},</if>
+            <if test="model.icon != null and model.icon !=''">icon= #{model.icon},</if>
+            <if test="model.rank != null">rank= #{model.rank},</if>
+            <if test="model.status != null">status= #{model.status},</if>
+            <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            <if test="model.goodSortType != null and model.goodSortType != ''">goodSortType=#{model.goodSortType},</if>
+            updateTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+        update
+        <include refid="table_name"/>
+        set status = 0,updateTime=now() where id = #{id}
+    </update>
+
+    <select id="getGoodsSortVoListAll" resultType="com.yanbao.vo.GoodsSortVo">
+       SELECT gs.id,gs.icon,gs.name,gs.rank,COUNT(gd.status=1) count,gs.createTime,gs.status
+       from hb_mall_goods_sort gs LEFT JOIN hb_mall_goods gd on gs.id=gd.goodsSortId  where gs.status = 1 
+       GROUP BY gs.id  
+       ORDER BY gs.rank ASC 
+       limit #{page.startRow}, #{page.pageSize} 
+    </select>
+    
+</mapper>
+
+

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.GoodsWinDetailMapper">
+
+    <sql id="fields">
+        id, orderNo, goodsWinId, userId, storeId, storeName, goodsId, goodsName,
+		icon, price,createTime, updateTime, status, remark,num,firstReferrerScale
+		,secondReferrerScale,thirdReferrerScale,businessSendEp,originalPrice,discountEP
+    </sql>
+
+    <sql id="table">hb_user_goods_win_detail</sql>
+
+    <sql id="selector">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="table"/>
+    </sql>
+
+    <select id="getListByGoodsWinId" resultType="GoodsWinDetail">
+        <include refid="selector"/>
+        WHERE goodsWinId = #{goodsWinId}
+        ORDER BY createTime DESC,num DESC
+    </select>
+
+    <insert id="add" keyProperty="id">
+        INSERT INTO <include refid="table"/> (<include refid="fields"/>)
+        VALUES (#{model.id}, #{model.orderNo}, #{model.goodsWinId}, #{model.userId}, #{model.storeId}, #{model.storeName}, #{model.goodsId}, #{model.goodsName},
+        #{model.icon}, #{model.price}, #{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark}, #{model.num}, #{model.firstReferrerScale}, #{model.secondReferrerScale}, #{model.thirdReferrerScale},
+        #{model.businessSendEp}, #{model.originalPrice},#{model.discountEP})
+    </insert>
+    <update id="updateOrderNoByWinId" >
+        UPDATE   <include refid="table"/>   SET  orderNo = #{newOrderNo}  WHERE  goodsWinId=#{goodsWinId}
+    </update>
+
+    <update id="updateByGoodsId" >
+        UPDATE   <include refid="table"/>
+        <set>
+            <if test="model.orderNo!=null">orderNo=#{model.orderNo},</if>
+            <if test="model.icon!=null">icon=#{model.icon},</if>
+            <if test="model.price!=null and model.price>=0">price=#{model.price},</if>
+            <if test="model.originalPrice!=null and model.originalPrice>=0">originalPrice=#{model.originalPrice},</if>
+            <if test="model.businessSendEp!=null and model.businessSendEp>=0">businessSendEp=#{model.businessSendEp},</if>
+            <if test="model.discountEP!=null and model.discountEP>=0">discountEP=#{model.discountEP},</if>
+            <if test="model.firstReferrerScale!=null and model.firstReferrerScale>=0">firstReferrerScale=#{model.firstReferrerScale},</if>
+            <if test="model.secondReferrerScale!=null and model.secondReferrerScale>=0">secondReferrerScale=#{model.secondReferrerScale},</if>
+            <if test="model.thirdReferrerScale!=null and model.thirdReferrerScale>=0">thirdReferrerScale=#{model.thirdReferrerScale},</if>
+        </set>
+         WHERE  goodsId=#{goodsId} and goodsWinId=#{model.goodsWinId}
+    </update>
+</mapper>
+
+

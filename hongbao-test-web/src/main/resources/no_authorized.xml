@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 幸运积分项目，免登录验证的接口 -->
+<no_authorized> 
+	<url>/wallet/recharge/wxCallback</url>
+	<url>/wallet/handle/callback</url>
+	<url>/app</url>
+</no_authorized>
+
+

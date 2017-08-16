@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_hongbao-h5" default="compile.module.hongbao-h5">
+  <dirname property="module.hongbao-h5.basedir" file="${ant.file.module_hongbao-h5}"/>
+  
+  <property name="module.jdk.home.hongbao-h5" value=""/>
+  <property name="module.jdk.bin.hongbao-h5" value=""/>
+  <property name="module.jdk.classpath.hongbao-h5" value=""/>
+  
+  <property name="compiler.args.hongbao-h5" value="-encoding UTF-8 -source 8 -target 1.7 ${compiler.args}"/>
+  
+  <property name="hongbao-h5.output.dir" value="undefined"/>
+  <property name="hongbao-h5.testoutput.dir" value="undefined"/>
+  
+  <path id="hongbao-h5.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="hongbao-h5.module.production.classpath"/>
+  
+  <path id="hongbao-h5.runtime.production.module.classpath"/>
+  
+  <path id="hongbao-h5.module.classpath"/>
+  
+  <path id="hongbao-h5.runtime.module.classpath"/>
+  
+  
+  <patternset id="excluded.from.module.hongbao-h5">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.hongbao-h5">
+    <patternset refid="excluded.from.module.hongbao-h5"/>
+  </patternset>
+  
+  
+  <target name="compile.module.hongbao-h5" depends="compile.module.hongbao-h5.production,compile.module.hongbao-h5.tests" description="Compile module hongbao-h5"/>
+  
+  <target name="compile.module.hongbao-h5.production" depends="register.custom.compilers" description="Compile module hongbao-h5; production classes"/>
+  
+  <target name="compile.module.hongbao-h5.tests" depends="register.custom.compilers,compile.module.hongbao-h5.production" description="compile module hongbao-h5; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.hongbao-h5" description="cleanup module">
+    <delete dir="${hongbao-h5.output.dir}"/>
+    <delete dir="${hongbao-h5.testoutput.dir}"/>
+  </target>
+</project>
