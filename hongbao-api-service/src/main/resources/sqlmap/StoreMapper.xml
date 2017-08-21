@@ -32,7 +32,7 @@
 			#{model.detail}, #{model.isRecommend}, #{model.collectNum}, #{model.firstReferrerScale}, #{model.secondReferrerScale},
 			#{model.thirdReferrerScale}, #{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark},#{model.storeLicense},
             #{model.IDCardIcon}, #{model.servicePhone},#{model.provinceCode},#{model.cityCode},#{model.countyCode},#{model.areaId},#{model.longitude},
-            #{model.latitude},0,#{qrcodeUrl},#{menuUrl},#{shareUrl},#{weixinStatus})
+            #{model.latitude},0,#{model.qrcodeUrl},#{model.menuUrl},#{model.shareUrl},#{model.weixinStatus})
     </insert>
 
 	<update id="update">
