@@ -1,6 +1,5 @@
 package com.yanbao.controller;
 
-import com.alibaba.fastjson.util.UTF8Decoder;
 import com.mall.model.*;
 import com.taobao.api.internal.util.Base64;
 import com.yanbao.constant.GradeType;
@@ -193,6 +192,148 @@ public class UserController {
         setUserVo(user, vo);
         return new JsonResult(vo);
     }
+
+
+
+
+    /**
+     * 手机号注册
+     */
+    @ResponseBody
+    @RequestMapping(value = "/registerwithphone", method = RequestMethod.POST)
+    public JsonResult loginWithPhone(HttpServletRequest request, @RequestBody RegisterVo  vo) throws Exception {
+        if (StringUtils.isBlank(vo.getPhone())) {
+            return new JsonResult(0, "请输入手机号");
+        }
+        if (StringUtils.isBlank(vo.getSmsCode())) {
+            return new JsonResult(1, "请输入短信验证码");
+        }
+        String smsCode2 = Strings.get(RedisKey.SMS_CODE.getKey() + vo.getPhone());
+        if (!vo.getSmsCode().equalsIgnoreCase(smsCode2)) {
+            return new JsonResult(2, "短信验证码不正确或已失效");
+        }
+        User condition = new User();
+        condition.setPhone(vo.getPhone());
+        User user = userService.getByCondition(condition);
+        if (user == null) {
+            return new JsonResult(-1, "该手机号不存在");
+        }
+        if (StringUtils.isBlank(vo.getPassword())) {
+            return new JsonResult(1, "请输入登录密码");
+        }
+        if (StringUtils.isBlank(vo.getPasswordConfirm())) {
+            return new JsonResult(3, "请输入确认登录密码");
+        }
+        if (!vo.getPassword().equals(vo.getPasswordConfirm())) {
+            return new JsonResult(7, "两次输入密码不一致");
+        }
+        User referrerCondition = new User();
+        referrerCondition.setUid(vo.getInviteCode());
+        User referrer = userService.getByCondition(referrerCondition);
+        if (null == referrer) {
+            return new JsonResult(10001, "邀请码不正确");
+        }
+        if (user.getId().equals(referrer.getId())) {
+            return new JsonResult(10002, "邀请人不能是自己");
+        }
+        if (referrer.getStatus() == StatusType.FALSE.getCode()) {
+            return new JsonResult(10002, "邀请人帐号已禁用");
+        }
+        if (StringUtils.isBlank(referrer.getFirstReferrer())) {
+            return new JsonResult(10003, "邀请人帐号未激活");
+        }
+        User addUser = new User();
+        addUser.setPhone(vo.getPhone());
+        addUser.setSalt(DateTimeUtil.formatDate(new Date(),DateTimeUtil.PATTERN_B));
+        addUser.setPassword(Md5Util.MD5Encode(vo.getPassword(),addUser.getSalt()));
+        addUser.setFirstReferrer(referrer.getId());
+        addUser.setSecondReferrer(referrer.getFirstReferrer());
+        addUser.setThirdReferrer(referrer.getSecondReferrer());
+        addUser.setLevles(referrer.getLevles() + 1);
+        addUser.setUpdateTime(new Date());
+        addUser.setLoginTime(new Date());
+        addUser.setHeadImgUrl("http://user.doupaimall.com/logo.png");
+        addUser.setStatus(StatusType.TRUE.getCode());
+        // 每次都会保存极光推送生成ID
+        if (StringUtils.isNoneBlank(vo.getRegistrationId()) && !vo.getRegistrationId().equals(user.getRegistrationId())) {
+            addUser.setRegistrationId(vo.getRegistrationId());
+        }
+        userService.add(addUser);
+        user = userService.getByCondition(condition);
+        // 异步处理分组业务
+        final String userId = user.getId();
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    //客户端微信注册登录，用户根据系统算法分组
+                    userService.updateGroupCount(userId, "");
+                } catch (Exception e) {
+                    logger.error("处理分组失败！！" + e.getMessage());
+                }
+            }
+        }).start();
+
+        // 登录
+        String token = TokenUtil.generateToken(user.getId(), user.getUserName(), user.getNickName());
+        loginRedis(user, token);
+        Sets.sadd(RedisKey.ALL_TOKENS.getKey(), token);
+        if (logger.isInfoEnabled()) {
+            logger.info(String.format("user login[%s]", TokenUtil.getTokenObject(token)));
+        }
+        UserVo resvo = new UserVo();
+        BeanUtils.copyProperties(vo, user);
+        resvo.setToken(token);
+        resvo.setScore(FormatUtils.formatDouble(user.getScore()));
+        setUserVo(user, resvo);
+        return new JsonResult(resvo);
+    }
+
+
+
+
+
+
+    /**
+     * 绑定新的微信号
+     */
+    @ResponseBody
+    @RequestMapping(value = "/bindweixin", method = RequestMethod.POST)
+    public JsonResult bindWeixin(HttpServletRequest request, @RequestBody BindWeiXinVo  vo) throws Exception {
+        Token token = TokenUtil.getSessionUser(request);
+        if (token == null) {
+            return new JsonResult(1, "用户登录失效");
+        }
+        User user = userService.getById(token.getId());
+        if (null == user) {
+            logger.error(String.format("Illegal user id[%s]", token.getId()));
+            throw new IllegalArgumentException();
+        }
+        if (StringUtils.isBlank(vo.getUnionId())) {
+            return new JsonResult(0, "微信号不能为空");
+        }
+        User updateModel = new User();
+        updateModel.setWeixin(vo.getUnionId());
+        if (ToolUtil.isEmpty(user.getWeixin())){
+            updateModel.setRemark(DateTimeUtil.formatDate(new Date(),DateTimeUtil.PATTERN_LONG)+",新用户绑定微信号");
+        }else {
+            updateModel.setRemark(DateTimeUtil.formatDate(new Date(),DateTimeUtil.PATTERN_LONG)+",老用户切换微信号");
+            updateModel.setOldUnionId(user.getWeixin());
+        }
+        if (ToolUtil.isNotEmpty(vo.getHeadImgUrl())){
+            updateModel.setHeadImgUrl(vo.getHeadImgUrl());
+        }
+        if (ToolUtil.isNotEmpty(vo.getNickName())){
+             updateModel.setNickName(vo.getNickName());
+        }
+        if (vo.getSex()!=null){
+            updateModel.setSex(vo.getSex());
+        }
+        userService.update(user.getId(),updateModel);
+        return new JsonResult();
+    }
+
+
+
 
     private void loginRedis(User user, String token) {
         String redisToken = Strings.get(RedisKey.TOKEN_API.getKey() + user.getId());

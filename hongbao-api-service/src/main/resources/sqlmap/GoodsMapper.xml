@@ -47,11 +47,32 @@
 	</select>
 
 	<select id="getList" resultType="Goods">
+	<include refid="selector" />
+	<where>
+		status = 1 AND    `storeId` IS NOT NULL
+		<if test="goodsSortId !=null and goodsSortId !=''">
+			AND goodsSortId= #{goodsSortId}
+		</if>
+		<if test="page.timeSort==1000 and page.priceSort==1000">AND LENGTH(icon)>2000</if>
+	</where>
+	<if test="page.timeSort==2 and page.priceSort==0">ORDER BY createTime ASC </if>
+	<if test="page.timeSort==1 and page.priceSort==0">ORDER BY createTime DESC </if>
+	<if test="page.timeSort==0 and page.priceSort==2">ORDER BY price DESC</if>
+	<if test="page.timeSort==0 and  page.priceSort==1">ORDER BY price ASC</if>
+	<if test="page.priceSort==0 and page.timeSort==0">ORDER BY businessSendEp DESC</if>
+	LIMIT #{page.startRow}, #{page.pageSize}
+</select>
+
+
+	<select id="getSearchList" resultType="Goods">
 		<include refid="selector" />
 		<where>
-			status = 1 AND    `storeId` IS NOT NULL
-			<if test="goodsSortId !=null and goodsSortId !=''">
-				AND goodsSortId= #{goodsSortId}
+			status = 1 AND    `storeId` IS NOT NULL AND goodsSortId!='E694266A369F4C1AAF337C37B8575FA2'
+			<if test="goodsSearch.goodsSortId !=null and goodsSearch.goodsSortId !=''">
+				AND goodsSortId= #{goodsSearch.goodsSortId}
+			</if>
+			<if test="goodsSearch.name !=null and goodsSearch.name !=''">
+				AND name LIKE  CONCAT('%', #{goodsSearch.name}, '%')
 			</if>
 			<if test="page.timeSort==1000 and page.priceSort==1000">AND LENGTH(icon)>2000</if>
 		</where>

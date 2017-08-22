@@ -8,13 +8,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class DateTimeUtil {
-	
+	/**
+	 * yyyy-MM-dd HH:mm:ss
+	 */
 	public final static String PATTERN_LONG = "yyyy-MM-dd HH:mm:ss";
-
+	/**
+	 *yyyyMM
+	 */
 	public final static String PATTERN_A = "yyyyMM";
-	
+	/**
+	 *yyyyMMdd
+	 */
 	public final static String PATTERN_B = "yyyyMMdd";
-	
+	/**
+	 *yyyy-MM-dd
+	 */
 	public final static String PATTERN_C = "yyyy-MM-dd";
 	
 	/**

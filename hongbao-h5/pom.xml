@@ -132,6 +132,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>m</finalName>
+        <finalName>wxstore</finalName>
     </build>
 </project>

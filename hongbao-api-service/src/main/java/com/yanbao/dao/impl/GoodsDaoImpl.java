@@ -6,6 +6,7 @@ import com.yanbao.core.page.Page;
 import com.yanbao.dao.GoodsDao;
 import com.yanbao.mapper.GoodsMapper;
 import com.yanbao.redis.Strings;
+import com.yanbao.vo.GoodsSearchVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -107,5 +108,10 @@ public class GoodsDaoImpl implements GoodsDao {
 	@Override
 	public Integer updateSaleCount(String id, Integer sumSaleCount) throws Exception {
 		return goodsMapper.updateSaleCount(id, sumSaleCount);
+	}
+
+	@Override
+	public List<Goods> getSearchList( GoodsSearchVo goodsSearch, Page page) throws Exception {
+		return goodsMapper.getSearchList(goodsSearch, page);
 	}
 }

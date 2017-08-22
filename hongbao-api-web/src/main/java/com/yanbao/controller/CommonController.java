@@ -166,6 +166,9 @@ public class CommonController {
         return new JsonResult();
     }
 
+
+
+
     private static String generateCode(OutputStream outputStream) throws IOException {
         // 定义图像buffer
         BufferedImage buffImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);

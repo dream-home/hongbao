@@ -2,6 +2,7 @@ package com.yanbao.mapper;
 
 import java.util.List;
 
+import com.yanbao.vo.GoodsSearchVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,8 @@ public interface GoodsMapper {
 	Integer count(@Param("goodsSortId") String goodsSortId);
 
 	List<Goods> getList(@Param("goodsSortId") String goodsSortId, @Param("page") Page page);
+
+	List<Goods> getSearchList(@Param("goodsSearch") GoodsSearchVo goodsSearch, @Param("page") Page page) throws Exception;
 
 	Integer add(@Param("model") Goods model);
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.yanbao.core.page.Page;
 import com.mall.model.Goods;
+import com.yanbao.vo.GoodsSearchVo;
 
 /**
  * 
@@ -19,6 +20,8 @@ public interface GoodsDao {
 	Integer count(String goodsSortId) throws Exception;
 
 	List<Goods> getList(String goodsSortId, Page page) throws Exception;
+
+	List<Goods> getSearchList(GoodsSearchVo goodsSearch, Page page) throws Exception;
 
 	Integer add(Goods model) throws Exception;
 

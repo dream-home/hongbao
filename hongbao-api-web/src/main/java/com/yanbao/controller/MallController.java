@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.yanbao.vo.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -56,14 +57,6 @@ import com.yanbao.util.Md5Util;
 import com.yanbao.util.QiNiuUtil;
 import com.yanbao.util.TokenUtil;
 import com.yanbao.util.UUIDUtil;
-import com.yanbao.vo.DrawUserVo;
-import com.yanbao.vo.DrawVo;
-import com.yanbao.vo.GoodsDetailParamsVo;
-import com.yanbao.vo.GoodsDetailVo;
-import com.yanbao.vo.GoodsEpVo;
-import com.yanbao.vo.GoodsVo;
-import com.yanbao.vo.ImageVo;
-import com.yanbao.vo.PurchaseVo;
 
 @Controller
 @RequestMapping("/mall")
@@ -779,5 +772,45 @@ public class MallController {
 		}
 		List<Goods> list = goodsService.getNesGoodsList(maxRow);
 		return new JsonResult(list);
+	}
+
+
+
+	/**
+	 * 用户模糊搜索商品，返回商品列表
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/goods/searchlist", method = RequestMethod.GET)
+	public JsonResult goodsList(HttpServletRequest request, GoodsSearchVo goodsSearch, Page page) throws Exception {
+		Token token = TokenUtil.getSessionUser(request);
+		Integer timeSort = page.getTimeSort();
+		Integer priceSort = page.getPriceSort();
+		if (timeSort==null) {
+			timeSort=0;
+		}
+		if (priceSort==null) {
+			priceSort=0;
+		}
+		if (timeSort>0 && priceSort>0) {
+			timeSort=0;
+			priceSort=0;
+		}
+
+		page.setTimeSort(timeSort);
+		page.setPriceSort(priceSort);
+
+		PageResult<Goods> result = goodsService.getSearchPage(goodsSearch, page);
+		List<Goods> rows = result.getRows();
+		if (rows == null || rows.size() < 0) {
+			return new JsonResult(result);
+		}
+		List<GoodsVo> rows2 = new ArrayList<GoodsVo>();
+		for (Goods model : rows) {
+			GoodsVo vo = new GoodsVo();
+			BeanUtils.copyProperties(vo, model);
+			rows2.add(vo);
+		}
+		PageResult<GoodsVo> result2 = new PageResult<GoodsVo>(result.getPageNo(), result.getPageSize(), result.getTotalSize(), rows2);
+		return new JsonResult(result2);
 	}
 }

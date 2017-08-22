@@ -164,9 +164,13 @@ public class User extends SimpleModel {
     private Date loginTime;
     /***openId**/
     private String openId;
-    /**个人总斗斗数量*/
+    /**
+     * 个人总斗斗数量
+     */
     private Double doudou;
-    /** 斗斗用户签到时间 */
+    /**
+     * 斗斗用户签到时间
+     */
     @JsonSerialize(using = com.yanbao.core.model.CustomDateSerializer.class)
     private Date douSignTime;
     /**
@@ -185,7 +189,9 @@ public class User extends SimpleModel {
      * 区域代码
      */
     private String areaId;
-    /** 累计最大赠送斗斗 */
+    /**
+     * 累计最大赠送斗斗
+     */
     private Double bindDoudou;
     /**
      * 加入合伙人时间
@@ -195,12 +201,19 @@ public class User extends SimpleModel {
     /**
      * 非数据库字段----------------------------------------------------
      */
-    /** 用户详细地址 */
+    /**
+     * 用户详细地址
+     */
     private String addr;
 
     private Date fromTime;
 
     private Date toTime;
+
+    /**
+     * 炎宝开放平台用户oldUnionId
+     */
+    private String oldUnionId;
 
     public Double getBindEP() {
         return bindEP;
@@ -595,5 +608,13 @@ public class User extends SimpleModel {
 
     public void setJoinPartnerTime(Date joinPartnerTime) {
         this.joinPartnerTime = joinPartnerTime;
+    }
+
+    public String getOldUnionId() {
+        return oldUnionId;
+    }
+
+    public void setOldUnionId(String oldUnionId) {
+        this.oldUnionId = oldUnionId;
     }
 }

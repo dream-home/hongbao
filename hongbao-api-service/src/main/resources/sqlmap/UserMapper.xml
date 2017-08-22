@@ -12,7 +12,7 @@
 		groupType, groupChildCountA, groupChildCountB, groupChildCountC,
 		createTime, updateTime, status, remark, registrationId,
 		exchangeEP,consumeEP,grade,remainSign,performanceOne,performanceTwo,
-		performanceThree,signTime,bindEP,bindDoudou,checked,levles,loginTime,openId,doudou,douSignTime,province,city,county,areaId,joinPartnerTime
+		performanceThree,signTime,bindEP,bindDoudou,checked,levles,loginTime,openId,doudou,douSignTime,province,city,county,areaId,joinPartnerTime,oldUnionId
 	</sql>
 
 	<sql id="table">hb_sys_user</sql>
@@ -37,6 +37,8 @@
 			<if test="model.thirdReferrer != null">AND thirdReferrer= #{model.thirdReferrer}</if>
 			<if test="model.storeId != null">AND storeId= #{model.storeId}</if>
 			<if test="model.openId != null">AND openId= #{model.openId}</if>
+			<if test="model.oldUnionId != null">AND oldUnionId= #{model.oldUnionId}</if>
+
 		</where>
 	</sql>
 
@@ -106,7 +108,7 @@
 		#{model.city},
 		#{model.county},
 		#{model.areaId},
-		null)
+		null,#{model.oldUnionId})
 	</insert>
 
 	<update id="update">
@@ -150,6 +152,7 @@
 			<if test="model.county != null">county= #{model.county},</if>
 			<if test="model.areaId != null">areaId= #{model.areaId},</if>
 			<if test="model.joinPartnerTime != null">joinPartnerTime= #{model.joinPartnerTime},</if>
+			<if test="model.oldUnionId != null">oldUnionId= #{model.oldUnionId},</if>
 		</set>
 		WHERE id = #{id}
 	</update>

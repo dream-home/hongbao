@@ -1,13 +1,14 @@
 package com.yanbao.service.impl;
 
+import com.mall.model.Goods;
+import com.mall.model.GoodsIssue;
 import com.yanbao.core.page.Page;
 import com.yanbao.core.page.PageResult;
 import com.yanbao.dao.GoodsDao;
-import com.mall.model.Goods;
-import com.mall.model.GoodsIssue;
 import com.yanbao.service.GoodsIssueService;
 import com.yanbao.service.GoodsService;
 import com.yanbao.util.UUIDUtil;
+import com.yanbao.vo.GoodsSearchVo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -126,23 +128,23 @@ public class GoodsServiceImpl implements GoodsService {
     public PageResult<Goods> getEpPage(String goodsSortId, Page page) throws Exception {
         PageResult<Goods> pageResult = new PageResult<>();
         Integer totalSize = goodsDao.countEp(goodsSortId);
-        List<Goods> list =null;
-        if (totalSize==null){
-            totalSize=0;
+        List<Goods> list = null;
+        if (totalSize == null) {
+            totalSize = 0;
         }
         if (totalSize != null && totalSize > 0) {
-            list  = goodsDao.getEpList(goodsSortId, page);
+            list = goodsDao.getEpList(goodsSortId, page);
             for (Goods g : list) {
                 g.setDetail("");
             }
             if (!CollectionUtils.isEmpty(list)) {
                 BeanUtils.copyProperties(pageResult, page);
-            }else {
-                totalSize=0;
+            } else {
+                totalSize = 0;
             }
         } else {
-            list=new ArrayList<Goods>();
-            totalSize=0;
+            list = new ArrayList<Goods>();
+            totalSize = 0;
         }
         pageResult.setRows(list);
         pageResult.setTotalSize(totalSize);
@@ -202,12 +204,25 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public Integer updateSaleCount(String id, Integer sumSaleCount) throws Exception {
-        if(StringUtils.isEmpty(id)){
+        if (StringUtils.isEmpty(id)) {
             return 0;
         }
-        if(sumSaleCount == null || sumSaleCount < 0){
+        if (sumSaleCount == null || sumSaleCount < 0) {
             return 0;
         }
-        return goodsDao.updateSaleCount(id,sumSaleCount);
+        return goodsDao.updateSaleCount(id, sumSaleCount);
+    }
+
+    @Override
+    public PageResult<Goods> getSearchPage(GoodsSearchVo goodsSearch, Page page) throws Exception {
+        PageResult<Goods> pageResult = new PageResult<Goods>();
+        BeanUtils.copyProperties(pageResult, page);
+        List<Goods> list = goodsDao.getSearchList(goodsSearch, page);
+        if (list == null) {
+            list = Collections.emptyList();
+        }
+        pageResult.setTotalSize(list.size());
+        pageResult.setRows(list);
+        return pageResult;
     }
 }

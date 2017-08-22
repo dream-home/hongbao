@@ -4,6 +4,7 @@
 <no_authorized>
 	<!-- 微信登录 -->
 	<url>/user/login/weixin</url>
+	<url>/user/registerwithphone</url>
 	<url>/user/login/loginIn</url>
 	<!-- 首页广告 -->
 	<url>/home/ad</url>
@@ -49,6 +50,7 @@
 	<url>/mypartner/partnerinfo</url>
 	<url>/sign/signlist</url>
 	<url>/goods/eplist</url>
+	<url>/mall/goods/searchlist</url>
 	<url>/goods/list</url>
 	<url>/goods/indexlist</url>
 	<url>/goods/getNesGoods</url>

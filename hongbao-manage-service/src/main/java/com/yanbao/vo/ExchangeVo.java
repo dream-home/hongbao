@@ -55,7 +55,8 @@ public class ExchangeVo extends BaseVo {
 
     @JsonSerialize(using = CustomDateSerializer.class)
     private Date createTime;
-
+    @JsonSerialize(using = CustomDateSerializer.class)
+    private Date updateTime;
     private String remark;
 
     public String getRemark() {
@@ -162,4 +163,11 @@ public class ExchangeVo extends BaseVo {
         this.createTime = createTime;
     }
 
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 }
