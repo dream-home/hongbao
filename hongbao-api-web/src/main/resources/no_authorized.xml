@@ -42,6 +42,8 @@
 	<url>/test.html</url> 
 	<!-- 登录图片验证码 -->
 	<url>/common/forgetLoginPic</url>
+	<!-- 注册获取手机短信验证码 -->
+	<url>/common/registersms</url>
 	<!-- 获取手机短信验证码 -->
 	<url>/common/forgetLoginSmsCode</url>
 	<!-- 忘记密码 -->

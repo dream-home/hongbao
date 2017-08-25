@@ -40,7 +40,7 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private static final Integer SYSTEM_USER_UID = 200000;
-    private static final String PAGE_SHARE = "http://m.yanbaocoin.cn/h5";
+    private static final String PAGE_SHARE = "http://doupaimall.com/h5";
 
     public static List<String> group = new ArrayList<>();
 
@@ -397,13 +397,13 @@ public class UserController {
            /* mv.setViewName("error");
             mv.addObject("msg", "店铺已被屏蔽");
             return mv;*/
-            return  new ModelAndView(new RedirectView("http://m.yanbaocoin.cn/wxpage?index=errorPage"));
+            return  new ModelAndView(new RedirectView("http://doupaimall.com/wxpage?index=errorPage"));
         }
         if (ToolUtil.isEmpty(store.getMenuUrl())) {
           /*  mv.setViewName("error");
             mv.addObject("msg", "店铺尚未设置链接");
             return mv;*/
-            return  new ModelAndView(new RedirectView("http://m.yanbaocoin.cn/wxpage?index=errorPage"));
+            return  new ModelAndView(new RedirectView("http://doupaimall.com/wxpage?index=errorPage"));
         }
         if (vo.getUid() == null) {
             User condition = new User();
@@ -413,7 +413,7 @@ public class UserController {
               /*  mv.setViewName("error");
                 mv.addObject("msg", "创建店铺用户已被屏蔽");
                 return mv;*/
-                return  new ModelAndView(new RedirectView("http://m.yanbaocoin.cn/wxpage?index=errorPage"));
+                return  new ModelAndView(new RedirectView("http://doupaimall.com/wxpage?index=errorPage"));
             }
             vo.setUid(storeUser.getUid());
         }
@@ -585,7 +585,7 @@ public class UserController {
             return mv;
         }
         if (store.getWeixinStatus()==null || store.getWeixinStatus()!=2){
-            return  new ModelAndView(new RedirectView("http://m.yanbaocoin.cn/wxpage/?index=errorPage"));
+            return  new ModelAndView(new RedirectView("http://doupaimall.com/wxpage/?index=errorPage"));
         }
         /*UserVo vo = new UserVo();
         BeanUtils.copyProperties(vo, user);
@@ -605,7 +605,7 @@ public class UserController {
             *//*mv.setViewName("error");
             mv.addObject("msg", "店铺参数配置错误");
             return mv;*//*
-            return  new ModelAndView(new RedirectView("http://m.yanbaocoin.cn/wxpage?index=errorPage"));
+            return  new ModelAndView(new RedirectView("http://doupaimall.com/wxpage?index=errorPage"));
         }*/
         // 进入h5页面
         mv.addObject("info", "微信店铺");

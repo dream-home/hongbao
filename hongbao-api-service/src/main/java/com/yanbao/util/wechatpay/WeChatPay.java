@@ -24,10 +24,10 @@ public interface WeChatPay {
 
 //	public static String NOTIFY_URL = "http://121.199.25.90:8091/api/wallet/recharge/wxCallback";
 			//h5页面微信直接购买
-	public static String NOTIFY_URL_H5 = "http://m.yanbaocoin.cn/m/wallet/share/wxCallback";
+	public static String NOTIFY_URL_H5 = "http://doupaimall.com/m/wallet/share/wxCallback";
 
 	//商家固定扫码支付
-	public static String NOTIFY_URL_SCAN = "http://m.yanbaocoin.cn/api/wallet/wxScanCallback";
+	public static String NOTIFY_URL_SCAN = "http://doupaimall.com/api/wallet/wxScanCallback";
 
 	//http://120.25.120.154:8090/api/wallet/recharge/wxCallback
 	//https://www.6pyun.com/api/wallet/recharge/wxCallback

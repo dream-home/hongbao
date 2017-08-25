@@ -39,7 +39,7 @@ public class ScanController {
     private String wechatCallbackDomain;
     @Value("${payPage}")
     private String payPage;
-    private static final String PAGE_SHARE ="http://m.yanbaocoin.cn/h5";
+    private static final String PAGE_SHARE ="http://doupaimall.com/h5";
 
     /**
      * 微信分享过渡页

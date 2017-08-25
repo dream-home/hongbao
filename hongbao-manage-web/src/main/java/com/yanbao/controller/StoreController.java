@@ -93,7 +93,7 @@ public class StoreController extends BaseController {
     		updateStore.setMenuUrl(storeVo.getMenuUrl());
     	}
     	updateStore.setQrcodeUrl(storeVo.getQrcodeUrl());
-    	updateStore.setShareUrl("http://m.yanbaocoin.cn/wxpage");
+    	updateStore.setShareUrl("http://doupaimall.com/wxpage");
     	storeService.updateById(store.getId(), updateStore);
         return success();
     }

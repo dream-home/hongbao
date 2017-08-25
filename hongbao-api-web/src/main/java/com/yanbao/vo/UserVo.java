@@ -106,6 +106,10 @@ public class UserVo implements Serializable {
 	 * 区域代码
 	 */
 	private String areaId;
+	/**
+	 * 是否弹窗显示用户绑定微信
+	 */
+	private Integer isBindSHWeiXin;
 
 	public String getProvince() {
 		return province;
@@ -427,5 +431,13 @@ public class UserVo implements Serializable {
 
 	public void setDoudou(Double doudou) {
 		this.doudou = doudou;
+	}
+
+	public Integer getIsBindSHWeiXin() {
+		return isBindSHWeiXin;
+	}
+
+	public void setIsBindSHWeiXin(Integer isBindSHWeiXin) {
+		this.isBindSHWeiXin = isBindSHWeiXin;
 	}
 }

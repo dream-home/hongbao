@@ -418,6 +418,28 @@ public class CommonController {
     }
 
 
+    @ResponseBody
+    @RequestMapping(value = "/registersms", method = RequestMethod.POST)
+    public JsonResult registerSmsCode(HttpServletRequest request, @RequestBody PhoneVo vo) throws Exception {
+        if (StringUtils.isBlank(vo.getPhone())) {
+            return new JsonResult(0, "请输入手机号");
+        }
+        if (!PasswordUtil.isAllNumeric(vo.getPhone()) || vo.getPhone().length() != 11) {
+            return new JsonResult(1, "请输入合法手机号");
+        }
+        User condition = new User();
+        condition.setPhone(vo.getPhone());
+        User temp = userService.getByCondition(condition);
+        if (temp != null) {
+            return new JsonResult(-1, "该手机号已被注册");
+        }
+        int smsCode = (int) ((Math.random() * 9 + 1) * 100000);
+        SmsUtil.sendSmsCode(vo.getPhone(), SmsTemplate.COMMON, smsCode + "");
+        Strings.setEx(RedisKey.SMS_CODE.getKey() + vo.getPhone(), RedisKey.SMS_CODE.getSeconds(), smsCode + "");
+        return new JsonResult();
+    }
+
+
     public static void main(String[] args) {
 //        File file = new File("E:\\ideawork\\serveManage\\hongbao\\hongbao-api-web\\target\\api\\0028FB70FFA14A68ABF55EA2D48BEE09.jpg");
 //        if (file.exists()) {

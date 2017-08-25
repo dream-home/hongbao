@@ -1,10 +1,10 @@
-https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx32266be91b9e0a8f&redirect_uri=http%3A%2F%2Fm.yanbaocoin.cn%2Fm%2Fscan%2Fcallback&response_type=code&scope=snsapi_userinfo&state=200000_4_ASDFSAFDSAFSAFSAFSA_JKLAJFADLKGADGDASFDSADFSAAF_2#wechat_redirect
+https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx32266be91b9e0a8f&redirect_uri=http%3A%2F%2Fdoupaimall.com%2Fm%2Fscan%2Fcallback&response_type=code&scope=snsapi_userinfo&state=200000_4_ASDFSAFDSAFSAFSAFSA_JKLAJFADLKGADGDASFDSADFSAAF_2#wechat_redirect
 
 {"openid":"ouH4bsxz5q0d9uf3B1dy8CpN2Un8","nickname":"思清浅","sex":0,"language":"zh_CN","city":"","province":"","country":"中国","headimgurl":"http://wx.qlogo.cn/mmopen/qiaATlRAxedI1OUEXibe9QKjqxto9DuL3Elo51ykia5I40psGQjric4XQSZ4xGYtSneEZMOS0JT79GaV0hxZDosYCW46TnIVn3wg/0","privilege":[],"unionid":"oVpwvwLsTU3zcigEJ1qPKDRb8IcY"}
 
 
-http://m.yanbaocoin.cn/h5?uid=200000&token=eyJ0aW1lIjoxNDk1NjE4MTg3NTQ4LCJpZCI6IjE0MzRGRjNDMTUxQzQ1QUJCMzg2MjMwQUE3NUNDQjFGIiwibmlja05hbWUiOiLmgJ3muIXmtYUifQ**&index=4&storeUserId=ASDFSAFDSAFSAFSAFSA&storeId=&type=2
+http://doupaimall.com/h5?uid=200000&token=eyJ0aW1lIjoxNDk1NjE4MTg3NTQ4LCJpZCI6IjE0MzRGRjNDMTUxQzQ1QUJCMzg2MjMwQUE3NUNDQjFGIiwibmlja05hbWUiOiLmgJ3muIXmtYUifQ**&index=4&storeUserId=ASDFSAFDSAFSAFSAFSA&storeId=&type=2
 
 
-http://m.yanbaocoin.cn/h5?uid=201902&token=eyJ0aW1lIjoxNDk1NzAxMjg3MzgyLCJpZCI6IkU2NDAxOEM1MDQxNDQ1Qzc5REY0QkEwQTcxQzFCOEU1IiwidXNlck5hbWUiOiLmuIXmtYUiLCJuaWNrTmFtZSI6Iua4hea1hSJ9&index=4&storeUserId=null&storeId=00CAC9547B3848D784B538025A2E87BA&type=2
+http://doupaimall.com/h5?uid=201902&token=eyJ0aW1lIjoxNDk1NzAxMjg3MzgyLCJpZCI6IkU2NDAxOEM1MDQxNDQ1Qzc5REY0QkEwQTcxQzFCOEU1IiwidXNlck5hbWUiOiLmuIXmtYUiLCJuaWNrTmFtZSI6Iua4hea1hSJ9&index=4&storeUserId=null&storeId=00CAC9547B3848D784B538025A2E87BA&type=2
 
