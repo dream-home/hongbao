@@ -1641,13 +1641,15 @@ public class WalletController {
     @ResponseBody
     @RequestMapping(value = "/v42/exchange", method = RequestMethod.POST)
     public JsonResult v42Exchange(HttpServletRequest request, @RequestBody WalletV42Vo vo) throws Exception {
+        Token token = TokenUtil.getSessionUser(request);
         // 检查后台是否开启兑换开关
         ParamUtil util = ParamUtil.getIstance();
         if (ToolUtil.parseInt(util.get(Parameter.EXCHANGESWITCH), 0) != StatusType.TRUE.getCode()) {
             return new JsonResult(0, "兑换功能暂未开启");
         }
 
-        Token token = TokenUtil.getSessionUser(request);
+
+
         double exchangeMin = ToolUtil.parseDouble(util.get(Parameter.EXCHANGEMIN), 100d);
         double exchangeMax = ToolUtil.parseDouble(util.get(Parameter.EXCHANGEMAX), 10000d);
         if (vo.getScore() == null || vo.getScore() < exchangeMin || vo.getScore() > exchangeMax) {
@@ -1686,7 +1688,11 @@ public class WalletController {
         if (user.getScore() == null || user.getScore() < vo.getScore()) {
             return new JsonResult(5, "您的余额不足");
         }
-
+        Integer times=ToolUtil.parseInt(util.get(Parameter.EXCHANGTIMES), 0);
+        Integer hasExchange =  walletExchangeService.countCurrentDay(user.getId());
+        if (hasExchange!=null && hasExchange>times) {
+            return new JsonResult(0, "每天最多提现"+times+"笔");
+        }
         List<UserBankcard> bankList = userBankcardService.getList(user.getId());
         UserBankcard bankcard = new UserBankcard();
         if (CollectionUtils.isEmpty(bankList)) {

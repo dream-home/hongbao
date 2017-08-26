@@ -21,4 +21,6 @@ public interface WalletExchangeMapper {
 
 	Integer update(@Param("id") String id, @Param("model") WalletExchange model);
 
+	Integer  countCurrentDay(@Param("userId") String userId);
+
 }

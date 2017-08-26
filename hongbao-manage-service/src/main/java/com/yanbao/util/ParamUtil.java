@@ -3,6 +3,7 @@ package com.yanbao.util;
 import com.mall.model.Parameter;
 import com.yanbao.constant.RedisKey;
 import com.yanbao.core.page.Page;
+import com.yanbao.redis.Sets;
 import com.yanbao.redis.Strings;
 import com.yanbao.service.ParameterService;
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class ParamUtil {
             updateToken = Strings.get(RedisKey.SYS_PARAM_UPDTOKEN.getKey());
             //初始化redis
             if (updateToken == null || "".equalsIgnoreCase(updateToken)) {
-                Strings.set(RedisKey.SYS_PARAM_UPDTOKEN.getKey(),UUIDUtil.getUUID());
+                Strings.set(RedisKey.SYS_PARAM_UPDTOKEN.getKey(), UUIDUtil.getUUID());
                 updateToken = Strings.get(RedisKey.SYS_PARAM_UPDTOKEN.getKey());
             }
             hmProperties_ = new HashMap<String, Parameter>();
@@ -104,7 +105,14 @@ public class ParamUtil {
 
     //管理端更新系统参数
     public synchronized void reloadParam() {
+        System.out.println("******************************old*************************");
+        System.out.println(Strings.get(RedisKey.SYS_PARAM_UPDTOKEN.getKey()));
+        System.out.println("*******************************************************");
         Strings.set(RedisKey.SYS_PARAM_UPDTOKEN.getKey(), UUIDUtil.getUUID());
+        System.out.println("********************** new *********************************");
+        System.out.println(Strings.get(RedisKey.SYS_PARAM_UPDTOKEN.getKey()));
+        System.out.println("*******************************************************");
+        Strings.del(RedisKey.SYS_PARAM_UPDTOKEN.getKey());
         reload();
     }
 
@@ -168,7 +176,7 @@ public class ParamUtil {
         //遍历map中的键
         for (String key : hmProperties_.keySet()) {
             model = hmProperties_.get(key);
-            if(model !=null && model.getGroupType().equals(group)) {
+            if (model != null && model.getGroupType().equals(group)) {
                 list.add(model);
             }
         }
@@ -176,6 +184,7 @@ public class ParamUtil {
         return list;
 
     }
+
     /**
      * 范例: prop.getInstance().getAllModel();
      * <p>

@@ -71,6 +71,10 @@ public class Parameter extends SimpleModel implements Comparable<Parameter>{
      */
     public static final String EXCHANGESWITCH = "exchangeSwitch";
     /**
+     * 每天提现次数限制
+     */
+    public static final String EXCHANGTIMES = "exchangeTimes";
+    /**
      * 单次兑换（提现）最大值
      */
     public static final String EXCHANGEMAX = "exchangeMax";

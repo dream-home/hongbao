@@ -68,4 +68,9 @@ public class WalletExchangeServiceImpl  extends CommonServiceImpl<WalletExchange
 	public List<WalletExchange> getByStoreIds(List<String> storeIds) {
 		return walletExchangeMapper.getByStoreIds(storeIds);
 	}
+
+    @Override
+    public Integer countCurrentDay(String userId) {
+        return walletExchangeMapper.countCurrentDay(userId);
+    }
 }

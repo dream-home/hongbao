@@ -25,4 +25,6 @@ public interface WalletExchangeService {
 
 	Boolean epToDouDouExchangeHandler(User user, Double ep) throws Exception;
 
+	public Integer countCurrentDay(String userId) throws Exception;
+
 }

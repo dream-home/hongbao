@@ -160,6 +160,9 @@ public class UserServiceImpl implements UserService {
         if (StringUtils.isNotBlank(user.getPayPwd())) {
             user.setPayPwd(Md5Util.MD5Encode(user.getPayPwd().trim(), salt));
         }
+        if (StringUtils.isEmpty(user.getNickName())){
+            user.setNickName("http://user.doupaimall.com/logo.png");
+        }
         user.setStatus(StatusType.TRUE.getCode());
         user.setIsKF(StatusType.FALSE.getCode());
         user.setGroupChildCountA(0);

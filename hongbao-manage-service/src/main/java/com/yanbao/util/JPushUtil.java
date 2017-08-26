@@ -24,8 +24,10 @@ import java.util.Map;
  */
 public class JPushUtil {
     /*暂时写死，后期有重构再调整*/
-    private static String MASTER_SECRET = "a143399be3c99ee3e7afbd77";
-    private static String APP_KEY = "87a89551ec616197a8c5d8ff";
+//    private static String MASTER_SECRET = "a143399be3c99ee3e7afbd77";
+//    private static String APP_KEY = "87a89551ec616197a8c5d8ff";
+    private static String MASTER_SECRET = "d242a7fd6a654af245ddf58f";
+    private static String APP_KEY = "f67377a1fcc75930682f8670";
 
     /**
      * 根据每个用户的极光推送Id进行精准推送

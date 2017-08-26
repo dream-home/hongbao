@@ -52,7 +52,12 @@
         </set>
 		WHERE id = #{id}
     </update>
-	
+
+	<select id="countCurrentDay" resultType="Integer">
+		SELECT COUNT(id)
+		FROM <include refid="table"/>
+		WHERE userId = #{userId}     AND status in(0,1,3) AND   to_days(createTime) = to_days(now())
+	</select>
 </mapper>
 
 

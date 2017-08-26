@@ -225,4 +225,9 @@ public class WalletExchangeServiceImpl implements WalletExchangeService {
         walletSignService.add(walletSign);
         return walletSign;
     }
+
+    @Override
+    public Integer countCurrentDay(String userId) throws Exception {
+        return walletExchangeDao.countCurrentDay(userId);
+    }
 }

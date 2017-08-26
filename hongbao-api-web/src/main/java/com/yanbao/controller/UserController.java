@@ -189,9 +189,9 @@ public class UserController {
         BeanUtils.copyProperties(vo, user);
         vo.setToken(token);
         vo.setScore(FormatUtils.formatDouble(user.getScore()));
-        if (ToolUtil.isEmpty(user.getOldUnionId())){
+        if (ToolUtil.isEmpty(user.getOldUnionId())) {
             vo.setIsBindSHWeiXin(StatusType.TRUE.getCode());
-        }else {
+        } else {
             vo.setIsBindSHWeiXin(StatusType.FALSE.getCode());
         }
 
@@ -200,14 +200,12 @@ public class UserController {
     }
 
 
-
-
     /**
      * 手机号注册
      */
     @ResponseBody
     @RequestMapping(value = "/registerwithphone", method = RequestMethod.POST)
-    public JsonResult registerWithPhone(HttpServletRequest request, @RequestBody RegisterVo  vo) throws Exception {
+    public JsonResult registerWithPhone(HttpServletRequest request, @RequestBody RegisterVo vo) throws Exception {
         if (StringUtils.isBlank(vo.getPhone())) {
             return new JsonResult(0, "请输入手机号");
         }
@@ -239,7 +237,7 @@ public class UserController {
         if (null == referrer) {
             return new JsonResult(10001, "邀请码不正确");
         }
-        if (referrer.getUid()==vo.getInviteCode()) {
+        if (referrer.getUid() == vo.getInviteCode()) {
             return new JsonResult(10002, "邀请人不能是自己");
         }
         if (referrer.getStatus() == StatusType.FALSE.getCode()) {
@@ -250,8 +248,7 @@ public class UserController {
         }
         User addUser = new User();
         addUser.setPhone(vo.getPhone());
-        addUser.setSalt(DateTimeUtil.formatDate(new Date(),DateTimeUtil.PATTERN_B));
-        addUser.setPassword(Md5Util.MD5Encode(vo.getPassword(),addUser.getSalt()));
+        addUser.setPassword(vo.getPassword());
         addUser.setFirstReferrer(referrer.getId());
         addUser.setSecondReferrer(referrer.getFirstReferrer());
         addUser.setThirdReferrer(referrer.getSecondReferrer());
@@ -295,16 +292,12 @@ public class UserController {
     }
 
 
-
-
-
-
     /**
      * 绑定新的微信号
      */
     @ResponseBody
     @RequestMapping(value = "/bindweixin", method = RequestMethod.POST)
-    public JsonResult bindWeixin(HttpServletRequest request, @RequestBody BindWeiXinVo  vo) throws Exception {
+    public JsonResult bindWeixin(HttpServletRequest request, @RequestBody BindWeiXinVo vo) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
         if (token == null) {
             return new JsonResult(1, "用户登录失效");
@@ -318,38 +311,36 @@ public class UserController {
             return new JsonResult(0, "微信号不能为空");
         }
 
-        User conditon= new User();
+        User conditon = new User();
         conditon.setWeixin(vo.getUnionId());
         User oldWeiXinUser = userService.getByCondition(conditon);
-        if (oldWeiXinUser!=null){
+        if (oldWeiXinUser != null) {
             User updateOldeWxModel = new User();
-            updateOldeWxModel.setWeixin(oldWeiXinUser.getWeixin()+"200000");
-            updateOldeWxModel.setRemark(DateTimeUtil.formatDate(new Date(),DateTimeUtil.PATTERN_LONG)+",新用户同一个微信号重复注册,将此微信号做变更");
-            userService.update(oldWeiXinUser.getId(),updateOldeWxModel);
+            updateOldeWxModel.setWeixin(oldWeiXinUser.getWeixin() + "200000");
+            updateOldeWxModel.setRemark(DateTimeUtil.formatDate(new Date(), DateTimeUtil.PATTERN_LONG) + ",新用户同一个微信号重复注册,将此微信号做变更");
+            userService.update(oldWeiXinUser.getId(), updateOldeWxModel);
         }
 
         User updateModel = new User();
         updateModel.setWeixin(vo.getUnionId());
-        if (ToolUtil.isEmpty(user.getWeixin())){
-            updateModel.setRemark(DateTimeUtil.formatDate(new Date(),DateTimeUtil.PATTERN_LONG)+",新用户绑定微信号");
-        }else {
-            updateModel.setRemark(DateTimeUtil.formatDate(new Date(),DateTimeUtil.PATTERN_LONG)+",老用户切换微信号");
+        if (ToolUtil.isEmpty(user.getWeixin())) {
+            updateModel.setRemark(DateTimeUtil.formatDate(new Date(), DateTimeUtil.PATTERN_LONG) + ",新用户绑定微信号");
+        } else {
+            updateModel.setRemark(DateTimeUtil.formatDate(new Date(), DateTimeUtil.PATTERN_LONG) + ",老用户切换微信号");
             updateModel.setOldUnionId(user.getWeixin());
         }
-        if (ToolUtil.isNotEmpty(vo.getHeadImgUrl())){
+        if (ToolUtil.isNotEmpty(vo.getHeadImgUrl())) {
             updateModel.setHeadImgUrl(vo.getHeadImgUrl());
         }
-        if (ToolUtil.isNotEmpty(vo.getNickName())){
-             updateModel.setNickName(vo.getNickName());
+        if (ToolUtil.isNotEmpty(vo.getNickName())) {
+            updateModel.setNickName(vo.getNickName());
         }
-        if (vo.getSex()!=null){
+        if (vo.getSex() != null) {
             updateModel.setSex(vo.getSex());
         }
-        userService.update(user.getId(),updateModel);
+        userService.update(user.getId(), updateModel);
         return new JsonResult();
     }
-
-
 
 
     private void loginRedis(User user, String token) {
@@ -783,7 +774,7 @@ public class UserController {
         }
 //        String content = wechatCallbackDomain + "/user/share?uid=" + uid + "&groupType=" + groupType + "&storeId=" + storeId + "&storeUserUid=" + storeUser.getUid();
         //微信店铺邀请有惊喜url
-        String content = "http://doupaimall.com/wxstore" + "/user/wdtransition?uid=" + uid + "&groupType=" + groupType + "&storeId=" + storeId + "&storeUserUid=" + storeUser.getUid() + "&shareUrl=http://doupaimall.com/wxpage"+"_"+"&index=shareCode";
+        String content = "http://doupaimall.com/wxstore" + "/user/wdtransition?uid=" + uid + "&groupType=" + groupType + "&storeId=" + storeId + "&storeUserUid=" + storeUser.getUid() + "&shareUrl=http://doupaimall.com/wxpage" + "_" + "&index=shareCode";
         String imgPath = store.getShareUrl();
         if (ToolUtil.isEmpty(imgPath)) {
             return new JsonResult(0, "本店铺尚未完善信息");
@@ -902,7 +893,7 @@ public class UserController {
             nickName = EmojiUtil.replaceEmoji(nickName);
             user.setNickName(nickName);
             user.setHeadImgUrl(headImgUrl);
-            if(ToolUtil.isEmpty(headImgUrl)){
+            if (ToolUtil.isEmpty(headImgUrl)) {
                 user.setHeadImgUrl("http://user.doupaimall.com/userDefault.png");
             }
             userService.add(user);
@@ -1075,10 +1066,10 @@ public class UserController {
         UserVo u = new UserVo();
         BeanUtils.copyProperties(u, user);
         u.setToken(token);
-        if (ToolUtil.isEmpty(user.getOldUnionId())){
-            vo.setIsBindSHWeiXin(StatusType.TRUE.getCode());
-        }else {
-            vo.setIsBindSHWeiXin(StatusType.FALSE.getCode());
+        if (ToolUtil.isEmpty(user.getOldUnionId())) {
+            u.setIsBindSHWeiXin(StatusType.TRUE.getCode());
+        } else {
+            u.setIsBindSHWeiXin(StatusType.FALSE.getCode());
         }
         u.setScore(FormatUtils.formatDouble(user.getScore()));
 
@@ -1222,9 +1213,9 @@ public class UserController {
         }
         UserVo vo = new UserVo();
         BeanUtils.copyProperties(vo, user);
-        if (ToolUtil.isEmpty(user.getOldUnionId())){
+        if (ToolUtil.isEmpty(user.getOldUnionId())) {
             vo.setIsBindSHWeiXin(StatusType.TRUE.getCode());
-        }else {
+        } else {
             vo.setIsBindSHWeiXin(StatusType.FALSE.getCode());
         }
         vo.setToken(redisToken);
@@ -1545,4 +1536,15 @@ public class UserController {
         userService.update(user.getId(), updateUser);
         return new JsonResult(ResultCode.SUCCESS.getCode(), "修改头像成功");
     }
+
+    public static void main(String[] args) {
+        String salt=  DateTimeUtil.formatDate(new Date(), DateTimeUtil.PATTERN_B);
+        String pass=Md5Util.MD5Encode("123456", salt);
+        System.out.println(pass);
+        System.out.println(salt);
+        System.out.println(pass.equals(Md5Util.MD5Encode("123456", salt)));
+        System.out.println("127C5073979AF8DB92E7626E5888EF49".equals(Md5Util.MD5Encode("", salt)));
+
+    }
+
 }

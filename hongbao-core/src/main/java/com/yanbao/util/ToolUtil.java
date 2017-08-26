@@ -360,7 +360,7 @@ public class ToolUtil {
         if (distance >= 1000) {
             return PoundageUtil.divide(distance, 1000d, 2) + "km";
         } else {
-            return distance + "米";
+            return distance + "m";
         }
     }
 

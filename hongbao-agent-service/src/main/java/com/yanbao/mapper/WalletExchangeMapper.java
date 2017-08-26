@@ -26,4 +26,5 @@ public interface WalletExchangeMapper extends CommonDao<WalletExchange>{
 	 * @return
 	 */
 	List<WalletExchange> getByStoreIds(@Param("storeIds")List<String> storeIds);
+
 }

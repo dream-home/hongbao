@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.yanbao.core.page.Page;
 import com.mall.model.WalletExchange;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 
@@ -21,5 +22,7 @@ public interface WalletExchangeDao {
 	Integer add(WalletExchange model) throws Exception;
 
 	Integer update(String id, WalletExchange model) throws Exception;
+
+	Integer  countCurrentDay( String userId) throws Exception ;
 
 }
