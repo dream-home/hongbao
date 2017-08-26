@@ -1690,7 +1690,7 @@ public class WalletController {
         }
         Integer times=ToolUtil.parseInt(util.get(Parameter.EXCHANGTIMES), 0);
         Integer hasExchange =  walletExchangeService.countCurrentDay(user.getId());
-        if (hasExchange!=null && hasExchange>times) {
+        if (hasExchange!=null && hasExchange>=times) {
             return new JsonResult(0, "每天最多提现"+times+"笔");
         }
         List<UserBankcard> bankList = userBankcardService.getList(user.getId());
