@@ -53,7 +53,7 @@ public class OrderInfoUtil2_0 {
 		keyValues.put("auth_type", "AUTHACCOUNT");
 
 		// 签名类型
-		keyValues.put("sign_type", "RSA");
+		keyValues.put("sign_type", SignUtils.ALGORITHM);
 
 		return keyValues;
 	}
@@ -76,7 +76,7 @@ public class OrderInfoUtil2_0 {
 
 		keyValues.put("method", "alipay.trade.app.pay");
 
-		keyValues.put("sign_type", "RSA");
+		keyValues.put("sign_type", SignUtils.ALGORITHM);
 
 		keyValues.put("timestamp", "2016-07-29 16:55:53");
 

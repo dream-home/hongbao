@@ -1,15 +1,16 @@
 package com.yanbao.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.mall.model.*;
 import com.yanbao.constant.*;
 import com.yanbao.core.model.Token;
 import com.yanbao.core.page.JsonResult;
 import com.yanbao.core.page.Page;
 import com.yanbao.core.page.PageResult;
-import com.mall.model.*;
 import com.yanbao.redis.Strings;
 import com.yanbao.service.*;
 import com.yanbao.util.*;
+import com.yanbao.util.alipay.AliPayUtils;
 import com.yanbao.util.h5.GenerateH5Order;
 import com.yanbao.util.h5.IWxAction;
 import com.yanbao.util.h5.WxH5CallBack;
@@ -59,7 +60,7 @@ public class OrderController {
     private String purchase_weixin_notifyUrl;
     @Value("${purchase_wxH5_store_notifyUrl}")
     private String purchase_wxH5_store_notifyUrl;
-//    @Value("${purchase_alipay_notifyUrl}")
+    //    @Value("${purchase_alipay_notifyUrl}")
 //    private String purchaseAlipayNotifyUrl;
     @Value("${environment}")
     private String environment;
@@ -69,6 +70,11 @@ public class OrderController {
     private GoodsIssueService goodsIssueService;
     @Autowired
     private PayCallbackService payCallbackService;
+
+    @Autowired
+    private OrderTypeService orderTypeService;
+    @Autowired
+    private SecondCallBackService secondCallBackService;
 
     /**
      * 订单直接购买
@@ -162,7 +168,7 @@ public class OrderController {
             m = totalPrice * 100 + "";
             String money = m.substring(0, m.indexOf("."));
             //场景：APP余额充值
-            if(ToolUtil.isEmpty(orderPurchaseVo.getScenes()) || orderPurchaseVo.getScenes().intValue() != ScenesType.WEIXIN_STORE.getCode().intValue()) {
+            if (ToolUtil.isEmpty(orderPurchaseVo.getScenes()) || orderPurchaseVo.getScenes().intValue() != ScenesType.WEIXIN_STORE.getCode().intValue()) {
                 //微信支付
                 GenerateOrder generateOrder = new GenerateOrder();
                 Map<String, String> wxMap = generateOrder.generate(money, ip, attach, goodsWin.getOrderNo(), purchase_weixin_notifyUrl);
@@ -174,7 +180,7 @@ public class OrderController {
                 map.put("prepayid", wxMap.get("prepayid"));
                 map.put("sign", wxMap.get("sign"));
                 //场景：微店余额充值
-            }else if(orderPurchaseVo.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()){
+            } else if (orderPurchaseVo.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()) {
                 GenerateH5Order order = new GenerateH5Order();
                 Map<String, String> wxMap = order.generate(money, ip, attach, goodsWin.getOrderNo(), user.getOpenId(), purchase_wxH5_store_notifyUrl);
                 map.put("appid", wxMap.get("appId"));
@@ -190,9 +196,9 @@ public class OrderController {
             map.put("orderNo", goodsWin.getOrderNo());
             map.put("payTime", goodsWin.getCreateTime());
             map.put("userId", goodsWin.getUserId());
-            map.put("returnUrl",environment);
-            map.put("orderTitle","购买商品");
-            map.put("tranType",30);
+            map.put("returnUrl", environment);
+            map.put("orderTitle", "购买商品");
+            map.put("tranType", 30);
         } else if (source == BankCardType.BALANCE.getCode().intValue()) {
             //余额支付
             Double score = 0d;
@@ -223,6 +229,7 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/purchasing", method = RequestMethod.POST)
     public JsonResult purchasing(HttpServletRequest request, @RequestBody WalletVo vo) throws Exception {
+        String tokens = TokenUtil.getToken(request);
         Token token = TokenUtil.getSessionUser(request);
         //支付来源
         Integer source = vo.getSource();
@@ -248,11 +255,11 @@ public class OrderController {
         if (goodsWin == null) {
             return new JsonResult(ResultCode.ERROR.getCode(), "订单不存在");
         }
-        Date createTime=goodsWin.getCreateTime();
+        Date createTime = goodsWin.getCreateTime();
 
-        if (createTime!=null){
-            Long createTimeStamp=createTime.getTime();
-            if ((System.currentTimeMillis()-createTimeStamp)>2*60*60*1000){
+        if (createTime != null) {
+            Long createTimeStamp = createTime.getTime();
+            if ((System.currentTimeMillis() - createTimeStamp) > 2 * 60 * 60 * 1000) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "订单已失效");
             }
         }
@@ -279,7 +286,7 @@ public class OrderController {
                 cartVo.setGoodsId(goods.getId());
                 cartVo.setNum(num);
                 cartVo.setDiscountEP(0d);
-                if(vo.getDiscountEP() > 0) {
+                if (vo.getDiscountEP() > 0) {
                     cartVo.setDiscountEP(1d);
                 }
                 cartVoList.add(cartVo);
@@ -297,7 +304,7 @@ public class OrderController {
             cartVo.setGoodsId(goods.getId());
             cartVo.setNum(goodsWin.getNum());
             cartVo.setDiscountEP(0d);
-            if(vo.getDiscountEP() > 0) {
+            if (vo.getDiscountEP() > 0) {
                 cartVo.setDiscountEP(1d);
             }
             cartVoList.add(cartVo);
@@ -321,7 +328,7 @@ public class OrderController {
             model.setPayWay(BankCardType.PURCHASE_WEIXIN.getCode().intValue());//微信直接购买支付
         } else if (source == BankCardType.BALANCE.getCode().intValue()) {
             model.setPayWay(BankCardType.PURCHASE_BALANCE.getCode().intValue());//余额直接购买支付
-        }else {
+        } else {
 
         }
         //直接购买的订单，要修正表头的三级分销 注释掉取用最新价格的分销数据
@@ -339,7 +346,7 @@ public class OrderController {
         goodsWin.setOrderNo(model.getOrderNo());
         goodsWin.setPayWay(model.getPayWay());
         //定义实付金额
-        Map<String, Double> countMap = orderService.calcMoney(vo.getDiscountEP()>0,user,goodsWin.getId());
+        Map<String, Double> countMap = orderService.calcMoney(vo.getDiscountEP() > 0, user, goodsWin.getId());
         realPayPrice = countMap.get("realPayPrice");
         //处理订单主表和明细表数据
         orderService.purchasingUpdate(cartVoList, user, goodsWin, countMap);
@@ -347,12 +354,12 @@ public class OrderController {
             //微信支付
             String ip = request.getRemoteAddr();
             String attach = token.getId() + "@" + BankCardType.PURCHASE_WEIXIN.getCode();
-            realPayPrice=PoundageUtil.getPoundage(realPayPrice,1d,2);
+            realPayPrice = PoundageUtil.getPoundage(realPayPrice, 1d, 2);
             String m = "";
             m = realPayPrice * 100 + "";
             String money = m.substring(0, m.indexOf("."));
             GenerateOrder generateOrder = new GenerateOrder();
-            if(ToolUtil.isEmpty(vo.getScenes()) || vo.getScenes().intValue() != ScenesType.WEIXIN_STORE.getCode().intValue()) {
+            if (ToolUtil.isEmpty(vo.getScenes()) || vo.getScenes().intValue() != ScenesType.WEIXIN_STORE.getCode().intValue()) {
                 Map<String, String> wxMap = generateOrder.generate(money, ip, attach, goodsWin.getOrderNo(), purchase_weixin_notifyUrl);
                 map.put("appid", wxMap.get("appid"));
                 map.put("partnerid", wxMap.get("partnerid"));
@@ -361,7 +368,7 @@ public class OrderController {
                 map.put("package", wxMap.get("package"));
                 map.put("prepayid", wxMap.get("prepayid"));
                 map.put("sign", wxMap.get("sign"));
-            }else if(vo.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()){
+            } else if (vo.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()) {
                 GenerateH5Order order = new GenerateH5Order();
                 Map<String, String> wxMap = order.generate(money, ip, attach, goodsWin.getOrderNo(), user.getOpenId(), purchase_wxH5_store_notifyUrl);
                 map.put("appid", wxMap.get("appId"));
@@ -373,11 +380,29 @@ public class OrderController {
             }
 
         } else if (goodsWin.getPayWay().intValue() == BankCardType.PURCHASE_ALIPAY.getCode().intValue()) {
+
+
+            //原生支付
+            String notifyUrl = "";
+            SecondCallBack secondCallBack = secondCallBackService.getById(BankCardType.SCAN_CODE_ALIPAY.getCode() + "");
+            if (secondCallBack == null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())) {
+                return new JsonResult(-1, "支付回调参数设置不合法");
+            }
+            if ("test".equals(environment)) {
+                notifyUrl = secondCallBack.getTestReturnUrl();
+            } else if ("online".equals(environment)) {
+                notifyUrl = secondCallBack.getReturnUrl();
+            }
+            orderTypeService.add(model.getOrderNo(), BankCardType.SCAN_CODE_ALIPAY.getCode(), "支付宝面对面扫码原生支付",tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(), notifyUrl, model.getScore(), "斗拍商城支付");
+            map.put("orderInfo", orderInfo);
+
+
             //支付宝支付
             map.put("orderNo", goodsWin.getOrderNo());
             map.put("payTime", goodsWin.getCreateTime());
             map.put("userId", goodsWin.getUserId());
-            map.put("returnUrl",environment);
+            map.put("returnUrl", environment);
         } else if (goodsWin.getPayWay().intValue() == BankCardType.PURCHASE_BALANCE.getCode().intValue()) {
             if (StringUtils.isBlank(user.getPayPwd())) {
                 return new JsonResult(4, "请先设置支付密码");
@@ -425,7 +450,7 @@ public class OrderController {
         Double totalDiscountEP = countMap.get("totalDiscountEP");
         //计算实付商品价格
         realPayPrice = countMap.get("realPayPrice");
-        realPayPrice= getPoundage(realPayPrice,1d);
+        realPayPrice = getPoundage(realPayPrice, 1d);
         //返回实付价格
         return realPayPrice;
     }
@@ -604,10 +629,10 @@ public class OrderController {
             return new JsonResult(ResultCode.SUCCESS.getCode(), "微信直接购买订单已支付成功");
         }
         Boolean isSucess = false;
-        if(goodsWin.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()){
-            isSucess=WechatUtil.isH5PaySucess(vo.getOrderNo());
-        }else{
-            isSucess=WechatUtil.isAppPaySucess(vo.getOrderNo());
+        if (goodsWin.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()) {
+            isSucess = WechatUtil.isH5PaySucess(vo.getOrderNo());
+        } else {
+            isSucess = WechatUtil.isAppPaySucess(vo.getOrderNo());
         }
         String key = RedisKey.HANDLE_CALLBACK.getKey() + vo.getOrderNo();
         Boolean flag = RedisLock.redisLock(key, vo.getOrderNo(), 6);
@@ -757,7 +782,7 @@ public class OrderController {
         GoodsWin goodsWin = goodsWinService.getStoreOrderByOrderNo(orderNo, storeId);
         if (goodsWin == null) {
             logger.error("订单号不存在 " + orderNo);
-            return new JsonResult(1,"订单号不存在");
+            return new JsonResult(1, "订单号不存在");
         }
         GoodsWinVo goodsWinVo = new GoodsWinVo();
         BeanUtils.copyProperties(goodsWinVo, goodsWin);
@@ -775,13 +800,13 @@ public class OrderController {
                 CartGoodsVo cartGoodsVo = new CartGoodsVo();
 //                Goods detailGoods= goodsService.getById(detail.getGoodsId());
                 //if (detailGoods!=null){
-                    cartGoodsVo.setGoodsId(detail.getGoodsId());
-                    cartGoodsVo.setGoodsName(detail.getGoodsName());
-                    cartGoodsVo.setPrice(detail.getPrice());
-                    cartGoodsVo.setIcon(detail.getIcon());
-                    cartGoodsVo.setNum(detail.getNum());
-                    cartGoodsVoList.add(cartGoodsVo);
-               // }
+                cartGoodsVo.setGoodsId(detail.getGoodsId());
+                cartGoodsVo.setGoodsName(detail.getGoodsName());
+                cartGoodsVo.setPrice(detail.getPrice());
+                cartGoodsVo.setIcon(detail.getIcon());
+                cartGoodsVo.setNum(detail.getNum());
+                cartGoodsVoList.add(cartGoodsVo);
+                // }
             }
         }
         Store store = storeService.getById(goodsWin.getStoreId());
@@ -812,7 +837,7 @@ public class OrderController {
             return new JsonResult("订单号不存在");
         }
         //兼容老数据
-        if (goodsWin.getDiscountEP()==null){
+        if (goodsWin.getDiscountEP() == null) {
             goodsWin.setDiscountEP(0d);
         }
         //订单取消，返回ep值
@@ -831,14 +856,15 @@ public class OrderController {
 
     /**
      * 重新计算金额
+     *
      * @param request
      * @param vo
      * @return
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping(value = "/purchasingep",method = RequestMethod.POST)
-    public JsonResult purchasingep(HttpServletRequest request,@RequestBody WalletVo vo) throws Exception{
+    @RequestMapping(value = "/purchasingep", method = RequestMethod.POST)
+    public JsonResult purchasingep(HttpServletRequest request, @RequestBody WalletVo vo) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.getById(token.getId());
         if (null == user) {
@@ -903,33 +929,31 @@ public class OrderController {
     }
 
 
-
-
     @ResponseBody
-    @RequestMapping(value = "/dealordericon",method = RequestMethod.GET)
-    public JsonResult dealicon(HttpServletRequest request,Page page,String bucket) throws Exception{
+    @RequestMapping(value = "/dealordericon", method = RequestMethod.GET)
+    public JsonResult dealicon(HttpServletRequest request, Page page, String bucket) throws Exception {
         //bucket=doupai-test-goods
-        PageResult<GoodsWin>  goodsPage = goodsWinService.getPage(null,1000,page,null,null);
-        int i=0;
-        int j=0;
-        int m=0;
-        int n=0;
-        int h=0;
-        List<GoodsWin> winlist= goodsPage.getRows();
-        if (ToolUtil.isNotEmpty(winlist)){
-            m=winlist.size();
-            for (GoodsWin goodsWin:winlist){
-                if (ToolUtil.isNotEmpty(goodsWin.getIcon()) && goodsWin.getIcon().length()>2000){
+        PageResult<GoodsWin> goodsPage = goodsWinService.getPage(null, 1000, page, null, null);
+        int i = 0;
+        int j = 0;
+        int m = 0;
+        int n = 0;
+        int h = 0;
+        List<GoodsWin> winlist = goodsPage.getRows();
+        if (ToolUtil.isNotEmpty(winlist)) {
+            m = winlist.size();
+            for (GoodsWin goodsWin : winlist) {
+                if (ToolUtil.isNotEmpty(goodsWin.getIcon()) && goodsWin.getIcon().length() > 2000) {
                     String fileName = UUIDUtil.getUUID();
-                    Map<String,String> map= QiNiuUtil.put64image(bucket, goodsWin.getIcon(),fileName,2000);
-                    if (map.size()>0){
+                    Map<String, String> map = QiNiuUtil.put64image(bucket, goodsWin.getIcon(), fileName, 2000);
+                    if (map.size() > 0) {
                         i++;
-                        String icon=map.get("keyWithPrefix");
-                        if (ToolUtil.isNotEmpty(icon)){
+                        String icon = map.get("keyWithPrefix");
+                        if (ToolUtil.isNotEmpty(icon)) {
                             GoodsWin updateModel = new GoodsWin();
                             updateModel.setId(goodsWin.getId());
                             updateModel.setIcon(icon);
-                            goodsWinService.update(goodsWin.getId(),updateModel);
+                            goodsWinService.update(goodsWin.getId(), updateModel);
                             j++;
                         }
                     }
@@ -939,19 +963,19 @@ public class OrderController {
                     List<GoodsWinDetail> list = goodsWinDetailService.getListByGoodsWinId(goodsWin.getId());
                     for (GoodsWinDetail goodsWinDetail : list) {
                         n++;
-                        if (ToolUtil.isNotEmpty(goodsWinDetail.getIcon()) && goodsWinDetail.getIcon().length()>2000){
+                        if (ToolUtil.isNotEmpty(goodsWinDetail.getIcon()) && goodsWinDetail.getIcon().length() > 2000) {
                             String fileName = UUIDUtil.getUUID();
-                            Map<String,String> map= QiNiuUtil.put64image(bucket, goodsWinDetail.getIcon(),fileName,2000);
-                            if (map.size()>0){
+                            Map<String, String> map = QiNiuUtil.put64image(bucket, goodsWinDetail.getIcon(), fileName, 2000);
+                            if (map.size() > 0) {
                                 i++;
-                                String icon=map.get("keyWithPrefix");
-                                if (ToolUtil.isNotEmpty(icon)){
+                                String icon = map.get("keyWithPrefix");
+                                if (ToolUtil.isNotEmpty(icon)) {
                                     GoodsWinDetail updateModel = new GoodsWinDetail();
                                     updateModel.setId(goodsWinDetail.getId());
                                     updateModel.setGoodsWinId(goodsWinDetail.getGoodsWinId());
                                     updateModel.setGoodsId(goodsWinDetail.getGoodsId());
                                     updateModel.setIcon(icon);
-                                    goodsWinDetailService.updateByGoodsId(goodsWinDetail.getGoodsId(),updateModel);
+                                    goodsWinDetailService.updateByGoodsId(goodsWinDetail.getGoodsId(), updateModel);
                                     j++;
                                 }
                             }
@@ -960,73 +984,74 @@ public class OrderController {
                 }
             }
         }
-        String msg="共计"+m+"个base64订单,其中"+h+"个购物车订单，购物车明细数据共"+n+"张图片，累计上传了"+i+"张图片，累计更新了"+j+"张图片";
+        String msg = "共计" + m + "个base64订单,其中" + h + "个购物车订单，购物车明细数据共" + n + "张图片，累计上传了" + i + "张图片，累计更新了" + j + "张图片";
         return new JsonResult(msg);
     }
 
 
     @ResponseBody
-    @RequestMapping(value = "/dealgoodsicon",method = RequestMethod.GET)
-    public JsonResult dealGoodsIcon(HttpServletRequest request,Page page,String bucket) throws Exception{
+    @RequestMapping(value = "/dealgoodsicon", method = RequestMethod.GET)
+    public JsonResult dealGoodsIcon(HttpServletRequest request, Page page, String bucket) throws Exception {
         //bucket=doupai-test-goods
         page.setTimeSort(1000);
         page.setPriceSort(1000);
-        PageResult<Goods>  goodsPage = goodsService.getPage("",page);
-        int i=0;
-        int j=0;
-        int m=0;
-        List<Goods> goodslist= goodsPage.getRows();
-        if (ToolUtil.isNotEmpty(goodslist)){
-            m=goodslist.size();
-            for (Goods goods:goodslist){
-                if (ToolUtil.isNotEmpty(goods.getIcon()) && goods.getIcon().length()>2000){
+        PageResult<Goods> goodsPage = goodsService.getPage("", page);
+        int i = 0;
+        int j = 0;
+        int m = 0;
+        List<Goods> goodslist = goodsPage.getRows();
+        if (ToolUtil.isNotEmpty(goodslist)) {
+            m = goodslist.size();
+            for (Goods goods : goodslist) {
+                if (ToolUtil.isNotEmpty(goods.getIcon()) && goods.getIcon().length() > 2000) {
                     String fileName = UUIDUtil.getUUID();
-                    Map<String,String> map= QiNiuUtil.put64image(bucket, goods.getIcon(),fileName,2000);
-                    if (map.size()>0){
+                    Map<String, String> map = QiNiuUtil.put64image(bucket, goods.getIcon(), fileName, 2000);
+                    if (map.size() > 0) {
                         i++;
-                        String icon=map.get("keyWithPrefix");
-                        if (ToolUtil.isNotEmpty(icon)){
+                        String icon = map.get("keyWithPrefix");
+                        if (ToolUtil.isNotEmpty(icon)) {
                             Goods updateModel = new Goods();
                             updateModel.setId(goods.getId());
                             updateModel.setIcon(icon);
-                            goodsService.update(goods.getId(),updateModel);
+                            goodsService.update(goods.getId(), updateModel);
                             j++;
                         }
                     }
                 }
             }
         }
-        String msg="共计"+m+"个base64商品, ，累计上传了"+i+"张图片，累计更新了"+j+"张图片";
+        String msg = "共计" + m + "个base64商品, ，累计上传了" + i + "张图片，累计更新了" + j + "张图片";
         return new JsonResult(msg);
     }
+
     @ResponseBody
-    @RequestMapping(value = "/storeDealicon",method = RequestMethod.GET)
-    public JsonResult storeDealicon(HttpServletRequest request,Page page,String bucket) throws Exception{
+    @RequestMapping(value = "/storeDealicon", method = RequestMethod.GET)
+    public JsonResult storeDealicon(HttpServletRequest request, Page page, String bucket) throws Exception {
         //bucket=doupai-test-goods
-        PageResult<Store>  storePage = storeService.getPage(page,"");
-        int i=0;
-        int j=0;
-        List<Store> winlist= storePage.getRows();
-        if (ToolUtil.isNotEmpty(winlist)){
-            for (Store store:winlist){
-                if (ToolUtil.isNotEmpty(store.getIcon()) && store.getIcon().length()>2000 && store.getIcon().indexOf("data:image/jpeg;base64,")>=0){
+        PageResult<Store> storePage = storeService.getPage(page, "");
+        int i = 0;
+        int j = 0;
+        List<Store> winlist = storePage.getRows();
+        if (ToolUtil.isNotEmpty(winlist)) {
+            for (Store store : winlist) {
+                if (ToolUtil.isNotEmpty(store.getIcon()) && store.getIcon().length() > 2000 && store.getIcon().indexOf("data:image/jpeg;base64,") >= 0) {
                     String fileName = UUIDUtil.getUUID();
-                    Map<String,String> map= QiNiuUtil.put64image(bucket, store.getIcon(),fileName,2000);
-                    if (map.size()>0){
+                    Map<String, String> map = QiNiuUtil.put64image(bucket, store.getIcon(), fileName, 2000);
+                    if (map.size() > 0) {
                         i++;
-                        String icon=map.get("keyWithPrefix");
-                        if (ToolUtil.isNotEmpty(icon)){
+                        String icon = map.get("keyWithPrefix");
+                        if (ToolUtil.isNotEmpty(icon)) {
                             Store model = new Store();
                             model.setId(store.getId());
                             model.setIcon(icon);
-                            storeService.update(model.getId(),model);
+                            storeService.update(model.getId(), model);
                             j++;
                         }
                     }
                 }
             }
         }
-        String msg="累计上传了"+i+"张图片，累计更新了"+j+"张图片";
+        String msg = "累计上传了" + i + "张图片，累计更新了" + j + "张图片";
         return new JsonResult(msg);
     }
 
@@ -1035,12 +1060,12 @@ public class OrderController {
         m = 2.01 * 100 + "";//201
         System.out.println(m);
         System.out.println(Double.valueOf(m));
-        double d= PoundageUtil.getPoundage(Double.valueOf(m).doubleValue(),1d);
+        double d = PoundageUtil.getPoundage(Double.valueOf(m).doubleValue(), 1d);
         String money = m.substring(0, m.indexOf("."));
         System.out.println(d);
         System.out.println(money);
-        Date date =DateUtils.addHours(new Date(),-2);
-        Long createTimeStamp=date.getTime();
-        System.out.println( System.currentTimeMillis()-createTimeStamp);
+        Date date = DateUtils.addHours(new Date(), -2);
+        Long createTimeStamp = date.getTime();
+        System.out.println(System.currentTimeMillis() - createTimeStamp);
     }
 }

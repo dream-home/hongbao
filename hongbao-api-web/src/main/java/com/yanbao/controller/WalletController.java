@@ -10,6 +10,7 @@ import com.yanbao.core.page.PageResult;
 import com.yanbao.redis.Strings;
 import com.yanbao.service.*;
 import com.yanbao.util.*;
+import com.yanbao.util.alipay.AliPayUtils;
 import com.yanbao.util.alipay.Alipay;
 import com.yanbao.util.alipay.OrderInfoUtil2_0;
 import com.yanbao.util.h5.GenerateH5Order;
@@ -69,6 +70,10 @@ public class WalletController {
     private PayCallbackService payCallbackService;
     @Autowired
     private PayDistributionService payDistributionService;
+    @Autowired
+    private  SecondCallBackService secondCallBackService;
+    @Autowired
+    private  OrderTypeService orderTypeService;
     @Value("${recharge_weixin_notifyUrl}")
     private String recharge_weixin_notifyUrl;
     @Value("${scan_weixin_notifyUrl}")
@@ -241,6 +246,7 @@ public class WalletController {
     @ResponseBody
     @RequestMapping(value = "/recharge", method = RequestMethod.POST)
     public JsonResult recharge(HttpServletRequest request, @RequestBody WalletVo vo) throws Exception {
+        String tokens = TokenUtil.getToken(request);
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.getById(token.getId());
         if (null == user) {
@@ -271,7 +277,19 @@ public class WalletController {
             Map<String, String> params = OrderInfoUtil2_0.buildOrderParamMap(Alipay.APP_ID, vo.getScore());
             String orderParam = OrderInfoUtil2_0.buildOrderParam(params);
             String sign = OrderInfoUtil2_0.getSign(params, Alipay.RSA_PRIVATE);
-            final String orderInfo = orderParam + "&" + sign;
+//            final String orderInfo = orderParam + "&" + sign;
+            String notifyUrl="";
+            SecondCallBack secondCallBack =  secondCallBackService.getById(BankCardType.ALIPAY.getCode()+"");
+            if (secondCallBack==null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())){
+                return new JsonResult(-1,"支付回调参数设置不合法");
+            }
+            if ("test".equals(environment)){
+                notifyUrl=secondCallBack.getTestReturnUrl();
+            }else if ("online".equals(environment)){
+                notifyUrl=secondCallBack.getReturnUrl();
+            }
+            orderTypeService.add(model.getOrderNo(),BankCardType.ALIPAY.getCode(),"支付宝充值原生支付",tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,model.getScore(),"斗拍商城支付");
             result.put("orderInfo", orderInfo);
             result.put("returnUrl", environment);
             result.put("orderTitle", "斗拍商城充值");
@@ -715,6 +733,7 @@ public class WalletController {
     @ResponseBody
     @RequestMapping(value = "/buildPayOrder", method = RequestMethod.POST)
     public JsonResult buildPayOrder(HttpServletRequest request, @RequestBody WalletVo vo) throws Exception {
+        String tokens=TokenUtil.getToken(request);
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.getById(token.getId());
         if (null == user) {
@@ -800,6 +819,22 @@ public class WalletController {
             model.setSource(BankCardType.SCAN_CODE_ALIPAY.getCode());
             model.setRemark("APP支付宝扫码支付：" + model.getRemark());
             walletRechargeService.add(model);
+
+            //原生支付
+            String notifyUrl="";
+            SecondCallBack secondCallBack =  secondCallBackService.getById(BankCardType.SCAN_CODE_ALIPAY.getCode()+"");
+            if (secondCallBack==null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())){
+                return new JsonResult(-1,"支付回调参数设置不合法");
+            }
+            if ("test".equals(environment)){
+                notifyUrl=secondCallBack.getTestReturnUrl();
+            }else if ("online".equals(environment)){
+                notifyUrl=secondCallBack.getReturnUrl();
+            }
+            orderTypeService.add(model.getOrderNo(),BankCardType.SCAN_CODE_ALIPAY.getCode(),"支付宝充值原生支付",tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,model.getScore(),"斗拍商城支付");
+            result.put("orderInfo", orderInfo);
+
             result.put("realPayPrice", countMoney);
             result.put("orderNo", model.getOrderNo());
             result.put("userId", token.getId());
@@ -840,9 +875,9 @@ public class WalletController {
      */
     @ResponseBody
     @RequestMapping(value = "/storeBuildPayOrder", method = RequestMethod.POST)
-    public JsonResult storeBuildPayOrder(HttpServletRequest request, @RequestBody WalletVo vo) throws Exception {
+    public JsonResult storeBuildPayOrder(HttpServletRequest request,HttpServletResponse response, @RequestBody WalletVo vo) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
-
+        String tokens=TokenUtil.getToken(request);
         //支付来源
         int source = vo.getSource().intValue();
         //二维码类型
@@ -946,6 +981,27 @@ public class WalletController {
             model.setSource(BankCardType.STORE_SCAN_APP_ALIPAY.getCode());
             model.setRemark("APP端商家二维码发起支付宝支付:" + model.getRemark());
             walletRechargeService.add(model);
+
+            //原生支付
+
+            String notifyUrl="";
+            SecondCallBack secondCallBack =  secondCallBackService.getById(BankCardType.STORE_SCAN_APP_ALIPAY.getCode()+"");
+            if (secondCallBack==null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())){
+                return new JsonResult(-1,"支付回调参数设置不合法");
+            }
+            if ("test".equals(environment)){
+                notifyUrl=secondCallBack.getTestReturnUrl();
+            }else if ("online".equals(environment)){
+                notifyUrl=secondCallBack.getReturnUrl();
+            }
+            orderTypeService.add(model.getOrderNo(),BankCardType.STORE_SCAN_APP_ALIPAY.getCode(),"支付宝APP内发起商家二维码扫码原生支付",tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,model.getScore(),"斗拍商城支付");
+            result.put("orderInfo", orderInfo);
+
+
+
+
+
             result.put("realPayPrice", countMoney);
             result.put("returnUrl", environment);
             result.put("orderNo", model.getOrderNo());
@@ -980,14 +1036,34 @@ public class WalletController {
             walletRechargeService.storeScanCodeHandler(user, model.getOrderNo());
 
         } else if (source == BankCardType.ALIPAY_STORE_SCAN.getCode().intValue()) {
-            //商家固定二维码发起支付宝支付
+            //支付宝客户端商家固定二维码发起支付宝支付
             model.setSource(BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode());
-            model.setRemark("商家固定二维码发起支付宝支付");
+            model.setRemark("支付宝客户端商家固定二维码发起支付宝支付");
             walletRechargeService.add(model);
+
+
+            //支付宝网页支付
+            String notifyUrl="";
+            SecondCallBack secondCallBack =  secondCallBackService.getById(BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode()+"");
+            if (secondCallBack==null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())){
+                return new JsonResult(-1,"支付回调参数设置不合法");
+            }
+            if ("test".equals(environment)){
+                notifyUrl=secondCallBack.getTestReturnUrl();
+            }else if ("online".equals(environment)){
+                notifyUrl=secondCallBack.getReturnUrl();
+            }
+            orderTypeService.add(model.getOrderNo(),BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode(),"支付宝支付宝客户端直接发起商家二维码扫码网页支付",tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForWap(model.getOrderNo(),notifyUrl,model.getScore(),"斗拍商城支付");
+            result.put("orderInfo", orderInfo);
+
             result.put("returnUrl", environment);
             result.put("orderNo", model.getOrderNo());
             result.put("userId", null);
-
+            response.setContentType("text/html;charset=utf-8");
+            response.getWriter().write(orderInfo);
+            //直接将完整的表单html输出到页面
+            response.getWriter().flush();
         } else if (source == BankCardType.WECHATPAY_STORE_SCAN.getCode().intValue()) {
             //商家固定二维码发起微信扫码(公众号支付)
             if (StringUtils.isEmpty(user.getOpenId())) {
@@ -1138,10 +1214,10 @@ public class WalletController {
         }
         if (recharge.getStatus().intValue() == RechargeType.PENDING.getCode().intValue()) {
             Boolean isSucess = false;
-            if(recharge.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()) {
-                isSucess=WechatUtil.isH5PaySucess(orderNo);
-            }else {
-                isSucess=WechatUtil.isAppPaySucess(orderNo);
+            if (recharge.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()) {
+                isSucess = WechatUtil.isH5PaySucess(orderNo);
+            } else {
+                isSucess = WechatUtil.isAppPaySucess(orderNo);
             }
             String key = RedisKey.HANDLE_CALLBACK.getKey() + orderNo;
             Boolean flag = RedisLock.redisLock(key, orderNo, 6);
@@ -1649,7 +1725,6 @@ public class WalletController {
         }
 
 
-
         double exchangeMin = ToolUtil.parseDouble(util.get(Parameter.EXCHANGEMIN), 100d);
         double exchangeMax = ToolUtil.parseDouble(util.get(Parameter.EXCHANGEMAX), 10000d);
         if (vo.getScore() == null || vo.getScore() < exchangeMin || vo.getScore() > exchangeMax) {
@@ -1688,10 +1763,10 @@ public class WalletController {
         if (user.getScore() == null || user.getScore() < vo.getScore()) {
             return new JsonResult(5, "您的余额不足");
         }
-        Integer times=ToolUtil.parseInt(util.get(Parameter.EXCHANGTIMES), 0);
-        Integer hasExchange =  walletExchangeService.countCurrentDay(user.getId());
-        if (hasExchange!=null && hasExchange>=times) {
-            return new JsonResult(0, "每天最多提现"+times+"笔");
+        Integer times = ToolUtil.parseInt(util.get(Parameter.EXCHANGTIMES), 0);
+        Integer hasExchange = walletExchangeService.countCurrentDay(user.getId());
+        if (hasExchange != null && hasExchange >= times) {
+            return new JsonResult(0, "每天最多提现" + times + "笔");
         }
         List<UserBankcard> bankList = userBankcardService.getList(user.getId());
         UserBankcard bankcard = new UserBankcard();

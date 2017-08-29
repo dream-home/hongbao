@@ -15,6 +15,7 @@ public class RegisterVo implements Serializable {
     private String password;
     private String passwordConfirm;
     private String registrationId;
+    private  String nickName;
 
     public Integer getInviteCode() {
         return inviteCode;
@@ -62,5 +63,13 @@ public class RegisterVo implements Serializable {
 
     public void setRegistrationId(String registrationId) {
         this.registrationId = registrationId;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 }

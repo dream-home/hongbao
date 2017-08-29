@@ -1,5 +1,7 @@
 package com.yanbao.util.alipay;
 
+import java.util.ResourceBundle;
+
 /**
  * 
  * @author zhuzh
@@ -7,21 +9,26 @@ package com.yanbao.util.alipay;
  */
 public interface Alipay {
 
-	public static final String APP_ID = "2017021605700687";
+//	public static final String APP_ID = "2017021605700687";
+//
+//	public static final String RSA_PRIVATE =
+//			"MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAKGeyNhr76ig5Gaf"+
+//					"089lahczfgx9XKltX4SSX9W7brFwV+IW+xR2g4S+SdYJdG+eSPZh3CtheMmUDHHb"+
+//					"sLqdAUq6Dv7KUlMPNjuqyqf3iajxYGNBjYCJx10AuJreuHNTAXZrBySmpVtgnT4Z"+
+//					"y3HSkR/VKC7bjWhjPzud+C9kxKN9AgMBAAECgYBVGjQt6Z/3jkjWVQCGK6OSdfXA"+
+//					"g95gBIyQVTcLZzehTUOpdGpfWwxjwINGphHemF1ZByyU1y1wD3oCFilYCkZcCaWg"+
+//					"U3KcEtdx3OQu3iQNZql8or//zGBHQ3WG0AVczV6uKtO06q8BUr8TO3j2vq3Q4kho"+
+//					"Dzwr0LgP7WTFu/apoQJBAM0wOOPtpDe1zmz/+6SYBinGKqLqrNjric7+J8kOpxqX"+
+//					"8mSQTNEIN8yDsaFloR/NthcHM2uT5eDruRvy1EwUpzUCQQDJpJdRz8FxlZ+HJN/s"+
+//					"dbzm3yKujRZKQT51S9cBe+qhU42sOnHb3FQWx1EALov/40czvL4qGXXU+ZoaMD2L"+
+//					"LewpAkEAwnCn+JYBwCkw7GnHdTn63StEzA3GrejGNrjxyr1v7OuAb3uuz4cSGWPS"+
+//					"uDcucIznuPrB53fHp1S5nZqHQ3Fu4QJAdwgJJ4tLtyBLFr0GzpBGHcd0srOoh9bx"+
+//					"5s4JMuAShn9LL3MkyVPL89JfF4tiq4BgBMOTQkjbTQi3FmSJwAIw2QJAcMGGUNKU"+
+//					"4Wd+Ej5DxepWdFYeQyMlKFG0tugWgJvTDtbYljXVBdV6WU6VpbzHQP5QvXY035W7"+
+//					"tLkrelQ2lCDoBw==";
 
-	public static final String RSA_PRIVATE = 
-			"MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAKGeyNhr76ig5Gaf"+
-			"089lahczfgx9XKltX4SSX9W7brFwV+IW+xR2g4S+SdYJdG+eSPZh3CtheMmUDHHb"+
-			"sLqdAUq6Dv7KUlMPNjuqyqf3iajxYGNBjYCJx10AuJreuHNTAXZrBySmpVtgnT4Z"+
-			"y3HSkR/VKC7bjWhjPzud+C9kxKN9AgMBAAECgYBVGjQt6Z/3jkjWVQCGK6OSdfXA"+
-			"g95gBIyQVTcLZzehTUOpdGpfWwxjwINGphHemF1ZByyU1y1wD3oCFilYCkZcCaWg"+
-			"U3KcEtdx3OQu3iQNZql8or//zGBHQ3WG0AVczV6uKtO06q8BUr8TO3j2vq3Q4kho"+
-			"Dzwr0LgP7WTFu/apoQJBAM0wOOPtpDe1zmz/+6SYBinGKqLqrNjric7+J8kOpxqX"+
-			"8mSQTNEIN8yDsaFloR/NthcHM2uT5eDruRvy1EwUpzUCQQDJpJdRz8FxlZ+HJN/s"+
-			"dbzm3yKujRZKQT51S9cBe+qhU42sOnHb3FQWx1EALov/40czvL4qGXXU+ZoaMD2L"+
-			"LewpAkEAwnCn+JYBwCkw7GnHdTn63StEzA3GrejGNrjxyr1v7OuAb3uuz4cSGWPS"+
-			"uDcucIznuPrB53fHp1S5nZqHQ3Fu4QJAdwgJJ4tLtyBLFr0GzpBGHcd0srOoh9bx"+
-			"5s4JMuAShn9LL3MkyVPL89JfF4tiq4BgBMOTQkjbTQi3FmSJwAIw2QJAcMGGUNKU"+
-			"4Wd+Ej5DxepWdFYeQyMlKFG0tugWgJvTDtbYljXVBdV6WU6VpbzHQP5QvXY035W7"+
-			"tLkrelQ2lCDoBw==";
+
+	public static final String APP_ID ="2017061907522726";
+
+	public static final String RSA_PRIVATE ="MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCvwXhnwUj7EOEkAoqrWVxRIL8YqU8mzpfCpHR91BG0OeyfOhpPwMPa1fdrMZdvcHdXxVWcweWF9tcb7+TREUnRF1bR+/GkN9u62wpZtLPJHqMLmX1RoDh8HgD85HNeyfiuWOjp705G6wt9xJRC7+7C0VRavDAiE5Vsvp84oTYMLB61YaRxZ4LcqZyAFTFw5vI1OXh1O1O4wZtjRSfSOVLX7+pOoJbsT25LnaopLvpPHm4mgPqXXPGJfhN8grBSqkJdAOkNwcuOXSG5OZNYK3Ueming1ZcE1Ksi0ArbTjuBZNpBxELCCRmENgGX8IZ6w8+pBusLIORCk9dBOFfwXmIVAgMBAAECggEAbDyRkhQOhc+XVz3ZeDzIBY5NITrja9q+yzfMJdF8NamWd1io64SjGRm8DV+1CwQP+xWj663dU+r3/lR2bepfs0zUQu0NmzxrLV/HuAb40Vr0vigAbUxmfMldgmCOTEnFxFks1yRw6GvH3+Q4CiEIwSF4+Yf7fIDi/N1H4PAnAMcCHOMkv4rXktXw+Bx9wbtFrRGjNL+tyOMN+a230g0UDhxe8GwA8/RSCvI+M3gfkOQ+qo9IYlCqvaBU3ymI8N50E6qEknK99U5vB826vUvhZbL539F987BJPQgdcf2uGaFnIr9EEz2DG6RIislYDM4JvPMwwYcXYFBpYMGkWJcI4QKBgQD6kofL9QcvoPG6/upTFlr7a0jeMKaovSkKDmu6KHy2tcZDg0hHrVOJPN3be57gPWIPIHSoK/OLa45I1hd0XD2t1FmW16vJ0LkNk26NibRHd0Ry9hdob3iDn2GqD0E8aQQdtZGVmqjD8gMMbjSdN25lGSGo/M6RjF0WkWUdSti9awKBgQCzkBFmMeM/nD9xX8tiGDf80zrwl64TAMQ203swQ90l+5hXZsDIA++gqQhP74oyRHR4gR0ZbLlwlLUQ1M7xtbryfzlo3K478WwH1APwx5K9gDwXg7ZusKvKQ6NjoBZVKQZbmgKhQ5RbTDpW84c4vSE17B2ZAANPXdIEOABBvIm+fwKBgAowdTc1ApLMP6gz/4Fbcl2w8iie39gSwR14kqbiSJgBckuChijsAm6dPARV1ZMWy+sDjdrc1q1/tSx/EDsaGSP9c5svr/un8i58JU26IMubLPxjx3XmuobXr1gEAModFx7CKGZmAKDfMYKK5LbT7zhLOlQt25SNmad2SB9V0NR7AoGAWI+OtUuXnDDw7XbktZ3iRzTbFfyJY1/2ZmAJmvVtpiUfrsPEAyJF1oRn0B0BmOdAVoq/kmGYWFlPsFx1MKuD58QtyXVGDdR1hqrfwqp7yjDr8mEI4jEKmXigpis3uIrCUv1znJvbGOhQwb/cinRlY9Xvhx2FhGhug5wnLETT3vsCgYAmWdl+dvY+F1nqZTIrKyqrMwrWpD4qHh7DYS8n/GnE1EYCjRA0SxgF8xnnbOBowdJLaUjDMWCstJQRWzAWAewTm8QqBNVnULR1ZViqDYMkZJ/Ke/4vnRfS+6x+DILfi8zjHR0LMGEox1kcrHn4DtbNXJ/n9NdaCE8T3ZoeGi9gzA==";
 }

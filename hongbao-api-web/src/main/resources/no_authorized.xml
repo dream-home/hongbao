@@ -91,6 +91,7 @@
 	<url>/home/test</url>
 	<url>/sysCity/getCityByField</url>
 	<url>/mall/store/search</url>
+	<url>/alipay/notify</url>
 </no_authorized>
 
 

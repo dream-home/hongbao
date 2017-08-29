@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanbao.mapper.OrderTypeMapper">
+    <sql id="fields">
+        id, type,token,  createTime, updateTime, status, remark
+    </sql>
+
+    <sql id="table">hb_sys_order_type</sql>
+
+    <sql id="selector">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="table"/>
+    </sql>
+
+    <select id="getById" resultType="OrderTypeModel">
+        <include refid="selector"/>
+        WHERE id = #{id}
+        LIMIT 1;
+    </select>
+
+
+
+    <insert id="add" keyProperty="id">
+        INSERT INTO
+        <include refid="table" />
+        (
+        <include refid="fields" />
+        )
+        VALUES
+        (#{model.id}, #{model.type},#{model.token} , #{model.createTime}, #{model.updateTime}, #{model.status}, #{model.remark})
+    </insert>
+</mapper>
+
+

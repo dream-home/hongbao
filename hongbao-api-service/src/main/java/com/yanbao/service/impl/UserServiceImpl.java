@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
             user.setPayPwd(Md5Util.MD5Encode(user.getPayPwd().trim(), salt));
         }
         if (StringUtils.isEmpty(user.getNickName())){
-            user.setNickName("http://user.doupaimall.com/logo.png");
+            user.setHeadImgUrl("http://user.doupaimall.com/logo.png");
         }
         user.setStatus(StatusType.TRUE.getCode());
         user.setIsKF(StatusType.FALSE.getCode());

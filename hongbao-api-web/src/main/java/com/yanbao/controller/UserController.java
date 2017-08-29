@@ -231,6 +231,9 @@ public class UserController {
         if (!vo.getPassword().equals(vo.getPasswordConfirm())) {
             return new JsonResult(7, "两次输入密码不一致");
         }
+        if (ToolUtil.isEmpty(vo.getNickName())) {
+            return new JsonResult(8, "昵称不能为空");
+        }
         User referrerCondition = new User();
         referrerCondition.setUid(vo.getInviteCode());
         User referrer = userService.getByCondition(referrerCondition);
@@ -257,6 +260,7 @@ public class UserController {
         addUser.setLoginTime(new Date());
         addUser.setHeadImgUrl("http://user.doupaimall.com/logo.png");
         addUser.setStatus(StatusType.TRUE.getCode());
+        addUser.setNickName(vo.getNickName());
         // 每次都会保存极光推送生成ID
         if (StringUtils.isNoneBlank(vo.getRegistrationId())) {
             addUser.setRegistrationId(vo.getRegistrationId());
@@ -315,9 +319,13 @@ public class UserController {
         conditon.setWeixin(vo.getUnionId());
         User oldWeiXinUser = userService.getByCondition(conditon);
         if (oldWeiXinUser != null) {
+            if (ToolUtil.isNotEmpty(oldWeiXinUser.getOldUnionId()) && ToolUtil.isNotEmpty(oldWeiXinUser.getPhone())){
+                return new JsonResult(0, "此微信号已被其他账号绑定");
+            }
             User updateOldeWxModel = new User();
             updateOldeWxModel.setWeixin(oldWeiXinUser.getWeixin() + "200000");
             updateOldeWxModel.setRemark(DateTimeUtil.formatDate(new Date(), DateTimeUtil.PATTERN_LONG) + ",新用户同一个微信号重复注册,将此微信号做变更");
+            updateOldeWxModel.setStatus(StatusType.FALSE.getCode());
             userService.update(oldWeiXinUser.getId(), updateOldeWxModel);
         }
 

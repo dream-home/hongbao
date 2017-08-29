@@ -188,4 +188,8 @@ public enum RecordType {
         return msg;
     }
 
+    public static void main(String[] args) {
+        System.out.println("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr8F4Z8FI+xDhJAKKq1lcUSC/GKlPJs6XwqR0fdQRtDnsnzoaT8DD2tX3azGXb3B3V8VVnMHlhfbXG+/k0RFJ0RdW0fvxpDfbutsKWbSzyR6jC5l9UaA4fB4A/ORzXsn4rljo6e9ORusLfcSUQu/uwtFUWrwwIhOVbL6fOKE2DCwetWGkcWeC3KmcgBUxcObyNTl4dTtTuMGbY0Un0jlS1+/qTqCW7E9uS52qKS76Tx5uJoD6l1zxiX4TfIKwUqpCXQDpDcHLjl0huTmTWCt1Hpop4NWXBNSrItAK2047gWTaQcRCwgkZhDYBl/CGesPPqQbrCyDkQpPXQThX8F5iFQIDAQAB".equals("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgf2aSgode8emw1QoZa/42YuxtUvUMp9roiOHkM72r6We49xhW+Fj0Zfw/nH+tAy32sXErdz4WRxUkMdUvaHRqPcH+LhVnpgnwB88P6lPIK3o9ln+otOCTWR2S7FXN5LWb0JX7nL8ygu087ch0gVqjYdxxJ2d4nW8qZUryYCDv/F0X2NWc7bjNkfNVVhqWCuGH8Y55eLU79vFYucEemmq4Wy28p793kontadEOt+GpE+iKMHz4lLvWluTlzCVTEbGBeUk6p5x9AsPrDGcVDhpipLxCTpomo46+ZZuD3CSWltsRD6C4NvvPEiMjtiSvklLB2r0ReGiUTpnITCRr2jZYQIDAQAB"));
+    }
+
 }

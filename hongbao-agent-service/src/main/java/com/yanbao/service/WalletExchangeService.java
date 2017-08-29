@@ -32,6 +32,4 @@ public interface WalletExchangeService extends CommonService<WalletExchange> {
      * @return
      */
     List<WalletExchange> getByStoreIds(List<String> storeIds);
-
-    Integer countCurrentDay(String userId);
 }

@@ -2,6 +2,7 @@ package com.yanbao.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.mall.model.Parameter;
+import com.mall.model.SecondCallBack;
 import com.mall.model.User;
 import com.mall.model.WalletRecharge;
 import com.yanbao.constant.*;
@@ -10,6 +11,7 @@ import com.yanbao.core.page.JsonResult;
 import com.yanbao.redis.Strings;
 import com.yanbao.service.*;
 import com.yanbao.util.*;
+import com.yanbao.util.alipay.AliPayUtils;
 import com.yanbao.util.h5.GenerateH5Order;
 import com.yanbao.util.h5.IWxAction;
 import com.yanbao.util.h5.WxH5CallBack;
@@ -57,6 +59,10 @@ public class JoinController {
     private String environment;
     @Value("${wxStoreH5_join_weixin_notifyUrl}")
     private String wxStoreH5joinWeixinNotifyUrl;
+    @Autowired
+    private SecondCallBackService secondCallBackService;
+    @Autowired
+    private  OrderTypeService orderTypeService;
 
 
 
@@ -66,6 +72,7 @@ public class JoinController {
     @ResponseBody
     @RequestMapping(value = "/partnerorder", method = RequestMethod.POST)
     public JsonResult buildPayOrder(HttpServletRequest request, @RequestBody WalletVo vo) throws Exception {
+        String tokens = TokenUtil.getToken(request);
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.getById(token.getId());
         if (null == user) {
@@ -131,6 +138,22 @@ public class JoinController {
             result.put("returnUrl", environment);
             result.put("orderTitle", "加入合伙人支付");
             result.put("tranType", 60);
+
+            //原生支付
+            String notifyUrl="";
+            SecondCallBack secondCallBack =  secondCallBackService.getById(BankCardType.JOIN_ALIPAY.getCode()+"");
+            if (secondCallBack==null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())){
+                return new JsonResult(-1,"支付回调参数设置不合法");
+            }
+            if ("test".equals(environment)){
+                notifyUrl=secondCallBack.getTestReturnUrl();
+            }else if ("online".equals(environment)){
+                notifyUrl=secondCallBack.getReturnUrl();
+            }
+            orderTypeService.add(model.getOrderNo(),BankCardType.JOIN_ALIPAY.getCode(),"支付宝加入合伙人原生支付",tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,model.getScore(),"斗拍商城支付");
+            result.put("orderInfo", orderInfo);
+
         } else if (source == BankCardType.WECHATPAY.getCode().intValue()) {
             model.setSource(BankCardType.JOIN_WEIXIN.getCode());
             model.setStoreUserId(Constant.SYSTEM_USERID);
