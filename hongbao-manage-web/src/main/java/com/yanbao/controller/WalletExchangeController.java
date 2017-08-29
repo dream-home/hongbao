@@ -195,7 +195,7 @@ public class WalletExchangeController extends BaseController {
 
 		}else if(cashtemp.getRespCode().equals("2317") || cashtemp.getRespCode().equals("2332")){
 			//银行卡余额不足，返回信息，提示管理员充值余额，提现记录状态不变
-			return fail(1466,cashtemp.getRespMsg());
+			return fail(1466,"电子银行余额不足，请联系管理员");
 		}else {
 			// 设置兑现失败
 			walletExchange.setStatus(4);
