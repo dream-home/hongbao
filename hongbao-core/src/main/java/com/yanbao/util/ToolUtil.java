@@ -308,7 +308,7 @@ public class ToolUtil {
         try {
             _dValue = Double.parseDouble(sValue);
         } catch (NumberFormatException e) {
-            ;
+            return _dValue;
         }
         return _dValue;
     }
