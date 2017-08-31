@@ -1724,30 +1724,41 @@ public class WalletController {
         if (ToolUtil.parseInt(util.get(Parameter.EXCHANGESWITCH), 0) != StatusType.TRUE.getCode()) {
             return new JsonResult(0, "兑换功能暂未开启");
         }
-
+        if (vo.getSource()==null) {
+            return new JsonResult(0, "提现请下载最新app");
+        }
+        if (vo.getSource()!=1 && vo.getSource()!=2 && vo.getSource()!=3) {
+            return new JsonResult(0, "请选择合法提现方式");
+        }
 
         double exchangeMin = ToolUtil.parseDouble(util.get(Parameter.EXCHANGEMIN), 100d);
         double exchangeMax = ToolUtil.parseDouble(util.get(Parameter.EXCHANGEMAX), 10000d);
         if (vo.getScore() == null || vo.getScore() < exchangeMin || vo.getScore() > exchangeMax) {
             return new JsonResult(1, "单笔兑换余额必须在[" + exchangeMin + "," + exchangeMax + "]之间");
         }
-        if (ToolUtil.isEmpty(vo.getBankId())) {
-            return new JsonResult(2, "请选择银行卡类型");
-        }
-        if (ToolUtil.isEmpty(vo.getBankName())) {
-            return new JsonResult(3, "请填写开户银行");
-        }
-        if (ToolUtil.isEmpty(vo.getBankId())) {
-            return new JsonResult(4, "请选择银行卡类型");
-        }
-        if (ToolUtil.isEmpty(vo.getCardNo())) {
-            return new JsonResult(5, "请填写银行卡号");
-        }
-        if (ToolUtil.isEmpty(vo.getUserName())) {
-            return new JsonResult(6, "请填写真实姓名");
-        }
-        if (StringUtils.isBlank(vo.getPayPwd())) {
-            return new JsonResult(8, "支付密码不能为空");
+        if (vo.getSource()==1 || vo.getSource()==2){
+            //银行
+            if (!ToolUtil.is100Mutiple(vo.getScore())){
+                return new JsonResult(1, "单笔兑换余额必须是100整数倍");
+            }
+            if (ToolUtil.isEmpty(vo.getBankId())) {
+                return new JsonResult(2, "请选择银行卡类型");
+            }
+            if (ToolUtil.isEmpty(vo.getBankName())) {
+                return new JsonResult(3, "请填写开户银行");
+            }
+            if (ToolUtil.isEmpty(vo.getBankId())) {
+                return new JsonResult(4, "请选择银行卡类型");
+            }
+            if (ToolUtil.isEmpty(vo.getCardNo())) {
+                return new JsonResult(5, "请填写银行卡号");
+            }
+            if (ToolUtil.isEmpty(vo.getUserName())) {
+                return new JsonResult(6, "请填写真实姓名");
+            }
+            if (StringUtils.isBlank(vo.getPayPwd())) {
+                return new JsonResult(8, "支付密码不能为空");
+            }
         }
 
         User user = userService.getById(token.getId());
@@ -1769,32 +1780,36 @@ public class WalletController {
         if (hasExchange != null && hasExchange >= times) {
             return new JsonResult(0, "每天最多提现" + times + "笔");
         }
-        List<UserBankcard> bankList = userBankcardService.getList(user.getId());
-        UserBankcard bankcard = new UserBankcard();
-        if (CollectionUtils.isEmpty(bankList)) {
-            bankcard.setRemark(user.getUserName());
-            bankcard.setUserId(user.getId());
-            bankcard.setBankId(vo.getBankId());
-            bankcard.setBankName(vo.getBankName());
-            bankcard.setCardNo(vo.getCardNo());
-            bankcard.setType(0);
-            userBankcardService.add(bankcard);
-        } else {
-            bankcard = new UserBankcard();
-            bankcard.setId(bankList.get(0).getId());
-            bankcard.setType(0);
-            bankcard.setBankName(vo.getBankName());
-            bankcard.setBankId(vo.getBankId());
-            bankcard.setCardNo(vo.getCardNo());
-            bankcard.setUserId(user.getId());
-            bankcard.setRemark(user.getUserName());
-            userBankcardService.update(bankcard.getId(), bankcard);
+        if (vo.getSource()==1 || vo.getSource()==2){
+            List<UserBankcard> bankList = userBankcardService.getList(user.getId());
+            UserBankcard bankcard = new UserBankcard();
+            if (CollectionUtils.isEmpty(bankList)) {
+                bankcard.setRemark(user.getUserName());
+                bankcard.setUserId(user.getId());
+                bankcard.setBankId(vo.getBankId());
+                bankcard.setBankName(vo.getBankName());
+                bankcard.setCardNo(vo.getCardNo());
+                bankcard.setType(0);
+                userBankcardService.add(bankcard);
+            } else {
+                bankcard = new UserBankcard();
+                bankcard.setId(bankList.get(0).getId());
+                bankcard.setType(0);
+                bankcard.setBankName(vo.getBankName());
+                bankcard.setBankId(vo.getBankId());
+                bankcard.setCardNo(vo.getCardNo());
+                bankcard.setUserId(user.getId());
+                bankcard.setRemark(user.getUserName());
+                userBankcardService.update(bankcard.getId(), bankcard);
+            }
+            User updateUser = new User();
+            updateUser.setUserName(vo.getUserName());
+            userService.update(user.getId(), updateUser);
+            walletExchangeService.exchangeHandler(user, vo.getScore(), bankcard);
         }
-
-        User updateUser = new User();
-        updateUser.setUserName(vo.getUserName());
-        userService.update(user.getId(), updateUser);
-        walletExchangeService.exchangeHandler(user, vo.getScore(), bankcard);
+        if (vo.getSource()==3){
+            walletExchangeService.exchangeHandlerForWeiXin(user,vo.getScore());
+        }
         // 操作成功返回用户当前积分
         Map<String, Object> result = new HashMap<String, Object>();
         user = userService.getById(token.getId());
@@ -1820,5 +1835,6 @@ public class WalletController {
         System.out.println(msg.split("@")[1]);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         System.out.println(sdf.format(new Date()));
+
     }
 }
