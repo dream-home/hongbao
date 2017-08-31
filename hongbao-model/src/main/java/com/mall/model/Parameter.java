@@ -66,6 +66,7 @@ public class Parameter extends SimpleModel implements Comparable<Parameter>{
      * 转账手续费
      */
     public static final String DONATEPOUNDAGESCALE = "donatePoundageScale";
+
     /**
      * 积分兑换（提现）开关：0：禁用，1：启用
      */
@@ -294,6 +295,37 @@ public class Parameter extends SimpleModel implements Comparable<Parameter>{
      * 县代EP业绩提成比例
      */
     public static final String COUNTRYEPSCALE = "countryEPScale";
+
+    /**
+     * EP转账 开关：0：禁用，1：启用
+     **/
+    public static final String DONATEEPSWICH = "donateEPSwich";
+    /**
+     * 单次EP转账 最大值
+     */
+    public static final String DONATEEPMAX = "donateEPMax";
+    /**
+     * 单次EP转账 最小值
+     */
+    public static final String DONATEEPMIN = "donateEPMin";
+    /**
+     * 转账EP手续费
+     */
+    public static final String DONATEEPPOUNDAGESCALE = "donateEPPoundageScale";
+    /**
+     * 加入合伙人60业绩累加值
+     */
+    public static final String JOINPERFORMANCE = "joinPerformance";
+    /**
+     * 加入合伙人最小现金比例（默认50%)
+     */
+    public static final String JOINRMBSCALE = "joinRmbScale";
+    /**
+     * 余额提现方式:1： 民生银行 2：德衫银行 3：微信
+     */
+    public static final String EXCHANGEWAY = "exchangeWay";
+
+
 
     private String name;
     private String value;
