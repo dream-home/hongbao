@@ -288,8 +288,9 @@ public class WalletController {
             }else if ("online".equals(environment)){
                 notifyUrl=secondCallBack.getReturnUrl();
             }
+            Double payMoney = PoundageUtil.getPoundage(vo.getScore(), 1d, 2);
             orderTypeService.add(model.getOrderNo(),BankCardType.ALIPAY.getCode(),"支付宝充值原生支付",tokens);
-            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,model.getScore(),"斗拍商城支付");
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,payMoney,"斗拍商城支付");
             result.put("orderInfo", orderInfo);
             result.put("returnUrl", environment);
             result.put("orderTitle", "斗拍商城充值");
@@ -790,7 +791,7 @@ public class WalletController {
             model.setRemark("有EP折扣");
         }
         model.setConfirmScore(countMoney);
-
+        countMoney = PoundageUtil.getPoundage(countMoney, 1d, 2);
         /*余额支付时先进行一些基本判断*/
         if (source == BankCardType.BALANCE.getCode().intValue()) {
             if (StringUtils.isBlank(user.getPayPwd())) {
@@ -831,8 +832,8 @@ public class WalletController {
             }else if ("online".equals(environment)){
                 notifyUrl=secondCallBack.getReturnUrl();
             }
-            orderTypeService.add(model.getOrderNo(),BankCardType.SCAN_CODE_ALIPAY.getCode(),"支付宝充值原生支付",tokens);
-            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,model.getScore(),"斗拍商城支付");
+            orderTypeService.add(model.getOrderNo(),BankCardType.SCAN_CODE_ALIPAY.getCode(),"支付宝面对面扫码原生支付",tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,countMoney,"斗拍商城支付");
             result.put("orderInfo", orderInfo);
 
             result.put("realPayPrice", countMoney);
@@ -950,7 +951,7 @@ public class WalletController {
 
         //设置实付金额
         model.setConfirmScore(countMoney);
-
+        countMoney = PoundageUtil.getPoundage(countMoney, 1d, 2);
         /*余额支付时先进行一些基本判断*/
         if (source == BankCardType.BALANCE.getCode().intValue()) {
             if (StringUtils.isBlank(user.getPayPwd())) {
@@ -995,7 +996,7 @@ public class WalletController {
                 notifyUrl=secondCallBack.getReturnUrl();
             }
             orderTypeService.add(model.getOrderNo(),BankCardType.STORE_SCAN_APP_ALIPAY.getCode(),"支付宝APP内发起商家二维码扫码原生支付",tokens);
-            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,model.getScore(),"斗拍商城支付");
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,countMoney,"斗拍商城支付");
             result.put("orderInfo", orderInfo);
 
 

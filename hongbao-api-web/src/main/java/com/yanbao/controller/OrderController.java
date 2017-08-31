@@ -82,6 +82,7 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/appPurchase", method = RequestMethod.POST)
     public JsonResult appPurchase(HttpServletRequest request, @RequestBody OrderPurchaseVo orderPurchaseVo) throws Exception {
+        String  tokens = TokenUtil.getToken(request);
         Token token = TokenUtil.getSessionUser(request);
         if (orderPurchaseVo.getCartList() == null || orderPurchaseVo.getCartList().size() <= 0 || StringUtils.isBlank(orderPurchaseVo.getCartList().get(0).getGoodsId())) {
             return new JsonResult(1, "请选择商品");
@@ -146,25 +147,25 @@ public class OrderController {
 
         //生成待付款的订单
         GoodsWin goodsWin = orderService.addOrderByApp(user, goodsList, orderPurchaseVo, store);
-
+        //计算订单价格
+        Double totalPrice = 0d;
+        if (goodsWin.getOrderType().intValue() == OrderType.PURCHASE.getCode().intValue()) {
+            //ep折扣优惠前的计算金钱
+//                m = goodsWin.getPrice() * goodsWin.getNum() * 100 + "";
+            //ep折扣优惠后的计算金钱
+            totalPrice = goodsWin.getPrice() * goodsWin.getNum() - goodsWin.getDiscountEP();
+        } else {
+//                m = goodsWin.getPrice() * 100 + "";
+            //ep折扣优惠后的计算金钱
+            totalPrice = goodsWin.getPrice() - goodsWin.getDiscountEP();
+        }
+        totalPrice = getPoundage(totalPrice, 1d, 2);
         //返回参数给前端
         Map<Object, Object> map = new HashedMap();
         if (source == BankCardType.WECHATPAY.getCode().intValue()) {
             String ip = request.getRemoteAddr();
             String attach = token.getId() + "@" + BankCardType.PURCHASE_WEIXIN.getCode();
             String m = "";
-            Double totalPrice = 0d;
-            if (goodsWin.getOrderType().intValue() == OrderType.PURCHASE.getCode().intValue()) {
-                //ep折扣优惠前的计算金钱
-//                m = goodsWin.getPrice() * goodsWin.getNum() * 100 + "";
-                //ep折扣优惠后的计算金钱
-                totalPrice = goodsWin.getPrice() * goodsWin.getNum() - goodsWin.getDiscountEP();
-            } else {
-//                m = goodsWin.getPrice() * 100 + "";
-                //ep折扣优惠后的计算金钱
-                totalPrice = goodsWin.getPrice() - goodsWin.getDiscountEP();
-            }
-            totalPrice = getPoundage(totalPrice, 1d, 2);
             m = totalPrice * 100 + "";
             String money = m.substring(0, m.indexOf("."));
             //场景：APP余额充值
@@ -192,6 +193,19 @@ public class OrderController {
 
             }
         } else if (source == BankCardType.ALIPAY.getCode().intValue()) {
+            String notifyUrl="";
+            SecondCallBack secondCallBack =  secondCallBackService.getById(BankCardType.PURCHASE_ALIPAY.getCode()+"");
+            if (secondCallBack==null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())){
+                return new JsonResult(-1,"支付回调参数设置不合法");
+            }
+            if ("test".equals(environment)){
+                notifyUrl=secondCallBack.getTestReturnUrl();
+            }else if ("online".equals(environment)){
+                notifyUrl=secondCallBack.getReturnUrl();
+            }
+            orderTypeService.add(goodsWin.getOrderNo(),BankCardType.PURCHASE_ALIPAY.getCode(),"支付宝订单购买原生支付",tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(goodsWin.getOrderNo(),notifyUrl,totalPrice,"斗拍商城支付");
+            map.put("orderInfo", orderInfo);
             //支付宝支付
             map.put("orderNo", goodsWin.getOrderNo());
             map.put("payTime", goodsWin.getCreateTime());
@@ -384,7 +398,7 @@ public class OrderController {
 
             //原生支付
             String notifyUrl = "";
-            SecondCallBack secondCallBack = secondCallBackService.getById(BankCardType.SCAN_CODE_ALIPAY.getCode() + "");
+            SecondCallBack secondCallBack = secondCallBackService.getById(BankCardType.PURCHASE_ALIPAY.getCode() + "");
             if (secondCallBack == null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())) {
                 return new JsonResult(-1, "支付回调参数设置不合法");
             }
@@ -393,8 +407,8 @@ public class OrderController {
             } else if ("online".equals(environment)) {
                 notifyUrl = secondCallBack.getReturnUrl();
             }
-            orderTypeService.add(model.getOrderNo(), BankCardType.SCAN_CODE_ALIPAY.getCode(), "支付宝面对面扫码原生支付",tokens);
-            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(), notifyUrl, model.getScore(), "斗拍商城支付");
+            orderTypeService.add(model.getOrderNo(), BankCardType.PURCHASE_ALIPAY.getCode(), "支付宝待付订单购买原生支付",tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(), notifyUrl,realPayPrice, "斗拍商城支付");
             map.put("orderInfo", orderInfo);
 
 

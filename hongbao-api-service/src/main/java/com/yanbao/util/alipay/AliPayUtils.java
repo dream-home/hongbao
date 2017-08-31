@@ -86,13 +86,17 @@ public class AliPayUtils {
         model.setTotalAmount(money.toString());
         model.setProductCode("QUICK_MSECURITY_PAY");
         model.setSellerId(PropertiesUtil.getSellerId());
+        log.error("88888888888888888888888888888888889888888888888888888888888888888888888888888888888888888888888888888888888");
+        log.error(JSON.toJSONString(model));
         request.setBizModel(model);
         request.setNotifyUrl(notifyUrl);
         try {
             //这里和普通的接口调用不同，使用的是sdkExecute
             AlipayTradeAppPayResponse response = alipayClient.sdkExecute(request);
             if (response != null) {
-                System.out.println(response.getBody());//就是orderString 可以直接给客户端请求，无需再做处理。
+                log.error("999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999");
+                log.error("支付宝原生支付预付单信息："+response.getBody());
+                log.error("999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999");
                 return response.getBody();
             }
         } catch (AlipayApiException e) {
@@ -151,5 +155,10 @@ public class AliPayUtils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static void main(String[] args) {
+        Double money =0d;
+        alipayPreOrderForApp("201782245552014400","",money,"斗拍商城支付");
     }
 }
