@@ -20,4 +20,6 @@ public interface WalletDonateService {
 
 	Boolean donateHandler(User user, User donateUser, Double score) throws Exception;
 
+	Boolean donateEpHandler(User user, User donateUser, Double score) throws Exception;
+
 }

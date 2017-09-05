@@ -107,10 +107,14 @@ public class WalletController {
         if (StringUtils.isBlank(vo.getDonateTo()) || vo.getScore() == null) {
             return new JsonResult(1, "参数异常");
         }
-        double donateMin = ToolUtil.parseDouble(util.get(Parameter.DONATEMIN), 10d);
+        //判断赠送金额是否是100的整数倍
+        if(vo.getScore() % 100 != 0){
+            return new JsonResult(9, "赠送余额必须是100的整数倍");
+        }
+        double donateMin = ToolUtil.parseDouble(util.get(Parameter.DONATEMIN), 100d);
         double donateMax = ToolUtil.parseDouble(util.get(Parameter.DONATEMAX), 10000d);
         if (vo.getScore() < donateMin || vo.getScore() > donateMax) {
-            return new JsonResult(2, "赠送积分必须在[" + donateMin + "," + donateMax + "]之间");
+            return new JsonResult(2, "赠送余额必须在[" + donateMin + "," + donateMax + "]之间");
         }
         if (StringUtils.isBlank(vo.getPayPwd())) {
             return new JsonResult(3, "支付密码不能为空");
@@ -128,7 +132,7 @@ public class WalletController {
             return new JsonResult(5, "支付密码不正确");
         }
         if (user.getScore() == null || user.getScore() < vo.getScore()) {
-            return new JsonResult(6, "您的积分不足");
+            return new JsonResult(6, "您的余额不足");
         }
         User condition = new User();
         if (vo.getDonateTo().length() < 11) { // UID
@@ -270,8 +274,8 @@ public class WalletController {
 
         logger.debug("*******************************");
 
-        logger.debug(JSON.toJSONString(vo));
-        logger.debug("*******************************");
+        logger.debug(  JSON.toJSONString(vo));
+        logger.debug("  *******************************");
 
         if (vo.getSource() == BankCardType.ALIPAY.getCode()) {
             Map<String, String> params = OrderInfoUtil2_0.buildOrderParamMap(Alipay.APP_ID, vo.getScore());
@@ -1729,6 +1733,8 @@ public class WalletController {
         if (ToolUtil.parseInt(util.get(Parameter.EXCHANGESWITCH), 0) != StatusType.TRUE.getCode()) {
             return new JsonResult(0, "兑换功能暂未开启");
         }
+
+
         if (vo.getSource()==null) {
             return new JsonResult(0, "提现请下载最新app");
         }
@@ -1824,6 +1830,69 @@ public class WalletController {
         return new JsonResult(result);
     }
 
+
+    /**
+     * EP赠送/转账
+     */
+    @ResponseBody
+    @RequestMapping(value = "/donateEP", method = RequestMethod.POST)
+    public JsonResult donate1(HttpServletRequest request, @RequestBody WalletVo vo) throws Exception {
+        // 检查后台是否开启赠送开关
+        ParamUtil util = ParamUtil.getIstance();
+        if (ToolUtil.parseInt(util.get(Parameter.DONATEEPSWICH), 0) != StatusType.TRUE.getCode()) {
+            return new JsonResult(0, "赠送EP功能暂未开启");
+        }
+        Token token = TokenUtil.getSessionUser(request);
+        if (StringUtils.isBlank(vo.getDonateTo()) || vo.getEp() == null) {
+            return new JsonResult(1, "参数异常");
+        }
+        //判断赠送Ep是否是100的整数倍
+        if(vo.getEp() % 100 != 0){
+            return new JsonResult(9, "赠送EP必须是100的整数倍");
+        }
+        double donateMin = ToolUtil.parseDouble(util.get(Parameter.DONATEEPMAX), 100d);
+        double donateMax = ToolUtil.parseDouble(util.get(Parameter.DONATEEPMIN), 10000d);
+        if (vo.getEp() < donateMin || vo.getEp() > donateMax) {
+            return new JsonResult(2, "赠送EP必须在[" + donateMin + "," + donateMax + "]之间");
+        }
+        if (StringUtils.isBlank(vo.getPayPwd())) {
+            return new JsonResult(3, "支付密码不能为空");
+        }
+        User user = userService.getById(token.getId());
+        if (null == user) {
+            logger.error(String.format("Illegal user id[%s]", token.getId()));
+            throw new IllegalArgumentException();
+        }
+        if (StringUtils.isBlank(user.getPayPwd())) {
+            return new JsonResult(4, "请先设置支付密码");
+        }
+        if (!user.getPayPwd().equals(Md5Util.MD5Encode(vo.getPayPwd(), user.getSalt()))) {
+            return new JsonResult(5, "支付密码不正确");
+        }
+        if (user.getExchangeEP() == null || user.getExchangeEP() < vo.getEp()) {
+            return new JsonResult(6, "您的ep不足");
+        }
+        User condition = new User();
+        if (vo.getDonateTo().length() < 11) { // UID
+            condition.setUid(Integer.parseInt(vo.getDonateTo()));
+        } else { // 手机号
+            condition.setPhone(vo.getDonateTo());
+        }
+        User donateUser = userService.getByCondition(condition);
+        if (null == donateUser) {
+            return new JsonResult(7, "赠送用户不存在");
+        }
+        if (user.getId().equals(donateUser.getId())) {
+            return new JsonResult(8, "不能赠送给自己");
+        }
+        //处理ep赠送业务
+        walletDonateService.donateEpHandler(user, donateUser, vo.getEp());
+        // 操作成功返回用户当前积分
+        Map<String, Object> result = new HashMap<String, Object>();
+        user = userService.getById(token.getId());
+        result.put("ep", FormatUtils.formatDouble(user.getExchangeEP()));
+        return new JsonResult(result);
+    }
 
     public static void main(String[] args) throws IOException, JDOMException {
     /*	GenerateOrder generateOrder = new GenerateOrder();

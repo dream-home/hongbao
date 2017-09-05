@@ -184,7 +184,7 @@ public class WalletSignServiceImpl implements WalletSignService {
         message.setUserId(user.getId());
         message.setTitle(RecordType.SIGN_DOUDOU.getMsg());
         message.setType(MessageType.SYSTEM.getCode());
-        message.setDetail("斗斗签到成功，领取：" + doudou + "金额");
+        message.setDetail("斗斗签到成功，领取：" + doudou + "EP");
         message.setOrderNo(OrderNoUtil.get());
         messageService.add(message);
         //领多少金额就扣除系统账户对应的EP

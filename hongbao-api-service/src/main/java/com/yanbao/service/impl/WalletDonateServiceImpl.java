@@ -3,31 +3,21 @@ package com.yanbao.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.mall.model.*;
+import com.yanbao.constant.*;
+import com.yanbao.service.*;
+import com.yanbao.util.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.yanbao.constant.MessageType;
-import com.yanbao.constant.RecordType;
-import com.yanbao.constant.RedisKey;
-import com.yanbao.constant.StatusType;
 import com.yanbao.core.page.Page;
 import com.yanbao.core.page.PageResult;
 import com.yanbao.dao.WalletDonateDao;
-import com.mall.model.Message;
-import com.mall.model.User;
-import com.mall.model.WalletDonate;
-import com.mall.model.WalletRecord;
 import com.yanbao.redis.Hash;
 import com.yanbao.redis.Sets;
-import com.yanbao.service.MessageService;
-import com.yanbao.service.UserService;
-import com.yanbao.service.WalletDonateService;
-import com.yanbao.service.WalletRecordService;
-import com.yanbao.util.OrderNoUtil;
-import com.yanbao.util.UUIDUtil;
 
 /**
  * 
@@ -45,6 +35,8 @@ public class WalletDonateServiceImpl implements WalletDonateService {
 	private WalletRecordService walletRecordService;
 	@Autowired
 	private MessageService messageService;
+	@Autowired
+	private EPRecordService epRecordService;
 
 	@Override
 	public WalletDonate getByOrderNo(String orderNo, String userId) throws Exception {
@@ -134,6 +126,66 @@ public class WalletDonateServiceImpl implements WalletDonateService {
 		message.setTitle("收到赠送金额");
 		message.setType(MessageType.DONATE.getCode());
 		message.setDetail("收到[" + user.getNickName() + "]赠送金额:" + score);
+		message.setRemark(MessageType.DONATE.getMsg());
+		messageService.add(message);
+		// websocket
+		Hash.hincrby(RedisKey.ALL_IDS.getKey(), donateUser.getId(), 1);
+		Sets.sadd(RedisKey.WAITING_IDS.getKey(), donateUser.getId());
+		return true;
+	}
+
+	/**
+	 * 赠送Ep处理流程
+	 *
+	 * @param user
+	 * @param donateUser
+	 * @param ep
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	@Transactional
+	public Boolean donateEpHandler(User user, User donateUser, Double ep) throws Exception {
+		// 计算手续费
+		Double poundageScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.DONATEEPPOUNDAGESCALE), 0d);
+		if (poundageScale == null) {
+			poundageScale = 0d;
+		}
+		Double poundage = PoundageUtil.getPoundage(ep, poundageScale);
+
+		//计算扣除完手续费赠送的ep
+		Double reallyEp = PoundageUtil.getPoundage(ep - poundage,1d);
+
+		// 修改用户ep
+		userService.updateEp(user.getId(), -ep);
+		userService.updateEp(donateUser.getId(),reallyEp);
+
+		//加入ep消费记录
+		epRecordService.consumeEpRecord(user,-ep,OrderNoUtil.get(), EPRecordType.DONATEEP,user.getId(),donateUser.getId(),"");
+
+		// 增加赠送记录
+		WalletDonate donateFrom = new WalletDonate();
+		donateFrom.setUserId(user.getId());
+		donateFrom.setScore(-ep);
+		donateFrom.setRemark(donateUser.getNickName());
+		donateFrom.setDonateUserId(donateUser.getId());
+		donateFrom.setDonateUid(donateUser.getUid());
+		this.add(donateFrom);
+
+		WalletDonate donateTo = new WalletDonate();
+		donateTo.setUserId(donateUser.getId());
+		donateTo.setScore(ep);
+		donateTo.setRemark(user.getNickName());
+		donateTo.setDonateUserId(user.getId());
+		donateTo.setDonateUid(user.getUid());
+		this.add(donateTo);
+		// 添加获赠消息
+		Message message = new Message();
+		message.setUserId(donateUser.getId());
+		message.setOrderNo(donateTo.getOrderNo());
+		message.setTitle("收到赠送ep");
+		message.setType(MessageType.DONATE.getCode());
+		message.setDetail("收到[" + user.getNickName() + "]赠送ep:" + ep);
 		message.setRemark(MessageType.DONATE.getMsg());
 		messageService.add(message);
 		// websocket
