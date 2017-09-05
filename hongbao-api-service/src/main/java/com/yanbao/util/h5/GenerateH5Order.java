@@ -283,7 +283,6 @@ public class GenerateH5Order {
 //		sb.append("key=" + WechatUtil.YANBAO_KEY);
         sb.append("key=" + PUBLIC_KEY);
         String sign = DigestUtils.md5Hex(sb.toString()).toUpperCase();// MD5加密
-
         return sign;
     }
 

@@ -78,8 +78,8 @@ public class JoinController {
             logger.error(String.format("Illegal user id[%s]", token.getId()));
             throw new IllegalArgumentException();
         }
-        Boolean isCompeteInfo =userService.isCompleteInfo(user);
-        if (!isCompeteInfo){
+        Boolean isCompeteInfo = userService.isCompleteInfo(user);
+        if (!isCompeteInfo) {
             return new JsonResult(0, "加入合伙人前,请先去账户中心完善资料");
         }
         //支付来源
@@ -99,22 +99,23 @@ public class JoinController {
         Double joinEp = ToolUtil.parseDouble(util.get(Parameter.JOINEP), 0d);
         Double joinRmbScale = ToolUtil.parseDouble(util.get(Parameter.JOINRMBSCALE), 0d);
         Double exchangeEp = user.getExchangeEP();
-        Double needEP = joinEp - joinEp * joinRmbScale;
+        Double needEP = joinEp - joinEp * joinRmbScale / 100;
+        needEP = PoundageUtil.getPoundage(needEP, 1d, 2);
         Double realMoney = 0d;
-        if (discountEP>0){
+        if (discountEP > 0) {
             if (exchangeEp >= needEP) {
                 //EP足额，以EP为主
-                realMoney=PoundageUtil.getPoundage(joinEp * joinRmbScale,1d,2);
-            }else  if (exchangeEp < needEP && exchangeEp>0){
-                needEP=exchangeEp;
-                realMoney=PoundageUtil.getPoundage(joinEp-needEP,1d,2);
-            }else {
-                realMoney=joinEp;
-                needEP=0d;
+                realMoney = PoundageUtil.getPoundage(joinEp * joinRmbScale / 100, 1d, 2);
+            } else if (exchangeEp < needEP && exchangeEp > 0) {
+                needEP = exchangeEp;
+                realMoney = PoundageUtil.getPoundage(joinEp - needEP, 1d, 2);
+            } else {
+                realMoney = joinEp;
+                needEP = 0d;
             }
-        }else {
-            realMoney=joinEp;
-            needEP=0d;
+        } else {
+            realMoney = joinEp;
+            needEP = 0d;
         }
 
         /*余额支付时先进行一些基本判断*/
@@ -189,9 +190,9 @@ public class JoinController {
                 ip = request.getRemoteAddr();
             }
             vo.setScore(PoundageUtil.getPoundage(vo.getScore(), 1d, 2));
-            realMoney=PoundageUtil.getPoundage(realMoney, 1d, 2);
+            realMoney = PoundageUtil.getPoundage(realMoney, 1d, 2);
             String sScore = vo.getScore() * 100 + "";
-            String realMoneyStr=realMoney * 100 + "";
+            String realMoneyStr = realMoney * 100 + "";
             String money = realMoneyStr.substring(0, sScore.indexOf("."));
             //扫码支付
             String attach = token.getId() + "@" + BankCardType.JOIN_WEIXIN.getCode();
