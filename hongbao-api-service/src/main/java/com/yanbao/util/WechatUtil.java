@@ -1,6 +1,10 @@
 package com.yanbao.util;
 
 import com.alibaba.fastjson.JSON;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradeQueryRequest;
+import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.yanbao.util.h5.GenerateH5Order;
@@ -102,6 +106,10 @@ public class WechatUtil {
         }
         return false;
     }
+
+
+
+
 
     public static void main(String[] args) {
 

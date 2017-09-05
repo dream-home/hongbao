@@ -7,9 +7,13 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
+import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
+import com.alipay.api.response.AlipayTradeQueryResponse;
+import com.yanbao.util.HttpUtil;
 import com.yanbao.util.PropertiesUtil;
+import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -157,8 +161,33 @@ public class AliPayUtils {
         }
     }
 
+
+    /**深圳支付宝app支付对账**/
+    public static Boolean  isSZAliPaySucess(String tradeNo)  {
+        try {
+            AlipayClient alipayClient = new DefaultAlipayClient(PropertiesUtil.getAppUrl(), PropertiesUtil.getAppId(), PropertiesUtil.getAppPrivateKey(), "json", "UTF-8", PropertiesUtil.getAliPayPublicKey(), "RSA2");
+            AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+            AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
+            model.setBody("斗拍商城支付");
+            model.setOutTradeNo(tradeNo);
+            model.setSellerId(PropertiesUtil.getSellerId());
+            request.setBizModel(model);
+            AlipayTradeQueryResponse response = alipayClient.execute(request);
+            if(response.isSuccess()){
+                return  true;
+            } else {
+                return  false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     public static void main(String[] args) {
         Double money =0d;
-        alipayPreOrderForApp("201782245552014400","",money,"斗拍商城支付");
+//        alipayPreOrderForApp("201782245552014400","",money,"斗拍商城支付");
+        System.out.println(isSZAliPaySucess("20170905111427369006"));
     }
 }

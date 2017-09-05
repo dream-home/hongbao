@@ -11,6 +11,7 @@ import com.yanbao.redis.Sets;
 import com.yanbao.redis.Strings;
 import com.yanbao.service.*;
 import com.yanbao.util.*;
+import com.yanbao.util.alipay.AliPayUtils;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,9 +45,9 @@ public class AppController {
     @Autowired
     private WalletRechargeService walletRechargeService;
     @Autowired
-    private  GoodsWinService goodsWinService;
+    private GoodsWinService goodsWinService;
     @Autowired
-    private  MallStoreService mallStoreService;
+    private MallStoreService mallStoreService;
     @Autowired
     private OrderService orderService;
 
@@ -283,6 +284,7 @@ public class AppController {
 
     /**
      * SOS接口
+     *
      * @param request
      * @param orderNo
      * @param auth
@@ -291,8 +293,8 @@ public class AppController {
      */
     @ResponseBody
     @RequestMapping(value = "/callscan", method = RequestMethod.GET)
-    public JsonResult callScan(HttpServletRequest request ,String orderNo,String auth) throws Exception {
-        JsonResult result=null;
+    public JsonResult callScan(HttpServletRequest request, String orderNo, String auth) throws Exception {
+        JsonResult result = null;
         String uri = request.getRequestURI();
         if (org.apache.commons.lang3.StringUtils.isEmpty(orderNo)) {
             return new JsonResult("订单号不能为空");
@@ -301,7 +303,7 @@ public class AppController {
         if (null == model) {
             return new JsonResult("订单不存在");
         }
-        if (org.apache.commons.lang3.StringUtils.isEmpty(model.getStoreUserId())){
+        if (org.apache.commons.lang3.StringUtils.isEmpty(model.getStoreUserId())) {
             return new JsonResult("此订单不是扫码支付订单，接口调用错误");
         }
 
@@ -315,52 +317,53 @@ public class AppController {
 
         User user = null;
         //判断是否是支付宝网页扫码支付
-        if(model.getSource() != BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode()){
+        if (model.getSource() != BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode()) {
             if (org.apache.commons.lang3.StringUtils.isEmpty(model.getUserId())) {
                 return new JsonResult("用户id不能为空");
             }
             user = userService.getById(model.getUserId());
-            if (user==null){
+            if (user == null) {
                 return new JsonResult("用户不存在");
             }
         }
 
-        Boolean isSuccess =false;
+        Boolean isSuccess = false;
         //判断微信扫码支付方式：微信app内扫码支付，微信商家固定二维码app内扫码支付，微信商家固定二维码微信客户端直接发起扫码支付,加入合伙人
-        if (model.getSource()== BankCardType.SCAN_CODE_WEIXIN.getCode().intValue() || model.getSource()==BankCardType.STORE_SCAN_APP_WEIXIN.getCode().intValue() || model.getSource()==BankCardType.STORE_SCAN_PAGE_WEIXIN.getCode().intValue()|| model.getSource()==BankCardType.JOIN_WEIXIN.getCode().intValue()){
+        if (model.getSource() == BankCardType.SCAN_CODE_WEIXIN.getCode().intValue() || model.getSource() == BankCardType.STORE_SCAN_APP_WEIXIN.getCode().intValue() || model.getSource() == BankCardType.STORE_SCAN_PAGE_WEIXIN.getCode().intValue() || model.getSource() == BankCardType.JOIN_WEIXIN.getCode().intValue()) {
             isSuccess = WechatUtil.isAppPaySucess(orderNo);
-            if (!isSuccess){
+            if (!isSuccess) {
                 return new JsonResult("微信扫码订单未支付");
             }
         }
         //判断支付宝是否是扫码支付，商家固定扫码app支付，商家固定扫码支付宝支付,加入合伙人
-        if (model.getSource()== BankCardType.SCAN_CODE_ALIPAY.getCode().intValue() || model.getSource()==BankCardType.STORE_SCAN_APP_ALIPAY.getCode().intValue() || model.getSource()==BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode().intValue()|| model.getSource()==BankCardType.JOIN_ALIPAY.getCode().intValue()){
-            isSuccess = WechatUtil.isAppScanAliPaySucess(orderNo);
-            if (!isSuccess){
+        if (model.getSource() == BankCardType.SCAN_CODE_ALIPAY.getCode().intValue() || model.getSource() == BankCardType.STORE_SCAN_APP_ALIPAY.getCode().intValue() || model.getSource() == BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode().intValue() || model.getSource() == BankCardType.JOIN_ALIPAY.getCode().intValue()) {
+//            isSuccess = WechatUtil.isAppScanAliPaySucess(orderNo);
+            isSuccess = AliPayUtils.isSZAliPaySucess(orderNo);
+            if (!isSuccess) {
                 return new JsonResult("支付宝扫码订单未支付");
             }
         }
-        boolean b=false;
+        boolean b = false;
         b = model.getSource() == BankCardType.SCAN_CODE_WEIXIN.getCode().intValue() || model.getSource() == BankCardType.SCAN_CODE_ALIPAY.getCode().intValue();
-        if (b && isSuccess){
+        if (b && isSuccess) {
             if (null == model || model.getStatus() != RechargeType.SUCCESS.getCode()) {
-                return new JsonResult("面对面扫码支付订单不需要处理：订单状态--》"+model.getStatus()+"\n"+JSON.toJSONString(model));
+                return new JsonResult("面对面扫码支付订单不需要处理：订单状态--》" + model.getStatus() + "\n" + JSON.toJSONString(model));
             }
             walletRechargeService.scanCodeHandler(user, orderNo);
             result = new JsonResult("面对面扫码支付手工处理成功");
         }
-        b = model.getSource() == BankCardType.STORE_SCAN_PAGE_WEIXIN.getCode().intValue() || model.getSource() == BankCardType.STORE_SCAN_APP_WEIXIN.getCode().intValue() ||  model.getSource() == BankCardType.STORE_SCAN_APP_ALIPAY.getCode().intValue() || model.getSource() == BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode().intValue();
-        if (b && isSuccess){
+        b = model.getSource() == BankCardType.STORE_SCAN_PAGE_WEIXIN.getCode().intValue() || model.getSource() == BankCardType.STORE_SCAN_APP_WEIXIN.getCode().intValue() || model.getSource() == BankCardType.STORE_SCAN_APP_ALIPAY.getCode().intValue() || model.getSource() == BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode().intValue();
+        if (b && isSuccess) {
             if (null == model || model.getStatus() != RechargeType.PENDING.getCode()) {
-                return new JsonResult("商家二维码扫码支付订单不需要处理：订单状态--》"+model.getStatus()+"\n"+JSON.toJSONString(model));
+                return new JsonResult("商家二维码扫码支付订单不需要处理：订单状态--》" + model.getStatus() + "\n" + JSON.toJSONString(model));
             }
             walletRechargeService.storeScanCodeHandler(user, orderNo);
             result = new JsonResult("商家二维码扫码支付手工处理成功");
         }
         b = model.getSource() == BankCardType.JOIN_BALANCE.getCode().intValue();
-        if (b && isSuccess){
+        if (b && isSuccess) {
             if (null == model || model.getStatus() != RechargeType.PENDING.getCode()) {
-                return new JsonResult("加入合伙人支付订单不需要处理：订单状态--》"+model.getStatus()+"\n"+JSON.toJSONString(model));
+                return new JsonResult("加入合伙人支付订单不需要处理：订单状态--》" + model.getStatus() + "\n" + JSON.toJSONString(model));
             }
             walletRechargeService.joinPartnerHandler(user, orderNo);
             result = new JsonResult("加入合伙人手工处理成功");
@@ -370,14 +373,14 @@ public class AppController {
 
     @ResponseBody
     @RequestMapping(value = "/callh5", method = RequestMethod.GET)
-    public JsonResult callh5(HttpServletRequest request,String orderNo,String auth) throws Exception {
+    public JsonResult callh5(HttpServletRequest request, String orderNo, String auth) throws Exception {
         String uri = request.getRequestURI();
         if (org.apache.commons.lang3.StringUtils.isEmpty(orderNo)) {
             return new JsonResult("订单号不能为空");
         }
         GoodsWin goodsWin = goodsWinService.getUserOrderByOrderNo(orderNo);
-        if (goodsWin==null){
-            return new JsonResult(ResultCode.ERROR.getCode(),"订单不存在");
+        if (goodsWin == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "订单不存在");
         }
         if (org.apache.commons.lang3.StringUtils.isEmpty(goodsWin.getUserId())) {
             return new JsonResult("用户id不能为空");
@@ -386,20 +389,19 @@ public class AppController {
             return new JsonResult("error");
         }
         User user = userService.getById(goodsWin.getUserId());
-        if (user==null){
+        if (user == null) {
             return new JsonResult("用户不存在");
         }
         if (goodsWin.getStatus() != GoodsWinType.PENDING.getCode()) {
             return new JsonResult("订单支付宝微信已经回调成功");
         }
         Boolean isSuccess = WechatUtil.isH5PaySucess(orderNo);
-        if (!isSuccess){
+        if (!isSuccess) {
             return new JsonResult("微信分享购买订单未支付");
         }
-        mallStoreService.purchaseGoodsWinbyH5(orderNo,user.getId());
+        mallStoreService.purchaseGoodsWinbyH5(orderNo, user.getId());
         return new JsonResult("callh5 处理成功");
     }
-
 
 
     /**
@@ -407,9 +409,9 @@ public class AppController {
      */
     @ResponseBody
     @RequestMapping(value = "/callpay", method = RequestMethod.GET)
-    public JsonResult callPay(HttpServletRequest request,String orderNo, String auth) throws Exception {
+    public JsonResult callPay(HttpServletRequest request, String orderNo, String auth) throws Exception {
         String uri = request.getRequestURI();
-        if(org.apache.commons.lang3.StringUtils.isEmpty(orderNo) ){
+        if (org.apache.commons.lang3.StringUtils.isEmpty(orderNo)) {
             return new JsonResult("orderNo不能为空");
         }
         if (org.apache.commons.lang3.StringUtils.isEmpty(auth) || !auth.equals("qwertyui")) {
@@ -419,7 +421,7 @@ public class AppController {
         if (null == model) {
             return new JsonResult("订单号不存在");
         }
-        if (!org.apache.commons.lang3.StringUtils.isEmpty(model.getStoreUserId())){
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(model.getStoreUserId())) {
             return new JsonResult("此订单不是充值订单，接口调用错误");
         }
         if (model.getStatus() != RechargeType.PENDING.getCode()) {
@@ -428,21 +430,22 @@ public class AppController {
         if (org.apache.commons.lang3.StringUtils.isEmpty(model.getUserId())) {
             return new JsonResult("用户id不能为空");
         }
-        Boolean isSuccess =false;
-        if (model.getSource()== BankCardType.WECHATPAY.getCode().intValue()){
+        Boolean isSuccess = false;
+        if (model.getSource() == BankCardType.WECHATPAY.getCode().intValue()) {
             isSuccess = WechatUtil.isAppPaySucess(orderNo);
-            if (!isSuccess){
+            if (!isSuccess) {
                 return new JsonResult("微信钱包充值订单未支付");
             }
         }
-        if (model.getSource()== BankCardType.ALIPAY.getCode().intValue()){
-            isSuccess = WechatUtil.isAppScanAliPaySucess(orderNo);
-            if (!isSuccess){
+        if (model.getSource() == BankCardType.ALIPAY.getCode().intValue()) {
+//            isSuccess = WechatUtil.isAppScanAliPaySucess(orderNo);
+            isSuccess = AliPayUtils.isSZAliPaySucess(orderNo);
+            if (!isSuccess) {
                 return new JsonResult("支付宝钱包充值订单未支付");
             }
         }
         User user = userService.getById(model.getUserId());
-        if (user==null){
+        if (user == null) {
             return new JsonResult("用户不存在");
         }
         walletRechargeService.rechargeHandler(user, orderNo);
@@ -454,13 +457,13 @@ public class AppController {
      */
     @ResponseBody
     @RequestMapping(value = "/callwxapporder", method = RequestMethod.GET)
-    public JsonResult wxapporder(HttpServletRequest request,String orderNo, String auth) throws Exception {
+    public JsonResult wxapporder(HttpServletRequest request, String orderNo, String auth) throws Exception {
         if (org.apache.commons.lang3.StringUtils.isEmpty(orderNo)) {
             return new JsonResult("订单号不能为空");
         }
         GoodsWin goodsWin = goodsWinService.getUserOrderByOrderNo(orderNo);
-        if (goodsWin==null){
-            return new JsonResult(ResultCode.ERROR.getCode(),"订单不存在");
+        if (goodsWin == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "订单不存在");
         }
         if (org.apache.commons.lang3.StringUtils.isEmpty(goodsWin.getUserId())) {
             return new JsonResult("用户id不能为空");
@@ -469,7 +472,7 @@ public class AppController {
             return new JsonResult("error");
         }
         User user = userService.getById(goodsWin.getUserId());
-        if (user==null){
+        if (user == null) {
             return new JsonResult("用户不存在");
         }
         if (goodsWin.getStatus().intValue() != GoodsWinType.PENDING.getCode()) {
@@ -496,13 +499,13 @@ public class AppController {
      */
     @ResponseBody
     @RequestMapping(value = "/callalipayapporder", method = RequestMethod.GET)
-    public JsonResult alipayAppOrder(HttpServletRequest request,String orderNo, String auth) throws Exception {
+    public JsonResult alipayAppOrder(HttpServletRequest request, String orderNo, String auth) throws Exception {
         if (org.apache.commons.lang3.StringUtils.isEmpty(orderNo)) {
             return new JsonResult("订单号不能为空");
         }
         GoodsWin goodsWin = goodsWinService.getUserOrderByOrderNo(orderNo);
-        if (goodsWin==null){
-            return new JsonResult(ResultCode.ERROR.getCode(),"订单不存在");
+        if (goodsWin == null) {
+            return new JsonResult(ResultCode.ERROR.getCode(), "订单不存在");
         }
         if (org.apache.commons.lang3.StringUtils.isEmpty(goodsWin.getUserId())) {
             return new JsonResult("用户id不能为空");
@@ -511,7 +514,7 @@ public class AppController {
             return new JsonResult("error");
         }
         User user = userService.getById(goodsWin.getUserId());
-        if (user==null){
+        if (user == null) {
             return new JsonResult("用户不存在");
         }
 
@@ -520,9 +523,10 @@ public class AppController {
             return new JsonResult(ResultCode.SUCCESS.getCode(), "支付宝APP直接购买订单已支付成功");
         }
 
-        Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
+//        Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
+        Boolean isSucess = AliPayUtils.isSZAliPaySucess(orderNo);
         String key = RedisKey.HANDLE_CALLBACK.getKey() + orderNo;
-        Boolean flag = RedisLock.redisLock(key,orderNo, 6);
+        Boolean flag = RedisLock.redisLock(key, orderNo, 6);
 
         if (flag && isSucess) {
             //处理业务
@@ -540,41 +544,42 @@ public class AppController {
 
     /**
      * 后台人工新增账号
-     * @param uid  根节点推荐人
+     *
+     * @param uid        根节点推荐人
      * @param childCount 每个推荐人推荐多少个子账号
-     * @param layer 多少层级关系
+     * @param layer      多少层级关系
      */
     @ResponseBody
     @RequestMapping(value = "/callAddUser", method = RequestMethod.GET)
-    public JsonResult addUser(HttpServletRequest request,Integer uid,Integer childCount,Integer layer) throws Exception {
+    public JsonResult addUser(HttpServletRequest request, Integer uid, Integer childCount, Integer layer) throws Exception {
         User cond = new User();
         cond.setUid(uid);
         User parent = userService.getByCondition(cond);
-        if(parent == null){
-            return new JsonResult(1,"推荐人为空");
+        if (parent == null) {
+            return new JsonResult(1, "推荐人为空");
         }
-        if(childCount == null || childCount <0){
-            return new JsonResult(2,"childCount参数错误！！！");
+        if (childCount == null || childCount < 0) {
+            return new JsonResult(2, "childCount参数错误！！！");
         }
-        if(layer == null || layer <0){
-            return new JsonResult(3,"layer参数错误！！！");
+        if (layer == null || layer < 0) {
+            return new JsonResult(3, "layer参数错误！！！");
         }
         List<Integer> uidList = new ArrayList<>();
         List<User> list = new ArrayList<User>();
         list.add(parent);
-        String msg="";
-        int m=0;
-        int n=0;
-        logger.error("开始层级为："+parent.getLevles());
+        String msg = "";
+        int m = 0;
+        int n = 0;
+        logger.error("开始层级为：" + parent.getLevles());
         for (int i = 0; i < layer; i++) {
             List<User> list2 = new ArrayList<User>();
-            msg+="第"+(i+1)+"层：";
-            for(User user:list) {
+            msg += "第" + (i + 1) + "层：";
+            for (User user : list) {
                 n++;
-                logger.error("执行到第"+n+"层");
-                msg+="上级："+user.getUid()+">>下级：";
+                logger.error("执行到第" + n + "层");
+                msg += "上级：" + user.getUid() + ">>下级：";
                 for (int j = 0; j < childCount; j++) {
-                    logger.error("添加第"+m+"个账户");
+                    logger.error("添加第" + m + "个账户");
                     m++;
                     User newUser = new User();
                     newUser.setFirstReferrer(user.getId());
@@ -583,7 +588,7 @@ public class AppController {
                     newUser.setLevles(user.getLevles() + 1);
                     newUser.setLoginTime(null);
                     newUser.setUpdateTime(null);
-                    newUser.setWeixin(UUIDUtil.getUUID()+"0000000");
+                    newUser.setWeixin(UUIDUtil.getUUID() + "0000000");
                     newUser.setPassword("qwe123");
                     newUser.setPayPwd("123456");
                     userService.add(newUser);
@@ -606,7 +611,7 @@ public class AppController {
                         }
                     }).start();
                     list2.add(newUser);
-                    msg+=newUser.getUid()+",";
+                    msg += newUser.getUid() + ",";
                 }
             }
             list.clear();
@@ -616,20 +621,19 @@ public class AppController {
     }
 
     private static double EARTH_RADIUS = 6378.137;//地球半径
-    private static double rad(double d)
-    {
+
+    private static double rad(double d) {
         return d * Math.PI / 180.0;
     }
 
-    public static double GetDistance(double lat1, double lng1, double lat2, double lng2)
-    {
+    public static double GetDistance(double lat1, double lng1, double lat2, double lng2) {
         double radLat1 = rad(lat1);
         double radLat2 = rad(lat2);
         double a = radLat1 - radLat2;
         double b = rad(lng1) - rad(lng2);
 
-        double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a/2),2) +
-                Math.cos(radLat1)*Math.cos(radLat2)*Math.pow(Math.sin(b/2),2)));
+        double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) +
+                Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
         s = s * EARTH_RADIUS;
         s = Math.round(s * 10000) / 10000;
         return s;
@@ -660,13 +664,13 @@ public class AppController {
         }*/
 
         //定义一个数组
-        Integer[] a = {1,2,3,4,5,6,7};
+        Integer[] a = {1, 2, 3, 4, 5, 6, 7};
 
         List<Integer> a_int_List = Arrays.asList(a);
 
         //asList没有add和remove，会报错
         a_int_List.add(8);
-        for(int str:a_int_List){//能遍历出各个元素
+        for (int str : a_int_List) {//能遍历出各个元素
             System.out.println(str);
         }
 

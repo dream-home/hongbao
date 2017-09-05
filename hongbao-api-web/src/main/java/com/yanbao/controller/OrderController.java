@@ -686,7 +686,8 @@ public class OrderController {
             return new JsonResult(ResultCode.SUCCESS.getCode(), "支付宝直接购买订单已支付成功");
         }
 
-        Boolean isSucess = WechatUtil.isAppScanAliPaySucess(vo.getOrderNo());
+//        Boolean isSucess = WechatUtil.isAppScanAliPaySucess(vo.getOrderNo());
+        Boolean isSucess = AliPayUtils.isSZAliPaySucess(orderNo);
         String key = RedisKey.HANDLE_CALLBACK.getKey() + vo.getOrderNo();
         Boolean flag = RedisLock.redisLock(key, vo.getOrderNo(), 6);
 

@@ -491,7 +491,8 @@ public class JoinController {
             return new JsonResult("此订单不是扫码支付订单，接口调用错误");
         }
         if (recharge.getStatus().intValue() == RechargeType.PENDING.getCode().intValue()) {
-            Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
+            Boolean isSucess = AliPayUtils.isSZAliPaySucess(orderNo);
+//            Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
             String key = RedisKey.WEIXIN_CALLBACK.getKey() + orderNo;
             Boolean flag = RedisLock.redisLock(key, orderNo, 7);
             if (flag && isSucess) {
