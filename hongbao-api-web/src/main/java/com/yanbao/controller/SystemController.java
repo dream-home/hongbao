@@ -110,6 +110,13 @@ public class SystemController {
 		result.put("epSwitch", util.get(Parameter.EPSWITCH));
 		result.put("minSignDouNum", util.get(Parameter.MINSIGNDOUNUM));
 		result.put("servicePhone", util.get(Parameter.SERVICEPHONE));
+
+		result.put("donateEpSwich", util.get(Parameter.DONATEEPSWICH));
+		result.put("donateEpMax", util.get(Parameter.DONATEEPMAX));
+		result.put("donateEpMin", util.get(Parameter.DONATEEPMIN));
+		result.put("donateEpPoundageScale", util.get(Parameter.DONATEEPPOUNDAGESCALE));
+		result.put("joinRmbScale", util.get(Parameter.JOINRMBSCALE));
+		result.put("exchangeWay", util.get(Parameter.EXCHANGEWAY));
 		return new JsonResult(result);
 	}
 

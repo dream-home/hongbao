@@ -123,6 +123,41 @@ public class WalletExchangeServiceImpl implements WalletExchangeService {
         return true;
     }
 
+
+    @Override
+    @Transactional
+    public Boolean exchangeHandlerForWeiXin(User user, Double score) throws Exception {
+        // 计算手续费
+        Double poundageScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.EXCHANGEPOUNDAGESCALE), 0.05d);
+        if (poundageScale == null) {
+            poundageScale = 0.05;
+        }
+        Double poundage = PoundageUtil.getPoundage(score, poundageScale);
+        // 修改用户积分
+        userService.updateScore(user.getId(), -score);
+        // 增加兑换记录
+        WalletExchange exchange = new WalletExchange();
+        exchange.setUserId(user.getId());
+        exchange.setScore(-score);
+        exchange.setPoundage(poundage);
+        exchange.setConfirmScore(score - poundage);
+        exchange.setBankName("加入合伙人现金部分给代理提成");
+        exchange.setBankId("");
+        exchange.setCardType(BankCardType.JOIN_DONATE_FOR_AGENT.getCode());
+        exchange.setCardNo("");
+        exchange.setRemark("加入合伙人现金部分给代理提成");
+        this.add(exchange);
+        // 增加积分流水
+        WalletRecord record = new WalletRecord();
+        record.setUserId(user.getId());
+        record.setOrderNo(exchange.getOrderNo());
+        record.setScore(-score);
+        record.setRecordType(RecordType.EXCHANGE.getCode());
+        record.setRemark(RecordType.EXCHANGE.getMsg());
+        walletRecordService.add(record);
+        return true;
+    }
+
     /***
      *
      * EP 兑换成用户斗斗

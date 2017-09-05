@@ -27,4 +27,6 @@ public interface WalletExchangeService {
 
 	public Integer countCurrentDay(String userId) throws Exception;
 
+	Boolean exchangeHandlerForWeiXin(User user, Double score) throws Exception;
+
 }

@@ -308,7 +308,7 @@ public class ToolUtil {
         try {
             _dValue = Double.parseDouble(sValue);
         } catch (NumberFormatException e) {
-            ;
+            return _dValue;
         }
         return _dValue;
     }
@@ -434,6 +434,16 @@ public class ToolUtil {
         }
     }
 
+    public static Boolean   is100Mutiple(Double number) {
+        if (number==null || number<0){
+            return false;
+        }
+        if (number%100==0){
+            return true;
+        }
+        return  false;
+    }
+
     public static void main(String[] args) throws IOException {
 
         String s = "{\"Im\":\"http://apitest.doupaimall.com/h5/index.html\", \"Store\":\"http://apitest.doupaimall.com/m/user/wdtransition?index=Store&uid=200000&storeId=FB5937DBB58E45488D38228FC01E4928&groupType=A&goodsId=null\"}\n";
@@ -483,6 +493,9 @@ public class ToolUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
+        System.out.println(is100Mutiple(100d));
     }
+
+
 }
 

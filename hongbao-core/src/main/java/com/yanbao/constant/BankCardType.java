@@ -72,7 +72,9 @@ public enum BankCardType {
 
     JOIN_BALANCE(34, "余额加入合伙人支付"),
 
-    ADMIN_RECHARGE(99, "管理员后台充值");
+    ADMIN_RECHARGE(99, "管理员后台充值"),
+
+    JOIN_DONATE_FOR_AGENT(99, "管理员后台充值");
 
 
 

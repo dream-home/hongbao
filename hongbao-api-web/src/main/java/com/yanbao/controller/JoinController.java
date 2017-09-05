@@ -62,8 +62,7 @@ public class JoinController {
     @Autowired
     private SecondCallBackService secondCallBackService;
     @Autowired
-    private  OrderTypeService orderTypeService;
-
+    private OrderTypeService orderTypeService;
 
 
     /**
@@ -79,8 +78,14 @@ public class JoinController {
             logger.error(String.format("Illegal user id[%s]", token.getId()));
             throw new IllegalArgumentException();
         }
+        Boolean isCompeteInfo =userService.isCompleteInfo(user);
+        if (!isCompeteInfo){
+            return new JsonResult(0, "加入合伙人前,请先去账户中心完善资料");
+        }
         //支付来源
         int source = vo.getSource().intValue();
+        //如果discountEP>0 就是用兑换EP
+        Double discountEP = vo.getDiscountEP();
         //支付来源是否合法有效
         boolean isVaildPay = source == BankCardType.ALIPAY.getCode().intValue() || source == BankCardType.WECHATPAY.getCode().intValue() || source == BankCardType.BALANCE.getCode().intValue();
         if (!isVaildPay) {
@@ -91,7 +96,27 @@ public class JoinController {
         if (util == null) {
             return new JsonResult(6, "获取系统设置参数失败");
         }
-        double joinEp = ToolUtil.parseDouble(util.get(Parameter.JOINEP), 0d);
+        Double joinEp = ToolUtil.parseDouble(util.get(Parameter.JOINEP), 0d);
+        Double joinRmbScale = ToolUtil.parseDouble(util.get(Parameter.JOINRMBSCALE), 0d);
+        Double exchangeEp = user.getExchangeEP();
+        Double needEP = joinEp - joinEp * joinRmbScale;
+        Double realMoney = 0d;
+        if (discountEP>0){
+            if (exchangeEp >= needEP) {
+                //EP足额，以EP为主
+                realMoney=PoundageUtil.getPoundage(joinEp * joinRmbScale,1d,2);
+            }else  if (exchangeEp < needEP && exchangeEp>0){
+                needEP=exchangeEp;
+                realMoney=PoundageUtil.getPoundage(joinEp-needEP,1d,2);
+            }else {
+                realMoney=joinEp;
+                needEP=0d;
+            }
+        }else {
+            realMoney=joinEp;
+            needEP=0d;
+        }
+
         /*余额支付时先进行一些基本判断*/
         if (source == BankCardType.BALANCE.getCode().intValue()) {
             if (StringUtils.isBlank(user.getPayPwd())) {
@@ -103,23 +128,22 @@ public class JoinController {
             if (vo.getScore() < 0) {
                 return new JsonResult(4, "请输入合法有效的付款金额");
             }
-            if (user.getScore() == null || user.getScore() < joinEp) {
+            if (user.getScore() == null || user.getScore() < realMoney) {
                 return new JsonResult(5, "您的余额不足");
             }
         }
-
-
         Map<String, Object> result = new HashMap<String, Object>();
-        // 生成预订单
+        // 生成预订单   score :EP+现金         discountEP ：ep抵扣金额     confirmScore:扣除三级分销和手续费的金额
         WalletRecharge model = new WalletRecharge();
         model.setUserId(token.getId());
         model.setStoreUserId(vo.getStoreUserId());
         model.setScore(joinEp);
         model.setConfirmScore(joinEp);
         model.setBusinessSendEp(0d);
-        model.setFirstReferrerScale(PoundageUtil.divide(ToolUtil.parseDouble(util.get(Parameter.JOINFIRSTREFERRERSCALE),0d),100,4));
-        model.setSecondReferrerScale(PoundageUtil.divide(ToolUtil.parseDouble(util.get(Parameter.JOINSECONDREFERRERSCALE),0d),100,4));
-        model.setThirdReferrerScale(PoundageUtil.divide(ToolUtil.parseDouble(util.get(Parameter.JOINTHIRDREFERRERSCALE),0d),100,4));
+        model.setDiscountEP(needEP);
+        model.setFirstReferrerScale(PoundageUtil.divide(ToolUtil.parseDouble(util.get(Parameter.JOINFIRSTREFERRERSCALE), 0d), 100, 4));
+        model.setSecondReferrerScale(PoundageUtil.divide(ToolUtil.parseDouble(util.get(Parameter.JOINSECONDREFERRERSCALE), 0d), 100, 4));
+        model.setThirdReferrerScale(PoundageUtil.divide(ToolUtil.parseDouble(util.get(Parameter.JOINTHIRDREFERRERSCALE), 0d), 100, 4));
         //获取设置参数
         double tradeRate = 0;
         //手续费 = 三级分销+ep赠送+平台抽佣
@@ -140,18 +164,18 @@ public class JoinController {
             result.put("tranType", 60);
 
             //原生支付
-            String notifyUrl="";
-            SecondCallBack secondCallBack =  secondCallBackService.getById(BankCardType.JOIN_ALIPAY.getCode()+"");
-            if (secondCallBack==null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())){
-                return new JsonResult(-1,"支付回调参数设置不合法");
+            String notifyUrl = "";
+            SecondCallBack secondCallBack = secondCallBackService.getById(BankCardType.JOIN_ALIPAY.getCode() + "");
+            if (secondCallBack == null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())) {
+                return new JsonResult(-1, "支付回调参数设置不合法");
             }
-            if ("test".equals(environment)){
-                notifyUrl=secondCallBack.getTestReturnUrl();
-            }else if ("online".equals(environment)){
-                notifyUrl=secondCallBack.getReturnUrl();
+            if ("test".equals(environment)) {
+                notifyUrl = secondCallBack.getTestReturnUrl();
+            } else if ("online".equals(environment)) {
+                notifyUrl = secondCallBack.getReturnUrl();
             }
-            orderTypeService.add(model.getOrderNo(),BankCardType.JOIN_ALIPAY.getCode(),"支付宝加入合伙人原生支付",tokens);
-            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,model.getScore(),"斗拍商城支付");
+            orderTypeService.add(model.getOrderNo(), BankCardType.JOIN_ALIPAY.getCode(), "支付宝加入合伙人原生支付", tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(), notifyUrl, realMoney, "斗拍商城支付");
             result.put("orderInfo", orderInfo);
 
         } else if (source == BankCardType.WECHATPAY.getCode().intValue()) {
@@ -165,8 +189,10 @@ public class JoinController {
                 ip = request.getRemoteAddr();
             }
             vo.setScore(PoundageUtil.getPoundage(vo.getScore(), 1d, 2));
+            realMoney=PoundageUtil.getPoundage(realMoney, 1d, 2);
             String sScore = vo.getScore() * 100 + "";
-            String money = sScore.substring(0, sScore.indexOf("."));
+            String realMoneyStr=realMoney * 100 + "";
+            String money = realMoneyStr.substring(0, sScore.indexOf("."));
             //扫码支付
             String attach = token.getId() + "@" + BankCardType.JOIN_WEIXIN.getCode();
             //场景：APP加入合伙人
@@ -174,7 +200,7 @@ public class JoinController {
                 GenerateOrder generateOrder = new GenerateOrder();
                 Map<String, String> generate = generateOrder.generate(money, ip, attach, model.getOrderNo(), joinWeixinNotifyUrl);
                 result.put("generate", generate);
-            //场景：微店加入合伙人
+                //场景：微店加入合伙人
             } else if (vo.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()) {
                 GenerateH5Order order = new GenerateH5Order();
                 Map<String, String> wxMap = order.generate(money, ip, attach, model.getOrderNo(), user.getOpenId(), wxStoreH5joinWeixinNotifyUrl);
@@ -194,8 +220,8 @@ public class JoinController {
             model.setRemark("APP余额加入合伙人支付");
             walletRechargeService.add(model);
             //余额支付直接调用三级分销等业务
-            boolean flag =walletRechargeService.joinPartnerHandler(user, model.getOrderNo());
-            result.put("isPaySuccess",flag);
+            boolean flag = walletRechargeService.joinPartnerHandler(user, model.getOrderNo());
+            result.put("isPaySuccess", flag);
         }
         result.put("orderNo", model.getOrderNo());
         result.put("payTime", model.getCreateTime().getTime());
@@ -213,11 +239,11 @@ public class JoinController {
         Token token = TokenUtil.getSessionUser(request);
         //开始前记录回调
         payCallbackService.doCallBackAction(vo.getOrderNo(), request.getRequestURI(), JSON.toJSONString(vo), false);
-        logger.error("回调参数vo："+JSON.toJSONString(vo));
+        logger.error("回调参数vo：" + JSON.toJSONString(vo));
         if (StringUtils.isEmpty(vo.getOrderNo())) {
             return new JsonResult(2, "订单号参数错误");
         }
-        if ( vo.getSource() != BankCardType.JOIN_ALIPAY.getCode().intValue()) {
+        if (vo.getSource() != BankCardType.JOIN_ALIPAY.getCode().intValue()) {
             return new JsonResult(1, "回调类型错误");
         }
         User user = userService.getById(token.getId());
@@ -228,7 +254,7 @@ public class JoinController {
         if (model.getSource().intValue() == BankCardType.JOIN_ALIPAY.getCode().intValue()) {
             //支付宝面对面扫码支付
             walletRechargeService.joinPartnerHandler(user, vo.getOrderNo());
-        }else {
+        } else {
             logger.error("999999 ：数据库支付回调类型配置错误，请检查");
         }
         // 操作成功返回用户当前积分
@@ -249,9 +275,9 @@ public class JoinController {
     public void wxScanCallback(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String resXml = HttpsUtil.getXmlFromRequest(request);
         String msg = "";
-        String orderNo="";
+        String orderNo = "";
         //开始前记录回调
-        payCallbackService.doCallBackAction(null, request.getRequestURI(), resXml+"微信支付加入合伙人", false);
+        payCallbackService.doCallBackAction(null, request.getRequestURI(), resXml + "微信支付加入合伙人", false);
         logger.error("***********call***********");
         logger.error(resXml);
         logger.error("***********wxCallback***********");
@@ -313,12 +339,12 @@ public class JoinController {
             payCallbackService.doCallBackAction(orderNo, request.getRequestURI(), resXml, false);
             if ("SUCCESS".equals((String) packageParams.get("result_code")) && userId != null) {
                 recharge = walletRechargeService.getByOrderNo(orderNo, userId);
-                boolean b =fee == null || recharge == null;
-                boolean b1=true;
-                if (fee != null && recharge != null){
-                    double fee1= PoundageUtil.getPoundage(fee.doubleValue(),1d);
-                    double confirmScore=PoundageUtil.getPoundage(recharge.getConfirmScore() * 100,1d);
-                    b1 =confirmScore != fee1  || recharge.getStatus() != RechargeType.PENDING.getCode() || !StringUtils.isEmpty(value);
+                boolean b = fee == null || recharge == null;
+                boolean b1 = true;
+                if (fee != null && recharge != null) {
+                    double fee1 = PoundageUtil.getPoundage(fee.doubleValue(), 1d);
+                    double confirmScore = PoundageUtil.getPoundage(recharge.getConfirmScore() * 100, 1d);
+                    b1 = confirmScore != fee1 || recharge.getStatus() != RechargeType.PENDING.getCode() || !StringUtils.isEmpty(value);
                 }
                 if (b && b1) {
                     resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>" + "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
@@ -328,7 +354,7 @@ public class JoinController {
                     Boolean flag = RedisLock.redisLock(key, orderNo, 6);
                     User user = userService.getById(userId);
                     //处理商家固定扫码支付成功后的业务
-                    if (flag){
+                    if (flag) {
                         walletRechargeService.joinPartnerHandler(user, orderNo);
                     }
                     logger.error("支付成功");
@@ -342,7 +368,7 @@ public class JoinController {
             }
         }
         //成功回调后记录
-        payCallbackService.doCallBackAction(orderNo, request.getRequestURI(), JSON.toJSONString(recharge)+"   "+msg, true);
+        payCallbackService.doCallBackAction(orderNo, request.getRequestURI(), JSON.toJSONString(recharge) + "   " + msg, true);
         logger.error("*******************100000*********************");
         logger.error("*******************100000********************");
         logger.error(resXml);

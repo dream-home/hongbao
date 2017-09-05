@@ -2,6 +2,7 @@ package com.yanbao.service.impl;
 
 import com.yanbao.constant.*;
 import com.yanbao.core.model.JpushExtraModel;
+import com.yanbao.core.page.JsonResult;
 import com.yanbao.core.page.Page;
 import com.yanbao.core.page.PageResult;
 import com.yanbao.dao.WalletRechargeDao;
@@ -23,6 +24,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.yanbao.constant.BankCardType.JOIN_DONATE_FOR_AGENT;
 
 /**
  * @author ZHUZIHUI
@@ -58,6 +61,8 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
     private PerformanceRecordService performanceRecordService;
     @Autowired
     private PartnerBillDetailService partnerBillDetailService;
+    @Autowired
+    private WalletExchangeService walletExchangeService;
 
     @Override
     public WalletRecharge getByOrderNo(String orderNo, String userId) throws Exception {
@@ -664,6 +669,33 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
             logger.error(String.format("Illegal recharge orderNo[%s]", orderNo));
             throw new IllegalArgumentException();
         }
+        //获取支付的三级分销比例和ep比例
+        ParamUtil util = ParamUtil.getIstance();
+        if (util == null) {
+            return false;
+        }
+        Double joinEp = ToolUtil.parseDouble(util.get(Parameter.JOINEP), 0d);
+        Double joinRmbScale = ToolUtil.parseDouble(util.get(Parameter.JOINRMBSCALE), 0d);
+        Double exchangeEp = user.getExchangeEP();
+        Double needEP = joinEp - joinEp * joinRmbScale;
+        Double realMoney = 0d;
+        if (model.getDiscountEP()!=null && model.getDiscountEP()>0){
+            if (user.getExchangeEP() >= needEP) {
+                //EP足额，以EP为主
+                realMoney=PoundageUtil.getPoundage(joinEp * joinRmbScale,1d,2);
+            }else  if (exchangeEp < needEP && exchangeEp>0){
+                needEP=exchangeEp;
+                realMoney=PoundageUtil.getPoundage(joinEp-needEP,1d,2);
+            }else {
+                realMoney=joinEp;
+                needEP=0d;
+            }
+        }else {
+            realMoney=joinEp;
+            needEP=0d;
+        }
+        model.setDiscountEP(needEP);
+        model.setConfirmScore(realMoney);
         //余额支付
         if (null != model && model.getSource().intValue() == BankCardType.JOIN_BALANCE.getCode()) {
             if (user.getScore() == null || user.getScore() < model.getConfirmScore()) {
@@ -671,6 +703,17 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
             }
             //扣减用户积分
             userService.updateScore(user.getId(), -model.getConfirmScore());
+        }
+        if (model.getDiscountEP()>0){
+            //有使用EP抵扣,扣减用户EP
+            userService.updateEpById(user.getId(),-model.getDiscountEP());
+            //增加用户EP流水 加入EP业绩ep消费统计
+            epRecordService.consumeEpRecord(user,-model.getDiscountEP(),orderNo, EPRecordType.JOIN_PARTNER,user.getId(),Constant.SYSTEM_USERID,"");
+            //增加用户流水总表EP流水
+            addUserScoreRecord(user.getId(), model.getOrderNo(), model.getDiscountEP(), RecordType.JOIN_PAY.getCode(), RecordType.JOIN_PAY.getMsg());
+            //增加系统EP消息
+            String storeDetail = "用户" + user.getUid() + "加入合伙人，现金支付"+PoundageUtil.getPoundage(model.getScore()-model.getDiscountEP(),1d,2)+",EP支付" + model.getDiscountEP();
+            addUserScoreAndEpMessage(user.getId(), model.getOrderNo(), MessageType.JOIN_PAY.getMsg(), MessageType.JOIN_PAY.getCode(), storeDetail, MessageType.JOIN_PAY.getMsg());
         }
         //扣减用户积分流水
         addUserScoreRecord(user.getId(), model.getOrderNo(), -model.getConfirmScore(), RecordType.JOIN_PAY.getCode(), RecordType.JOIN_PAY.getMsg());
@@ -703,24 +746,36 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
         updateUser.setGrade(GradeType.grade2.getCode());
         updateUser.setUpdateTime(new Date());
         userService.update(user.getId(), updateUser);
-        //加入合伙人成功后，800EP兑换成斗斗给用户
+        //加入合伙人成功后，800EP兑换成斗斗给用户,以800为基数，乘以管理后台配置的倍数，动态赠送
         double joinTodouScale = ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.JOINTODOUSCALE), 0d);
         userService.updateDoudou(user.getId(), PoundageUtil.getPoundage(800 * joinTodouScale, 1d));
-        //增加加入合伙人记录
+        //增加加入合伙人记录，同时也是加入合伙人时候的赠送斗斗记录
         addWalletSign(user, PoundageUtil.getPoundage(800 * joinTodouScale, 1d));
-        //第一次加入合伙人，向上累加EP销售业绩
-        userService.updatePerformanceCount(user.getId(), 800d); // 此处是同步处理，现改为下面的线程池异步处理
+        //第一次加入合伙人，向上累加EP销售业绩，V4.4之后，销售业绩由后台配置，往上加60层
+        Double joinPerformance = ToolUtil.parseDouble(util.get(Parameter.JOINPERFORMANCE), 800d);
+        userService.updatePerformanceCount(user.getId(), joinPerformance); // 此处是同步处理，现改为下面的线程池异步处理
         //第一次加入合伙人，清除用户的所有销售业绩
         gradeService.clearAllPerformance(user,GradeType.grade2.getCode());
         //新增业绩处理记录
-        performanceRecordService.create(orderNo,800d,user.getId(),model.getSource(),model.getRemark());
-
+        performanceRecordService.create(orderNo,joinPerformance,user.getId(),model.getSource(),model.getRemark());
+        //插入提现记录，用户实付金额需要给对应地区的区域省代 区代 市代做业绩提成，此处为了简化，直接当作提现订单来处理
+        // 增加兑换记录
+        WalletExchange exchange = new WalletExchange();
+        exchange.setUserId(user.getId());
+        exchange.setScore(-realMoney);
+        exchange.setPoundage(0d);
+        exchange.setConfirmScore(realMoney);
+        exchange.setBankName("加入合伙人现金部分给代理提成");
+        exchange.setBankId("");
+        exchange.setCardType(JOIN_DONATE_FOR_AGENT.getCode());
+        exchange.setRemark("加入合伙人现金部分给代理提成");
+        exchange.setCardNo("");
+        walletExchangeService.add(exchange);
         // 修改支付订单
         WalletRecharge updateModel = new WalletRecharge();
         updateModel.setStatus(RechargeType.TRANSFER_SUCCESS.getCode());
         this.update(model.getId(), updateModel);
-        //加入业绩ep消费统计
-        epRecordService.consumeEpRecord(user,-800d,orderNo, EPRecordType.JOIN_SCAN_EP,user.getId(),Constant.SYSTEM_USERID,"");
+//        epRecordService.consumeEpRecord(user,-800d,orderNo, EPRecordType.JOIN_SCAN_EP,user.getId(),Constant.SYSTEM_USERID,"");
         //用户支付成功推送
         if (StringUtils.isNotEmpty(user.getRegistrationId())) {
             JPushUtil.pushPayloadByid(user.getRegistrationId(), "您有一笔金额为：" + model.getScore() + "的交易", new JpushExtraModel(JpushExtraModel.NOTIFIYPE, JpushExtraModel.EXPENSE_MSM));

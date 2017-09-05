@@ -22,7 +22,7 @@ public class WalletV42Vo implements Serializable {
 	private Double score;
 	/** 支付密码 */
 	private String payPwd;
-	/** 充值来源：1：支付宝，2：微信，3：余额  */
+	/**  余额提现方式:1： 民生银行 2：德衫银行 3：微信   */
 	private Integer source;
 	/** IP */
 	private String ip;
