@@ -274,8 +274,8 @@ public class WalletController {
 
         logger.debug("*******************************");
 
-        logger.debug(JSON.toJSONString(vo));
-        logger.debug("*******************************");
+        logger.debug(  JSON.toJSONString(vo));
+        logger.debug("  *******************************");
 
         if (vo.getSource() == BankCardType.ALIPAY.getCode()) {
             Map<String, String> params = OrderInfoUtil2_0.buildOrderParamMap(Alipay.APP_ID, vo.getScore());
