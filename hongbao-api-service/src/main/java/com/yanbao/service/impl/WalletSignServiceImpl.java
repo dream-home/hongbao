@@ -150,7 +150,14 @@ public class WalletSignServiceImpl implements WalletSignService {
         }
         doudou = PoundageUtil.getPoundage(doudou, 1d);
         //领取斗斗释放的金额
-        userService.updateScore(user.getId(), doudou);
+//        userService.updateScore(user.getId(), doudou);
+
+        //领取斗斗释放的金额，转换为ep，加入到用户的余额中
+        userService.updateEp(user.getId(),doudou);
+
+        //斗斗签到，获取ep,加入ep记录
+        epRecordService.consumeEpRecord(user,doudou,OrderNoUtil.get(), EPRecordType.DOUDOU_SIGNIN,SYSUSERID,user.getId(),"");
+
         //更新斗斗数量和签到时间
         userService.updateDoudou(user.getId(), - doudou, new Date());
         //记录斗斗每次签到的信息
@@ -181,7 +188,7 @@ public class WalletSignServiceImpl implements WalletSignService {
         message.setUserId(user.getId());
         message.setTitle(RecordType.SIGN_DOUDOU.getMsg());
         message.setType(MessageType.SYSTEM.getCode());
-        message.setDetail("斗斗签到成功，领取：" + doudou + "金额");
+        message.setDetail("斗斗签到成功，领取：" + doudou + "EP");
         message.setOrderNo(OrderNoUtil.get());
         messageService.add(message);
         //领多少金额就扣除系统账户对应的EP

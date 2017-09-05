@@ -27,4 +27,7 @@ public interface WalletExchangeMapper extends CommonDao<WalletExchange>{
 	 */
 	List<WalletExchange> getByStoreIds(@Param("storeIds")List<String> storeIds);
 
+
+	Integer countCurrentDay(@Param("userId")String userId);
+
 }

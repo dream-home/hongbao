@@ -32,6 +32,12 @@ public class WalletVo implements Serializable {
 	/**使用场景 1：微店*/
 	private Integer scenes;
 
+	/**
+	 * 赠送ep值
+	 * @return
+	 */
+	private Double ep;
+
 	public String getDonateTo() {
 		return donateTo;
 	}
@@ -110,5 +116,13 @@ public class WalletVo implements Serializable {
 
 	public void setScenes(Integer scenes) {
 		this.scenes = scenes;
+	}
+
+	public Double getEp() {
+		return ep;
+	}
+
+	public void setEp(Double ep) {
+		this.ep = ep;
 	}
 }

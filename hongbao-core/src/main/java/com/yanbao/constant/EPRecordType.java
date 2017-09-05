@@ -83,7 +83,12 @@ public enum EPRecordType {
     /**
      * 加入合伙人，面对面扫码支付、商家二维码扫码支付,后台记录，不给用户展示，1680，只是代理统计用到
      */
-    JOIN_SCAN_EP(19, "加入合伙人使用扫码支付消费ep");
+    JOIN_SCAN_EP(19, "加入合伙人使用扫码支付消费ep"),
+
+    /**
+     * ep互赠消费ep
+     */
+    DONATEEP(20, "ep互赠消费ep");
 
     private final Integer code;
 
