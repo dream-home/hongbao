@@ -1,9 +1,25 @@
 package com.yanbao.util.refunds;
 
 
-import com.yanbao.util.OrderNoUtil;
-import com.yanbao.util.ToolUtil;
-import com.yanbao.util.XMLUtil;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import javax.net.ssl.SSLContext;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -14,44 +30,13 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.net.ssl.SSLContext;
-import java.io.*;
-import java.security.*;
-import java.security.cert.CertificateException;
-import java.util.*;
+import com.yanbao.util.ToolUtil;
+import com.yanbao.util.XMLUtil;
 
 @Component
-public class RefundsUtils {
-    private static String _appid;// 微信APPID
-    private static String _MchId;// 微信商户ID
-    private static String _AppKey; // 微信APPkey
-    private static String _public_AppKey; // 微信APPkey
-    private static String _body;
-    @Value("${appAppId}")
-    private String appAppId;
-    @Value("${appMchId}")
-    private String appMchId;
-    @Value("${appKey}")
-    private String appKey;
-    @Value("${publicKey}")
-    private String publicKey;
-    @Value("${appBody}")
-    private String appBody;
-
-    @PostConstruct
-    public void init() {
-        _appid = appAppId;
-        _MchId = appMchId;
-        _AppKey = appKey;
-        _public_AppKey = publicKey;
-//        _body = appBody;
-        _body = "斗拍商城支付";
-    }
-
+public class RefundsUtils { 
     public static TransferInfo buildCompanyPayMap(String appId, String mchid, String appopenid, String orderNo, Boolean isCheckUserName, String userName, Integer money, String desc, String ip) {
         String noneStr = ToolUtil.getUUID();
         SortedMap map = new TreeMap();
@@ -110,8 +95,7 @@ public class RefundsUtils {
 //        sb.append("key=" + _AppKey);
 //        sb.append("key=" + _AppKey);
         sb.append("key=" + "ERGHBHF1581a2802e11162dYanbaodou");
-//        sb.append("key=" + "4KEFf84f7d7HJ35689a6535d5de3a9FC");
-        System.out.println("============================");
+//        sb.append("key=" + "4KEFf84f7d7HJ35689a6535d5de3a9FC"); 
         System.out.println(sb.toString());
         String sign = DigestUtils.md5Hex(sb.toString()).toUpperCase();// MD5加密
         System.out.println(sign);

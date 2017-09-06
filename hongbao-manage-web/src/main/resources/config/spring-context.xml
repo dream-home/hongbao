@@ -23,6 +23,7 @@
 				<value>classpath:config/api.properties</value>
 				<value>classpath:config/jdbc.properties</value>
 				<value>classpath:config/system.properties</value>
+				<value>classpath:config.properties</value>
 			</array>
 		</property>
 	</bean>
