@@ -4,7 +4,6 @@ package com.yanbao.util.refunds;
 import com.yanbao.util.OrderNoUtil;
 import com.yanbao.util.ToolUtil;
 import com.yanbao.util.XMLUtil;
-import com.yanbao.util.wechatpay.GenerateOrder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -15,18 +14,14 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.security.KeyStore;
+import java.io.*;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.util.*;
 
 @Component
@@ -36,7 +31,6 @@ public class RefundsUtils {
     private static String _AppKey; // 微信APPkey
     private static String _public_AppKey; // 微信APPkey
     private static String _body;
-    private static final Logger logger = LoggerFactory.getLogger(RefundsUtils.class);
     @Value("${appAppId}")
     private String appAppId;
     @Value("${appMchId}")
@@ -125,18 +119,18 @@ public class RefundsUtils {
     }
 
 
-    public final static void main(String[] args) throws Exception {
+
+    public static void weixinCompanyPay(String certificatPath,String appId,String muchId,String appOpenId,String orderNo,Integer money,Boolean isCheckRealName,String desc,String ip) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        FileInputStream instream = new FileInputStream(new File("E:\\项目\\微信支付\\炎宝斗拍商户平台证书\\apiclient_cert.p12"));
-//        FileInputStream instream = new FileInputStream(new File("E:\\项目\\微信支付\\炎宝商户平台证书\\apiclient_cert.p12"));
+        FileInputStream instream = new FileInputStream(new File(certificatPath));
         try {
-            keyStore.load(instream, "1425023102".toCharArray());
+            keyStore.load(instream, muchId.toCharArray());
         } finally {
             instream.close();
         }
         // Trust own CA and all self-signed certs
         SSLContext sslcontext = SSLContexts.custom()
-                .loadKeyMaterial(keyStore, "1425023102".toCharArray())
+                .loadKeyMaterial(keyStore, muchId.toCharArray())
                 .build();
         // Allow TLSv1 protocol only
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
@@ -149,20 +143,13 @@ public class RefundsUtils {
                 .build();
         try {
             HttpPost httppost = new HttpPost("https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers");
-            String orderNo = OrderNoUtil.get();
-//            wx1581a2802e11162d
-            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx1581a2802e11162d", "1425023102", "okMk5wuO_x9vfAUd4DEJcDjL7cIs", orderNo, false, "", 100, "test01", "113.74.9.11");
-
-//            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx32266be91b9e0a8f", "1337799001", "ouH4bs_JG0XvtFfvLQZUDnWHPCl0", orderNo, false, "", 130, "", "113.74.9.11");
+            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap(appId, muchId, appOpenId, orderNo, false, "", money, "test01", "113.74.9.11");
             String data = XMLUtil.objectToXml(transferInfo);
-            System.out.println(data);
+            System.out.println("00000000000000000000000000000000000000");
+            System.out.println("data 微信提现请求数据 "+data );
+            System.out.println("00000000000000000000000000000000000000");
             try {
-                //设置编码
                 httppost.setEntity(new StringEntity(data, "utf-8"));
-                System.out.println("executing request" + httppost.getRequestLine());
-                System.out.println("000000000000000000000000000000000000000");
-                System.out.println(httppost.getEntity().toString());
-                System.out.println("000000000000000000000000000000000000000");
                 CloseableHttpResponse response = httpclient.execute(httppost);
                 try {
                     HttpEntity entity = response.getEntity();

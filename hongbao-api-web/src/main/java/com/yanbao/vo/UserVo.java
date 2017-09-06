@@ -111,6 +111,11 @@ public class UserVo implements Serializable {
 	 */
 	private Integer isBindSHWeiXin;
 
+	/**
+	 * 是否弹窗显示用户绑定appopenid微信
+	 */
+	private Integer isBindAppOpenId;
+
 	public String getProvince() {
 		return province;
 	}
@@ -439,5 +444,13 @@ public class UserVo implements Serializable {
 
 	public void setIsBindSHWeiXin(Integer isBindSHWeiXin) {
 		this.isBindSHWeiXin = isBindSHWeiXin;
+	}
+
+	public Integer getIsBindAppOpenId() {
+		return isBindAppOpenId;
+	}
+
+	public void setIsBindAppOpenId(Integer isBindAppOpenId) {
+		this.isBindAppOpenId = isBindAppOpenId;
 	}
 }

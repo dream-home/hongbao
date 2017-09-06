@@ -3,7 +3,7 @@
 <mapper namespace="com.yanbao.mapper.UserDao">
 
     <sql id="fields">
-        uid,account,password,payPwd,weixin,phone,email,userName,nickName,sex,headImgUrl,salt,score,freezeScore,firstReferrer,secondReferrer,thirdReferrer,isKF, groupType, groupChildCountA, groupChildCountB, groupChildCountC,createTime,updateTime,status,remark,exchangeEP,consumeEP,grade,remainSign,performanceOne,performanceTwo,performanceThree,registrationId,bindEP,levles,areaId,joinPartnerTime,province,city,county,oldUnionId
+        uid,account,password,payPwd,weixin,phone,email,userName,nickName,sex,headImgUrl,salt,score,freezeScore,firstReferrer,secondReferrer,thirdReferrer,isKF, groupType, groupChildCountA, groupChildCountB, groupChildCountC,createTime,updateTime,status,remark,exchangeEP,consumeEP,grade,remainSign,performanceOne,performanceTwo,performanceThree,registrationId,bindEP,levles,areaId,joinPartnerTime,province,city,county,oldUnionId,appOpenId
     </sql>
 
     <sql id="fields_id">
@@ -46,13 +46,14 @@
             <if test="model.toTime != null">and toTime=#{model.toTime}</if>
             <if test="model.status != null">and status=#{model.status}</if>
             <if test="model.remark != null and model.remark != ''">and remark=#{model.remark}</if>
+            <if test="model.appOpenId != null and model.appOpenId != ''">and appOpenId=#{model.appOpenId}</if>
             <if test="model.joinPartnerTime != null and model.joinPartnerTime != ''">and joinPartnerTime=#{model.joinPartnerTime}</if>
         </where>
     </sql>
 
     <insert id="create" useGeneratedKeys="true" keyProperty="id">
         insert into<include refid="table_name"/>(<include refid="fields_id"/>)
-        values(#{model.id},#{model.uid},#{model.account},#{model.password},#{model.payPwd},#{model.weixin},#{model.phone},#{model.email},#{model.userName},#{model.nickName},#{model.sex},#{model.headImgUrl},#{model.salt},#{model.score},#{model.freezeScore},#{model.firstReferrer},#{model.secondReferrer},#{model.thirdReferrer},#{model.isKF}, #{model.groupType}, 0, 0, 0,now(),now(),1,#{model.remark},#{model.bindEP},null);
+        values(#{model.id},#{model.uid},#{model.account},#{model.password},#{model.payPwd},#{model.weixin},#{model.phone},#{model.email},#{model.userName},#{model.nickName},#{model.sex},#{model.headImgUrl},#{model.salt},#{model.score},#{model.freezeScore},#{model.firstReferrer},#{model.secondReferrer},#{model.thirdReferrer},#{model.isKF}, #{model.groupType}, 0, 0, 0,now(),now(),1,#{model.remark},#{model.bindEP},null,null);
     </insert>
 
     <select id="readById" resultType="com.mall.model.User">
@@ -106,6 +107,7 @@
             <if test="model.status != null">status= #{model.status},</if>
             <if test="model.exchangeEP != null">exchangeEP= #{model.exchangeEP},</if>
             <if test="model.remark != null and model.remark !=''">remark= #{model.remark},</if>
+            <if test="model.appOpenId != null and model.appOpenId !=''">appOpenId= #{model.appOpenId},</if>
             updateTime=now()
         </set>
         where id=#{id}

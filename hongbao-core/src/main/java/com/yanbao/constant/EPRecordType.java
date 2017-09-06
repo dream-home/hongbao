@@ -88,7 +88,7 @@ public enum EPRecordType {
     /**
      * ep互赠消费ep
      */
-    DONATEEP(20, "ep互赠消费ep");
+    DONATEEP(20, "EP转账");
 
     private final Integer code;
 

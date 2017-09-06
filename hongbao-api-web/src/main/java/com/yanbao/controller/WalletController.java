@@ -1850,8 +1850,8 @@ public class WalletController {
         if(vo.getEp() % 100 != 0){
             return new JsonResult(9, "赠送EP必须是100的整数倍");
         }
-        double donateMin = ToolUtil.parseDouble(util.get(Parameter.DONATEEPMAX), 100d);
-        double donateMax = ToolUtil.parseDouble(util.get(Parameter.DONATEEPMIN), 10000d);
+        Double  donateMax= ToolUtil.parseDouble(util.get(Parameter.DONATEEPMAX), 10000d);
+        Double  donateMin= ToolUtil.parseDouble(util.get(Parameter.DONATEEPMIN), 100d);
         if (vo.getEp() < donateMin || vo.getEp() > donateMax) {
             return new JsonResult(2, "赠送EP必须在[" + donateMin + "," + donateMax + "]之间");
         }

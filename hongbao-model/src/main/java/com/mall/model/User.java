@@ -215,6 +215,11 @@ public class User extends SimpleModel {
      */
     private String oldUnionId;
 
+    /**
+     * 炎宝app平台用户appOpenId
+     */
+    private String appOpenId;
+
     public Double getBindEP() {
         return bindEP;
     }
@@ -616,5 +621,13 @@ public class User extends SimpleModel {
 
     public void setOldUnionId(String oldUnionId) {
         this.oldUnionId = oldUnionId;
+    }
+
+    public String getAppOpenId() {
+        return appOpenId;
+    }
+
+    public void setAppOpenId(String appOpenId) {
+        this.appOpenId = appOpenId;
     }
 }
