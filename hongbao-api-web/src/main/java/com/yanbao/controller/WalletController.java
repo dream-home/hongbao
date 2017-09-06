@@ -1842,7 +1842,7 @@ public class WalletController {
             return new JsonResult(1, "参数异常");
         }
         //判断赠送Ep是否是100的整数倍
-        if(vo.getEp() % 100 != 0){
+        if(ToolUtil.is100Mutiple(vo.getEp())){
             return new JsonResult(9, "赠送EP必须是100的整数倍");
         }
         double donateMin = ToolUtil.parseDouble(util.get(Parameter.DONATEEPMAX), 100d);
