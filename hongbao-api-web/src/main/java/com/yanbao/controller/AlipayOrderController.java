@@ -139,7 +139,7 @@ public class AlipayOrderController {
             Map<String, Object> map = AliPayUtils.nofifyMap(request);
             orderNo = (String) map.get("orderNo");
             responseCode = (String) map.get("responseCode");
-            if (map != null && map.containsKey("sign") &&  (Boolean) map.get("sign")) {
+            if (map != null && map.containsKey("sign") && (Boolean) map.get("sign")) {
                 OrderTypeModel orderType = orderTypeService.getById(orderNo);
                 if (orderType == null) {
                     logger.error("回调配置表找不到订单，订单号为:" + orderNo);
@@ -147,21 +147,22 @@ public class AlipayOrderController {
                 if (ToolUtil.isEmpty(orderType.getType())) {
                     logger.error("回调配置表业务类型错误：订单号为:" + orderNo + "  类型为：" + orderType.getType(), orderType.getRemark());
                 }
-                Token token= null;
-                User user= null;
-                Boolean isAlipayPage =BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode()==orderType.getType();
-                if (!isAlipayPage &&  ToolUtil.isEmpty(orderType.getToken())) {
+                Token token = null;
+                User user = null;
+                Boolean isAlipayPage = BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode() == orderType.getType();
+                if (!isAlipayPage && ToolUtil.isEmpty(orderType.getToken())) {
                     logger.error("回调配置表token为空：订单号为:" + orderNo + "  类型为：" + orderType.getType(), orderType.getRemark());
                 }
-                token =  (Token) TokenUtil.getTokenObject(orderType.getToken());
-                if (!isAlipayPage &&  token==null){
+                token = (Token) TokenUtil.getTokenObject(orderType.getToken());
+                if (!isAlipayPage && token == null) {
                     logger.error("回调配置表token失效：订单号为:" + orderNo + "  类型为：" + orderType.getType(), orderType.getRemark() + "  token:" + orderType.getToken());
                 }
                 user = userService.getById(token.getId());
                 if (!isAlipayPage && user == null) {
                     logger.error("回调配置表token失效：订单号为:" + orderNo + "  类型为：" + orderType.getType(), orderType.getRemark() + "  token:" + orderType.getToken());
                 }
-                Boolean flag = comOderService.handleOrder(user,orderNo);
+
+                Boolean flag = comOderService.handleOrder(user, orderNo);
                 if (flag) {
                     response.getOutputStream().write("success".getBytes());
                     response.flushBuffer();
@@ -169,6 +170,8 @@ public class AlipayOrderController {
                     response.getOutputStream().write("failure".getBytes());
                     response.flushBuffer();
                 }
+
+
             } else {
                 logger.error("验签失败，订单号为:" + orderNo);
                 response.getOutputStream().write("failure".getBytes());

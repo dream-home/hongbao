@@ -74,7 +74,7 @@ public class ComOrderServiceImpl implements ComOderService {
         }
         if (model.getSource().intValue() == BankCardType.JOIN_ALIPAY.getCode().intValue()) {
             //支付宝面对面扫码支付
-            Boolean flag = RedisLock.redisLock(orderNo, "", 6);
+            Boolean flag = RedisLock.redisLock(orderNo, "", 16);
             if (flag) {
                 walletRechargeService.joinPartnerHandler(user, orderNo);
             }
@@ -90,7 +90,7 @@ public class ComOrderServiceImpl implements ComOderService {
         if (flag1) {
             log.error("直接购买回调配置表业务类型错误：订单号为:" + orderNo + "  类型为：" + orderType.getType() + "  " + orderType.getRemark() + " 购买订单类型为：scenes:" + goodsWin.getScenes() + "    orderType :" + goodsWin.getOrderType());
         } else {
-            Boolean flag = RedisLock.redisLock(orderNo, "", 6);
+            Boolean flag = RedisLock.redisLock(orderNo, "", 16);
             if (flag) {
                 orderService.purchaseHandlerByApp(user, orderNo);
             }
@@ -105,7 +105,7 @@ public class ComOrderServiceImpl implements ComOderService {
         if (model.getSource().intValue() == BankCardType.SCAN_CODE_ALIPAY.getCode().intValue()) {
             //支付宝面对面扫码支付
 
-            Boolean flag = RedisLock.redisLock(orderNo, "", 6);
+            Boolean flag = RedisLock.redisLock(orderNo, "", 16);
             if (flag) {
                 walletRechargeService.scanCodeHandler(user, orderNo);
             }
@@ -120,7 +120,7 @@ public class ComOrderServiceImpl implements ComOderService {
         }
         //支付宝充值
 
-        Boolean flag = RedisLock.redisLock(orderNo, "", 6);
+        Boolean flag = RedisLock.redisLock(orderNo, "", 16);
         if (flag) {
             walletRechargeService.rechargeHandler(user, orderNo);
         }
@@ -135,7 +135,7 @@ public class ComOrderServiceImpl implements ComOderService {
         if (model.getSource().intValue() == BankCardType.SCAN_CODE_ALIPAY.getCode().intValue()) {
             //支付宝面对面扫码支付
 
-            Boolean flag = RedisLock.redisLock(orderNo, "", 6);
+            Boolean flag = RedisLock.redisLock(orderNo, "",16);
             if (flag) {
                 walletRechargeService.storeScanCodeHandler(user, orderNo);
             }
@@ -150,7 +150,7 @@ public class ComOrderServiceImpl implements ComOderService {
         if (model.getSource().intValue() == BankCardType.SCAN_CODE_ALIPAY.getCode().intValue()) {
             //支付宝面对面扫码支付
 
-            Boolean flag = RedisLock.redisLock(orderNo, "", 6);
+            Boolean flag = RedisLock.redisLock(orderNo, "", 16);
             if (flag) {
                 walletRechargeService.storeScanCodeHandler(null, orderNo);
             }

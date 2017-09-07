@@ -715,7 +715,7 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
             //增加用户EP流水 加入EP业绩ep消费统计
             epRecordService.consumeEpRecord(user,-model.getDiscountEP(),orderNo, EPRecordType.JOIN_PARTNER,user.getId(),Constant.SYSTEM_USERID,"");
             //增加用户流水总表EP流水
-            addUserScoreRecord(user.getId(), model.getOrderNo(), model.getDiscountEP(), RecordType.JOIN_PAY.getCode(), RecordType.JOIN_PAY.getMsg());
+            addUserScoreRecord(user.getId(), model.getOrderNo(), model.getDiscountEP(), RecordType.JOIN_PAY.getCode(), RecordType.JOIN_PAY_EP.getMsg());
             //增加系统EP消息
             String storeDetail = "用户" + user.getUid() + "加入合伙人，现金支付"+PoundageUtil.getPoundage(model.getScore()-model.getDiscountEP(),1d,2)+",EP支付" + model.getDiscountEP();
             addUserScoreAndEpMessage(user.getId(), model.getOrderNo(), MessageType.JOIN_PAY.getMsg(), MessageType.JOIN_PAY.getCode(), storeDetail, MessageType.JOIN_PAY.getMsg());

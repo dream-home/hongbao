@@ -71,9 +71,9 @@ public class WalletController {
     @Autowired
     private PayDistributionService payDistributionService;
     @Autowired
-    private  SecondCallBackService secondCallBackService;
+    private SecondCallBackService secondCallBackService;
     @Autowired
-    private  OrderTypeService orderTypeService;
+    private OrderTypeService orderTypeService;
     @Value("${recharge_weixin_notifyUrl}")
     private String recharge_weixin_notifyUrl;
     @Value("${scan_weixin_notifyUrl}")
@@ -108,7 +108,7 @@ public class WalletController {
             return new JsonResult(1, "参数异常");
         }
         //判断赠送金额是否是100的整数倍
-        if(vo.getScore() % 100 != 0){
+        if (vo.getScore() % 100 != 0) {
             return new JsonResult(9, "赠送余额必须是100的整数倍");
         }
         double donateMin = ToolUtil.parseDouble(util.get(Parameter.DONATEMIN), 100d);
@@ -274,7 +274,7 @@ public class WalletController {
 
         logger.debug("*******************************");
 
-        logger.debug(  JSON.toJSONString(vo));
+        logger.debug(JSON.toJSONString(vo));
         logger.debug("  *******************************");
 
         if (vo.getSource() == BankCardType.ALIPAY.getCode()) {
@@ -282,19 +282,19 @@ public class WalletController {
             String orderParam = OrderInfoUtil2_0.buildOrderParam(params);
             String sign = OrderInfoUtil2_0.getSign(params, Alipay.RSA_PRIVATE);
 //            final String orderInfo = orderParam + "&" + sign;
-            String notifyUrl="";
-            SecondCallBack secondCallBack =  secondCallBackService.getById(BankCardType.ALIPAY.getCode()+"");
-            if (secondCallBack==null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())){
-                return new JsonResult(-1,"支付回调参数设置不合法");
+            String notifyUrl = "";
+            SecondCallBack secondCallBack = secondCallBackService.getById(BankCardType.ALIPAY.getCode() + "");
+            if (secondCallBack == null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())) {
+                return new JsonResult(-1, "支付回调参数设置不合法");
             }
-            if ("test".equals(environment)){
-                notifyUrl=secondCallBack.getTestReturnUrl();
-            }else if ("online".equals(environment)){
-                notifyUrl=secondCallBack.getReturnUrl();
+            if ("test".equals(environment)) {
+                notifyUrl = secondCallBack.getTestReturnUrl();
+            } else if ("online".equals(environment)) {
+                notifyUrl = secondCallBack.getReturnUrl();
             }
             Double payMoney = PoundageUtil.getPoundage(vo.getScore(), 1d, 2);
-            orderTypeService.add(model.getOrderNo(),BankCardType.ALIPAY.getCode(),"支付宝充值原生支付",tokens);
-            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,payMoney,"斗拍商城支付");
+            orderTypeService.add(model.getOrderNo(), BankCardType.ALIPAY.getCode(), "支付宝充值原生支付", tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(), notifyUrl, payMoney, "斗拍商城支付");
             result.put("orderInfo", orderInfo);
             result.put("returnUrl", environment);
             result.put("orderTitle", "斗拍商城充值");
@@ -738,7 +738,7 @@ public class WalletController {
     @ResponseBody
     @RequestMapping(value = "/buildPayOrder", method = RequestMethod.POST)
     public JsonResult buildPayOrder(HttpServletRequest request, @RequestBody WalletVo vo) throws Exception {
-        String tokens=TokenUtil.getToken(request);
+        String tokens = TokenUtil.getToken(request);
         Token token = TokenUtil.getSessionUser(request);
         User user = userService.getById(token.getId());
         if (null == user) {
@@ -826,18 +826,18 @@ public class WalletController {
             walletRechargeService.add(model);
 
             //原生支付
-            String notifyUrl="";
-            SecondCallBack secondCallBack =  secondCallBackService.getById(BankCardType.SCAN_CODE_ALIPAY.getCode()+"");
-            if (secondCallBack==null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())){
-                return new JsonResult(-1,"支付回调参数设置不合法");
+            String notifyUrl = "";
+            SecondCallBack secondCallBack = secondCallBackService.getById(BankCardType.SCAN_CODE_ALIPAY.getCode() + "");
+            if (secondCallBack == null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())) {
+                return new JsonResult(-1, "支付回调参数设置不合法");
             }
-            if ("test".equals(environment)){
-                notifyUrl=secondCallBack.getTestReturnUrl();
-            }else if ("online".equals(environment)){
-                notifyUrl=secondCallBack.getReturnUrl();
+            if ("test".equals(environment)) {
+                notifyUrl = secondCallBack.getTestReturnUrl();
+            } else if ("online".equals(environment)) {
+                notifyUrl = secondCallBack.getReturnUrl();
             }
-            orderTypeService.add(model.getOrderNo(),BankCardType.SCAN_CODE_ALIPAY.getCode(),"支付宝面对面扫码原生支付",tokens);
-            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,countMoney,"斗拍商城支付");
+            orderTypeService.add(model.getOrderNo(), BankCardType.SCAN_CODE_ALIPAY.getCode(), "支付宝面对面扫码原生支付", tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(), notifyUrl, countMoney, "斗拍商城支付");
             result.put("orderInfo", orderInfo);
 
             result.put("realPayPrice", countMoney);
@@ -880,9 +880,9 @@ public class WalletController {
      */
     @ResponseBody
     @RequestMapping(value = "/storeBuildPayOrder", method = RequestMethod.POST)
-    public JsonResult storeBuildPayOrder(HttpServletRequest request,HttpServletResponse response, @RequestBody WalletVo vo) throws Exception {
+    public JsonResult storeBuildPayOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody WalletVo vo) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
-        String tokens=TokenUtil.getToken(request);
+        String tokens = TokenUtil.getToken(request);
         //支付来源
         int source = vo.getSource().intValue();
         //二维码类型
@@ -989,22 +989,19 @@ public class WalletController {
 
             //原生支付
 
-            String notifyUrl="";
-            SecondCallBack secondCallBack =  secondCallBackService.getById(BankCardType.STORE_SCAN_APP_ALIPAY.getCode()+"");
-            if (secondCallBack==null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())){
-                return new JsonResult(-1,"支付回调参数设置不合法");
+            String notifyUrl = "";
+            SecondCallBack secondCallBack = secondCallBackService.getById(BankCardType.STORE_SCAN_APP_ALIPAY.getCode() + "");
+            if (secondCallBack == null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())) {
+                return new JsonResult(-1, "支付回调参数设置不合法");
             }
-            if ("test".equals(environment)){
-                notifyUrl=secondCallBack.getTestReturnUrl();
-            }else if ("online".equals(environment)){
-                notifyUrl=secondCallBack.getReturnUrl();
+            if ("test".equals(environment)) {
+                notifyUrl = secondCallBack.getTestReturnUrl();
+            } else if ("online".equals(environment)) {
+                notifyUrl = secondCallBack.getReturnUrl();
             }
-            orderTypeService.add(model.getOrderNo(),BankCardType.STORE_SCAN_APP_ALIPAY.getCode(),"支付宝APP内发起商家二维码扫码原生支付",tokens);
-            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(),notifyUrl,countMoney,"斗拍商城支付");
+            orderTypeService.add(model.getOrderNo(), BankCardType.STORE_SCAN_APP_ALIPAY.getCode(), "支付宝APP内发起商家二维码扫码原生支付", tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForApp(model.getOrderNo(), notifyUrl, countMoney, "斗拍商城支付");
             result.put("orderInfo", orderInfo);
-
-
-
 
 
             result.put("realPayPrice", countMoney);
@@ -1048,18 +1045,18 @@ public class WalletController {
 
 
             //支付宝网页支付
-            String notifyUrl="";
-            SecondCallBack secondCallBack =  secondCallBackService.getById(BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode()+"");
-            if (secondCallBack==null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())){
-                return new JsonResult(-1,"支付回调参数设置不合法");
+            String notifyUrl = "";
+            SecondCallBack secondCallBack = secondCallBackService.getById(BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode() + "");
+            if (secondCallBack == null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())) {
+                return new JsonResult(-1, "支付回调参数设置不合法");
             }
-            if ("test".equals(environment)){
-                notifyUrl=secondCallBack.getTestReturnUrl();
-            }else if ("online".equals(environment)){
-                notifyUrl=secondCallBack.getReturnUrl();
+            if ("test".equals(environment)) {
+                notifyUrl = secondCallBack.getTestReturnUrl();
+            } else if ("online".equals(environment)) {
+                notifyUrl = secondCallBack.getReturnUrl();
             }
-            orderTypeService.add(model.getOrderNo(),BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode(),"支付宝支付宝客户端直接发起商家二维码扫码网页支付",tokens);
-            String orderInfo = AliPayUtils.alipayPreOrderForWap(model.getOrderNo(),notifyUrl,model.getScore(),"斗拍商城支付");
+            orderTypeService.add(model.getOrderNo(), BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode(), "支付宝支付宝客户端直接发起商家二维码扫码网页支付", tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForWap(model.getOrderNo(), notifyUrl, model.getScore(), "斗拍商城支付");
             result.put("orderInfo", orderInfo);
 
             result.put("returnUrl", environment);
@@ -1220,7 +1217,7 @@ public class WalletController {
         }
         if (recharge.getStatus().intValue() == RechargeType.PENDING.getCode().intValue()) {
             Boolean isSucess = false;
-            if (recharge.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()) {
+            if (recharge.getScenes() != null && recharge.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()) {
                 isSucess = WechatUtil.isH5PaySucess(orderNo);
             } else {
                 isSucess = WechatUtil.isAppPaySucess(orderNo);
@@ -1727,6 +1724,7 @@ public class WalletController {
     @ResponseBody
     @RequestMapping(value = "/v42/exchange", method = RequestMethod.POST)
     public JsonResult v42Exchange(HttpServletRequest request, @RequestBody WalletV42Vo vo) throws Exception {
+        logger.error("000000000000000000 /v42/exchagne:" + JSON.toJSONString(vo));
         Token token = TokenUtil.getSessionUser(request);
         // 检查后台是否开启兑换开关
         ParamUtil util = ParamUtil.getIstance();
@@ -1735,10 +1733,10 @@ public class WalletController {
         }
 
 
-        if (vo.getSource()==null) {
+        if (vo.getSource() == null) {
             return new JsonResult(0, "提现请下载最新app");
         }
-        if (vo.getSource()!=1 && vo.getSource()!=2 && vo.getSource()!=3) {
+        if (vo.getSource() != 1 && vo.getSource() != 2 && vo.getSource() != 3) {
             return new JsonResult(0, "请选择合法提现方式");
         }
 
@@ -1747,9 +1745,9 @@ public class WalletController {
         if (vo.getScore() == null || vo.getScore() < exchangeMin || vo.getScore() > exchangeMax) {
             return new JsonResult(1, "单笔兑换余额必须在[" + exchangeMin + "," + exchangeMax + "]之间");
         }
-        if (vo.getSource()==1 || vo.getSource()==2){
+        if (vo.getSource() == 1 || vo.getSource() == 2) {
             //银行
-            if (!ToolUtil.is100Mutiple(vo.getScore())){
+            if (!ToolUtil.is100Mutiple(vo.getScore())) {
                 return new JsonResult(1, "单笔兑换余额必须是100整数倍");
             }
             if (ToolUtil.isEmpty(vo.getBankId())) {
@@ -1780,9 +1778,7 @@ public class WalletController {
         if (StringUtils.isBlank(user.getPayPwd())) {
             return new JsonResult(3, "请先设置支付密码");
         }
-        if (!user.getPayPwd().equals(Md5Util.MD5Encode(vo.getPayPwd(), user.getSalt()))) {
-            return new JsonResult(4, "支付密码不正确");
-        }
+
         if (user.getScore() == null || user.getScore() < vo.getScore()) {
             return new JsonResult(5, "您的余额不足");
         }
@@ -1791,7 +1787,11 @@ public class WalletController {
         if (hasExchange != null && hasExchange >= times) {
             return new JsonResult(0, "每天最多提现" + times + "笔");
         }
-        if (vo.getSource()==1 || vo.getSource()==2){
+
+        if (vo.getSource() == 1 || vo.getSource() == 2) {
+            if (!user.getPayPwd().equals(Md5Util.MD5Encode(vo.getPayPwd(), user.getSalt()))) {
+                return new JsonResult(4, "支付密码不正确");
+            }
             List<UserBankcard> bankList = userBankcardService.getList(user.getId());
             UserBankcard bankcard = new UserBankcard();
             if (CollectionUtils.isEmpty(bankList)) {
@@ -1818,8 +1818,11 @@ public class WalletController {
             userService.update(user.getId(), updateUser);
             walletExchangeService.exchangeHandler(user, vo.getScore(), bankcard);
         }
-        if (vo.getSource()==3){
-            walletExchangeService.exchangeHandlerForWeiXin(user,vo.getScore());
+        if (vo.getSource() == 3) {
+            if (ToolUtil.isEmpty(user.getAppOpenId())) {
+                return new JsonResult(4, "未绑定微信号");
+            }
+            walletExchangeService.exchangeHandlerForWeiXin(user, vo.getScore());
         }
         // 操作成功返回用户当前积分
         Map<String, Object> result = new HashMap<String, Object>();
@@ -1847,11 +1850,11 @@ public class WalletController {
             return new JsonResult(1, "参数异常");
         }
         //判断赠送Ep是否是100的整数倍
-        if(ToolUtil.is100Mutiple(vo.getEp())){
+        if (!ToolUtil.is100Mutiple(vo.getEp())) {
             return new JsonResult(9, "赠送EP必须是100的整数倍");
         }
-        Double  donateMax= ToolUtil.parseDouble(util.get(Parameter.DONATEEPMAX), 10000d);
-        Double  donateMin= ToolUtil.parseDouble(util.get(Parameter.DONATEEPMIN), 100d);
+        Double donateMax = ToolUtil.parseDouble(util.get(Parameter.DONATEEPMAX), 10000d);
+        Double donateMin = ToolUtil.parseDouble(util.get(Parameter.DONATEEPMIN), 100d);
         if (vo.getEp() < donateMin || vo.getEp() > donateMax) {
             return new JsonResult(2, "赠送EP必须在[" + donateMin + "," + donateMax + "]之间");
         }
@@ -1865,9 +1868,6 @@ public class WalletController {
         }
         if (StringUtils.isBlank(user.getPayPwd())) {
             return new JsonResult(4, "请先设置支付密码");
-        }
-        if (!user.getPayPwd().equals(Md5Util.MD5Encode(vo.getPayPwd(), user.getSalt()))) {
-            return new JsonResult(5, "支付密码不正确");
         }
         if (user.getExchangeEP() == null || user.getExchangeEP() < vo.getEp()) {
             return new JsonResult(6, "您的ep不足");

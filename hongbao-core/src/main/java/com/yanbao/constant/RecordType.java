@@ -156,7 +156,11 @@ public enum RecordType {
     /**
      * 合伙人业绩结算
      */
-    PARTNER_GAIN_SCORE(36, "合伙人业绩结算");
+    PARTNER_GAIN_SCORE(36, "合伙人业绩结算"),
+    /**
+     * 合伙人-支付EP
+     */
+    JOIN_PAY_EP(100, "加入合伙人-支付EP");
 
     private final Integer code;
 

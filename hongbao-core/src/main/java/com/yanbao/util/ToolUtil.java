@@ -445,8 +445,11 @@ public class ToolUtil {
     }
 
     public static void main(String[] args) throws IOException {
+        String s ="{\"donateTo\":\"212366\",\"payPwd\":\"123456\",\"ep\":\"100\"}  ";
+        JSONObject object = JSONObject.parseObject(s);
+        System.out.println(ToolUtil.is100Mutiple(object.getDouble("ep")));
 
-        String s = "{\"Im\":\"http://apitest.doupaimall.com/h5/index.html\", \"Store\":\"http://apitest.doupaimall.com/m/user/wdtransition?index=Store&uid=200000&storeId=FB5937DBB58E45488D38228FC01E4928&groupType=A&goodsId=null\"}\n";
+        String ss = "{\"Im\":\"http://apitest.doupaimall.com/h5/index.html\", \"Store\":\"http://apitest.doupaimall.com/m/user/wdtransition?index=Store&uid=200000&storeId=FB5937DBB58E45488D38228FC01E4928&groupType=A&goodsId=null\"}\n";
 
         com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(s);
         System.out.println(jsonObject.get("Store"));

@@ -161,8 +161,7 @@ public class WalletDonateServiceImpl implements WalletDonateService {
 		userService.updateEp(donateUser.getId(),reallyEp);
 
 		//加入ep消费记录
-		epRecordService.consumeEpRecord(user,-ep,OrderNoUtil.get(), EPRecordType.DONATEEP,user.getId(),donateUser.getId(),"");
-		epRecordService.consumeEpRecord(user,ep,OrderNoUtil.get(), EPRecordType.DONATEEP,donateUser.getId(),user.getId(),"");
+		epRecordService.consumeEpRecord(user,ep,OrderNoUtil.get(), EPRecordType.DONATEEP,user.getId(),donateUser.getId(),"");
 
 		// 增加赠送记录
 		WalletDonate donateFrom = new WalletDonate();
