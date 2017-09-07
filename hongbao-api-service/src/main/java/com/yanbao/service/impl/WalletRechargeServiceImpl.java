@@ -706,6 +706,10 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
             userService.updateScore(user.getId(), -model.getConfirmScore());
         }
         if (model.getDiscountEP()>0){
+
+            //处理消费EP精度错误
+            model.setDiscountEP(PoundageUtil.getPoundage(model.getDiscountEP(),1d,2));
+
             //有使用EP抵扣,扣减用户EP
             userService.updateEpById(user.getId(),-model.getDiscountEP());
             //增加用户EP流水 加入EP业绩ep消费统计

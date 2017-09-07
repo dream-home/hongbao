@@ -1511,26 +1511,30 @@ public class UserController {
 
     private JsonResult checkCompleteInfo(User user, UserV42Vo vo) {
 
+        //暂时不用
         if (ToolUtil.isEmpty(user.getPhone()) && ToolUtil.isEmpty(vo.getPhone())) {
             return new JsonResult(4, "手机号不能为空");
         }
         if (ToolUtil.isEmpty(user.getPhone()) && ToolUtil.isNotEmpty(vo.getPhone()) && ToolUtil.isEmpty(vo.getSmsCode())) {
             return new JsonResult(6, "验证码不能为空");
+        }else {
+            String checkCode = Strings.get(RedisKey.SMS_CODE.getKey() + vo.getPhone());
+            if (ToolUtil.isEmpty(checkCode)) {
+                return new JsonResult(6, "验证码已失效");
+            }
+            if (!checkCode.equals(vo.getSmsCode())) {
+                Strings.del(RedisKey.SMS_CODE.getKey() + vo.getPhone());
+                return new JsonResult(6, "验证码错误,请重新获取");
+            }
         }
-        String checkCode = Strings.get(RedisKey.SMS_CODE.getKey() + vo.getPhone());
-        if (ToolUtil.isEmpty(checkCode)) {
-            return new JsonResult(6, "验证码已失效");
-        }
-        if (!checkCode.equals(vo.getSmsCode())) {
-            Strings.del(RedisKey.SMS_CODE.getKey() + vo.getPhone());
-            return new JsonResult(6, "验证码错误,请重新获取");
-        }
+
         if (ToolUtil.isEmpty(user.getPayPwd()) && ToolUtil.isEmpty(vo.getPayPwd())) {
             return new JsonResult(7, "支付密码不能为空");
         }
         if (ToolUtil.isEmpty(user.getPassword()) && ToolUtil.isEmpty(vo.getPassword())) {
             return new JsonResult(8, "登录密码不能为空");
         }
+
         if (ToolUtil.isEmpty(user.getAreaId()) && ToolUtil.isEmpty(vo.getAreaId())) {
             return new JsonResult(9, "地址信息不能为空");
         }

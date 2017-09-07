@@ -32,7 +32,7 @@
 	<select id="getList" resultType="EpRecord">
 		<include refid="selector"/>
 		WHERE 1=1
-		AND ((sendUserId = #{userId} AND ep &lt; 0)  OR (sendUserId =#{userId} AND ep &gt;  0)
+		AND ((sendUserId = #{userId} AND ep &lt; 0)  OR (receiveUserId =#{userId} AND ep &gt;  0)
 				OR (sendUserId = #{userId} AND receiveUserId = 'system') OR (receiveUserId =#{userId} AND sendUserId = 'system'))
 		<if test="recordTypes != null">
 			AND recordType IN
