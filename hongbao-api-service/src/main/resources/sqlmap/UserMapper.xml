@@ -12,7 +12,7 @@
 		groupType, groupChildCountA, groupChildCountB, groupChildCountC,
 		createTime, updateTime, status, remark, registrationId,
 		exchangeEP,consumeEP,grade,remainSign,performanceOne,performanceTwo,
-		performanceThree,signTime,bindEP,bindDoudou,checked,levles,loginTime,openId,doudou,douSignTime,province,city,county,areaId,joinPartnerTime,oldUnionId
+		performanceThree,signTime,bindEP,bindDoudou,checked,levles,loginTime,openId,doudou,douSignTime,province,city,county,areaId,joinPartnerTime,oldUnionId,appOpenId
 	</sql>
 
 	<sql id="table">hb_sys_user</sql>
@@ -38,7 +38,8 @@
 			<if test="model.storeId != null">AND storeId= #{model.storeId}</if>
 			<if test="model.openId != null">AND openId= #{model.openId}</if>
 			<if test="model.oldUnionId != null">AND oldUnionId= #{model.oldUnionId}</if>
-
+			<if test="model.appOpenId != null">AND appOpenId= #{model.appOpenId}</if>
+			<if test="model.appOpenId != null">AND appOpenId= #{model.appOpenId}</if>
 		</where>
 	</sql>
 
@@ -108,7 +109,7 @@
 		#{model.city},
 		#{model.county},
 		#{model.areaId},
-		null,#{model.oldUnionId})
+		null,#{model.oldUnionId},null)
 	</insert>
 
 	<update id="update">
@@ -153,6 +154,7 @@
 			<if test="model.areaId != null">areaId= #{model.areaId},</if>
 			<if test="model.joinPartnerTime != null">joinPartnerTime= #{model.joinPartnerTime},</if>
 			<if test="model.oldUnionId != null">oldUnionId= #{model.oldUnionId},</if>
+			<if test="model.appOpenId != null">appOpenId= #{model.appOpenId},</if>
 		</set>
 		WHERE id = #{id}
 	</update>

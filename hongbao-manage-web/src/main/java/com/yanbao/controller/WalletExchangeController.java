@@ -9,12 +9,14 @@ import com.yanbao.constant.RecordType;
 import com.yanbao.core.page.JsonResult;
 import com.yanbao.service.*;
 import com.yanbao.util.UUIDUtil;
+import com.yanbao.util.refunds.RefundsUtils;
 import com.yanbao.vo.Cash;
 import com.yanbao.vo.CashMoneyVo;
 import com.yanbao.vo.HttpUtils;
 import com.yanbao.vo.ToolUtil;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +52,12 @@ public class WalletExchangeController extends BaseController {
 	private StoreService storeService;
 	@Autowired
 	private PartnerBillDetailService partnerBillDetailService;
+	@Value("${certificatPath}")
+	String certificatPath;
+	@Value("${wechartAppId}")
+	String wechartAppId;
+    @Value("${wechartMuchId}")
+    String wechartMuchId;
 
 	/**
 	 * 提现审核 需要参照 最小提现金额 最大提现金额 审核不通过 需要退款
@@ -61,7 +69,7 @@ public class WalletExchangeController extends BaseController {
 	 */
 	@RequestMapping("/check")
 	@ResponseBody
-	public JsonResult check(String userId, String id, int status) {
+	public JsonResult check(HttpServletRequest request,String userId, String id, int status) {
 		WalletExchange walletExchange = walletExchangeService.readById(id);
 		if (walletExchange == null) {
 			return fail("记录不存在");
@@ -69,9 +77,18 @@ public class WalletExchangeController extends BaseController {
 		if (walletExchange.getStatus() != 0) {
 			return fail("已经审核,不可更改");
 		}
-		if (status == 1) {
+		if (status == 1) {//通过
 			walletExchange.setStatus(1);
 			walletExchangeService.updateById(id, walletExchange);
+			if(null!=walletExchange.getCardType()&&walletExchange.getCardType()==100){
+				//自动微信转账
+				//walletExchangeService.
+				try {
+					RefundsUtils.weixinCompanyPay(certificatPath, wechartAppId, wechartMuchId, walletExchange.getCardNo(), walletExchange.getOrderNo(), (int)(walletExchange.getConfirmScore()*100), false, walletExchange.getRemark(), com.yanbao.util.ToolUtil.getRemoteAddr(request));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		if (status == 2) {
 			try {

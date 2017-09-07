@@ -133,6 +133,7 @@ public class WalletSignServiceImpl implements WalletSignService {
     @Override
     @Transactional
     public Double doudouSignIn(String userId) throws Exception {
+        String orderNo=OrderNoUtil.get();
         User user = userService.getById(userId);
         ParamUtil util = ParamUtil.getIstance();
         double minSignDouNum = ToolUtil.parseDouble(util.get(Parameter.MINSIGNDOUNUM), 0d);
@@ -149,15 +150,10 @@ public class WalletSignServiceImpl implements WalletSignService {
             doudou = user.getDoudou() * vipReleaseScale;
         }
         doudou = PoundageUtil.getPoundage(doudou, 1d);
-        //领取斗斗释放的金额
-//        userService.updateScore(user.getId(), doudou);
-
-        //领取斗斗释放的金额，转换为ep，加入到用户的余额中
-        userService.updateEp(user.getId(),doudou);
-
-        //斗斗签到，获取ep,加入ep记录
-        epRecordService.consumeEpRecord(user,doudou,OrderNoUtil.get(), EPRecordType.DOUDOU_SIGNIN,SYSUSERID,user.getId(),"");
-
+        //领取斗斗释放的金额 以前是加到用户余额  现在改为加到用户的EP账户 updateScore
+        userService.updateEpById(user.getId(), doudou);
+        //加到EP后，同时增加用户的EP流水记录
+        epRecordService.consumeEpRecord(user,PoundageUtil.getPoundage(doudou,1d),orderNo, EPRecordType.DOUDOU_SIGNIN,Constant.SYSTEM_USERID,null,"斗斗每日签到,用户EP增加");
         //更新斗斗数量和签到时间
         userService.updateDoudou(user.getId(), - doudou, new Date());
         //记录斗斗每次签到的信息

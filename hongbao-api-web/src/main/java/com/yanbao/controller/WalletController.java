@@ -1175,7 +1175,8 @@ public class WalletController {
             return new JsonResult("此订单不是扫码支付订单，接口调用错误");
         }
         if (recharge.getStatus().intValue() == RechargeType.PENDING.getCode().intValue()) {
-            Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
+//            Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
+            Boolean isSucess = AliPayUtils.isSZAliPaySucess(orderNo);
             String key = RedisKey.HANDLE_CALLBACK.getKey() + orderNo;
             Boolean flag = RedisLock.redisLock(key, orderNo, 6);
             if (flag && isSucess) {
@@ -1265,7 +1266,8 @@ public class WalletController {
             return new JsonResult("此订单不是充值订单，接口调用错误");
         }
         if (recharge.getStatus().intValue() == RechargeType.PENDING.getCode().intValue()) {
-            Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
+//            Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
+            Boolean isSucess = AliPayUtils.isSZAliPaySucess(orderNo);
             String key = RedisKey.HANDLE_CALLBACK.getKey() + orderNo;
             Boolean flag = RedisLock.redisLock(key, orderNo, 6);
             if (flag && isSucess) {
@@ -1461,7 +1463,8 @@ public class WalletController {
             return new JsonResult("此订单不是扫码支付订单，接口调用错误");
         }
         if (recharge.getStatus().intValue() == RechargeType.PENDING.getCode().intValue()) {
-            Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
+//            Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
+            Boolean isSucess = AliPayUtils.isSZAliPaySucess(orderNo);
             String key = RedisKey.HANDLE_CALLBACK.getKey() + orderNo;
             Boolean flag = RedisLock.redisLock(key, orderNo, 6);
             if (flag && isSucess) {
@@ -1502,7 +1505,8 @@ public class WalletController {
             return new JsonResult("此订单不是扫码支付订单，接口调用错误");
         }
         if (recharge.getStatus().intValue() == RechargeType.PENDING.getCode().intValue()) {
-            Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
+//            Boolean isSucess = WechatUtil.isAppScanAliPaySucess(orderNo);
+            Boolean isSucess = AliPayUtils.isSZAliPaySucess(orderNo);
             String key = RedisKey.HANDLE_CALLBACK.getKey() + orderNo;
             Boolean flag = RedisLock.redisLock(key, orderNo, 6);
             if (flag && isSucess) {
@@ -1707,7 +1711,8 @@ public class WalletController {
         }
         //判断支付宝是否是扫码支付，商家固定扫码app支付，商家固定扫码支付宝支付,加入合伙人
         if (model.getSource() == BankCardType.SCAN_CODE_ALIPAY.getCode().intValue() || model.getSource() == BankCardType.STORE_SCAN_APP_ALIPAY.getCode().intValue() || model.getSource() == BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode().intValue() || model.getSource() == BankCardType.JOIN_ALIPAY.getCode().intValue()) {
-            isSuccess = WechatUtil.isAppScanAliPaySucess(orderNo);
+//            isSuccess = WechatUtil.isAppScanAliPaySucess(orderNo);
+            isSuccess = AliPayUtils.isSZAliPaySucess(orderNo);
             if (!isSuccess) {
                 return new JsonResult(ResultCode.ERROR.getCode(), "支付宝扫码订单未支付");
             }
@@ -1845,8 +1850,8 @@ public class WalletController {
         if(ToolUtil.is100Mutiple(vo.getEp())){
             return new JsonResult(9, "赠送EP必须是100的整数倍");
         }
-        double donateMin = ToolUtil.parseDouble(util.get(Parameter.DONATEEPMAX), 100d);
-        double donateMax = ToolUtil.parseDouble(util.get(Parameter.DONATEEPMIN), 10000d);
+        Double  donateMax= ToolUtil.parseDouble(util.get(Parameter.DONATEEPMAX), 10000d);
+        Double  donateMin= ToolUtil.parseDouble(util.get(Parameter.DONATEEPMIN), 100d);
         if (vo.getEp() < donateMin || vo.getEp() > donateMax) {
             return new JsonResult(2, "赠送EP必须在[" + donateMin + "," + donateMax + "]之间");
         }

@@ -1,12 +1,11 @@
 package com.yanbao.service.impl;
 
+import com.mall.model.*;
 import com.yanbao.constant.*;
 import com.yanbao.core.model.JpushExtraModel;
-import com.yanbao.core.page.JsonResult;
 import com.yanbao.core.page.Page;
 import com.yanbao.core.page.PageResult;
 import com.yanbao.dao.WalletRechargeDao;
-import com.mall.model.*;
 import com.yanbao.redis.Hash;
 import com.yanbao.redis.Sets;
 import com.yanbao.service.*;
@@ -25,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.yanbao.constant.BankCardType.JOIN_DONATE_FOR_AGENT;
+import static com.yanbao.constant.BankCardType.JOIN_PAY_FOR_AGENT;
 
 /**
  * @author ZHUZIHUI
@@ -676,6 +675,8 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
         }
         Double joinEp = ToolUtil.parseDouble(util.get(Parameter.JOINEP), 0d);
         Double joinRmbScale = ToolUtil.parseDouble(util.get(Parameter.JOINRMBSCALE), 0d);
+        //如果百分比是50%,数据库存的是50
+        joinRmbScale=PoundageUtil.getPoundage(joinRmbScale,0.01d,2);
         Double exchangeEp = user.getExchangeEP();
         Double needEP = joinEp - joinEp * joinRmbScale;
         Double realMoney = 0d;
@@ -767,9 +768,9 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
         exchange.setConfirmScore(realMoney);
         exchange.setBankName("加入合伙人现金部分给代理提成");
         exchange.setBankId("");
-        exchange.setCardType(JOIN_DONATE_FOR_AGENT.getCode());
+        exchange.setCardType(JOIN_PAY_FOR_AGENT.getCode());
         exchange.setRemark("加入合伙人现金部分给代理提成");
-        exchange.setCardNo("");
+        exchange.setCardNo(user.getOpenId());
         walletExchangeService.add(exchange);
         // 修改支付订单
         WalletRecharge updateModel = new WalletRecharge();

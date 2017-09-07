@@ -194,6 +194,11 @@ public class UserController {
         } else {
             vo.setIsBindSHWeiXin(StatusType.FALSE.getCode());
         }
+        if (ToolUtil.isEmpty(user.getAppOpenId())) {
+            vo.setIsBindAppOpenId(StatusType.TRUE.getCode());
+        } else {
+            vo.setIsBindAppOpenId(StatusType.FALSE.getCode());
+        }
 
         setUserVo(user, vo);
         return new JsonResult(vo);
@@ -319,7 +324,7 @@ public class UserController {
         conditon.setWeixin(vo.getUnionId());
         User oldWeiXinUser = userService.getByCondition(conditon);
         if (oldWeiXinUser != null) {
-            if (ToolUtil.isNotEmpty(oldWeiXinUser.getOldUnionId()) && ToolUtil.isNotEmpty(oldWeiXinUser.getPhone())){
+            if (ToolUtil.isNotEmpty(oldWeiXinUser.getOldUnionId()) && ToolUtil.isNotEmpty(oldWeiXinUser.getPhone())) {
                 return new JsonResult(0, "此微信号已被其他账号绑定");
             }
             User updateOldeWxModel = new User();
@@ -615,6 +620,35 @@ public class UserController {
             userService.updateUserPhoneSendEp(user, phone, null);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return new JsonResult();
+    }
+
+    /**
+     * 绑定提现微信openid app商户号对应的
+     */
+    @ResponseBody
+    @RequestMapping(value = "/bindappopenid", method = RequestMethod.POST)
+    public JsonResult bindAppOpenId(HttpServletRequest request, @RequestBody BindOpenIdVo vo) throws Exception {
+        Token token = TokenUtil.getSessionUser(request);
+        if (token == null) {
+            return new JsonResult(1, "用户登录失效");
+        }
+        User user = userService.getById(token.getId());
+        if (null == user) {
+            logger.error(String.format("Illegal user id[%s]", token.getId()));
+            throw new IllegalArgumentException();
+        }
+        if (ToolUtil.isEmpty(vo.getAppOpenId())){
+            return new JsonResult(1, "获取微信提现账号失败");
+        }
+        try {
+            User update = new User();
+            update.setAppOpenId(vo.getAppOpenId());
+            userService.update(user.getId(), update);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new JsonResult(-1,"绑定微信失败");
         }
         return new JsonResult();
     }
@@ -1079,6 +1113,11 @@ public class UserController {
         } else {
             u.setIsBindSHWeiXin(StatusType.FALSE.getCode());
         }
+        if (ToolUtil.isEmpty(user.getAppOpenId())) {
+            u.setIsBindAppOpenId(StatusType.TRUE.getCode());
+        } else {
+            u.setIsBindAppOpenId(StatusType.FALSE.getCode());
+        }
         u.setScore(FormatUtils.formatDouble(user.getScore()));
 
         setUserVo(user, u);
@@ -1226,6 +1265,11 @@ public class UserController {
         } else {
             vo.setIsBindSHWeiXin(StatusType.FALSE.getCode());
         }
+        if (ToolUtil.isEmpty(user.getAppOpenId())) {
+            vo.setIsBindAppOpenId(StatusType.TRUE.getCode());
+        } else {
+            vo.setIsBindAppOpenId(StatusType.FALSE.getCode());
+        }
         vo.setToken(redisToken);
         vo.setScore(FormatUtils.formatDouble(user.getScore()));
         setUserVo(user, vo);
@@ -1234,6 +1278,7 @@ public class UserController {
             UserBankcard model = userBankcardList.get(0);
             vo.setUserBankcard(model);
         }
+
         return new JsonResult(vo);
     }
 
@@ -1472,6 +1517,14 @@ public class UserController {
         if (ToolUtil.isEmpty(user.getPhone()) && ToolUtil.isNotEmpty(vo.getPhone()) && ToolUtil.isEmpty(vo.getSmsCode())) {
             return new JsonResult(6, "验证码不能为空");
         }
+        String checkCode = Strings.get(RedisKey.SMS_CODE.getKey() + vo.getPhone());
+        if (ToolUtil.isEmpty(checkCode)) {
+            return new JsonResult(6, "验证码已失效");
+        }
+        if (!checkCode.equals(vo.getSmsCode())) {
+            Strings.del(RedisKey.SMS_CODE.getKey() + vo.getPhone());
+            return new JsonResult(6, "验证码错误,请重新获取");
+        }
         if (ToolUtil.isEmpty(user.getPayPwd()) && ToolUtil.isEmpty(vo.getPayPwd())) {
             return new JsonResult(7, "支付密码不能为空");
         }
@@ -1546,8 +1599,8 @@ public class UserController {
     }
 
     public static void main(String[] args) {
-        String salt=  DateTimeUtil.formatDate(new Date(), DateTimeUtil.PATTERN_B);
-        String pass=Md5Util.MD5Encode("123456", salt);
+        String salt = DateTimeUtil.formatDate(new Date(), DateTimeUtil.PATTERN_B);
+        String pass = Md5Util.MD5Encode("123456", salt);
         System.out.println(pass);
         System.out.println(salt);
         System.out.println(pass.equals(Md5Util.MD5Encode("123456", salt)));

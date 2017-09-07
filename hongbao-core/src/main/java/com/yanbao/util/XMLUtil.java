@@ -1,14 +1,8 @@
 package com.yanbao.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
+import com.thoughtworks.xstream.io.xml.XppDriver;
 import org.dom4j.io.SAXReader;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -16,6 +10,13 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  *    创建时间：2017年3月30日  版本号：v1.0
@@ -108,9 +109,12 @@ public class XMLUtil {
      * @return
      */
     public static String objectToXml(Object o) {
-        XStream xstream = new XStream();
-        xstream.alias("xml", o.getClass());
-        return xstream.toXML(o);
+//        XStream xstream = new XStream();
+        XStream xStream = new XStream(new XppDriver(new XmlFriendlyNameCoder("_-", "_")));
+        xStream.alias("xml", o.getClass());
+        String xml = xStream.toXML(o);
+        xml.replaceAll("__", "_");
+        return xml;
     }
 
 

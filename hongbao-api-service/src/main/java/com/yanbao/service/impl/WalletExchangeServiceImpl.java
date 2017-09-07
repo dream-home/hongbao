@@ -141,11 +141,11 @@ public class WalletExchangeServiceImpl implements WalletExchangeService {
         exchange.setScore(-score);
         exchange.setPoundage(poundage);
         exchange.setConfirmScore(score - poundage);
-        exchange.setBankName("加入合伙人现金部分给代理提成");
-        exchange.setBankId("");
-        exchange.setCardType(BankCardType.JOIN_DONATE_FOR_AGENT.getCode());
+        exchange.setBankName("微信企业付款");
+        exchange.setBankId(user.getAppOpenId());
+        exchange.setCardType(BankCardType.JOIN_WEIXIN.getCode());
         exchange.setCardNo("");
-        exchange.setRemark("加入合伙人现金部分给代理提成");
+        exchange.setRemark("微信企业付款");
         this.add(exchange);
         // 增加积分流水
         WalletRecord record = new WalletRecord();
@@ -192,7 +192,7 @@ public class WalletExchangeServiceImpl implements WalletExchangeService {
         //兑换斗斗成功，向上累加EP销售业绩
         userService.updatePerformanceCount(user.getId(), ep);
         //新增业绩处理记录
-        performanceRecordService.create(walletSign.getOrderNo(),ep,user.getId(),null,"用户使用EP兑换斗斗");
+        performanceRecordService.create(walletSign.getOrderNo(), ep, user.getId(), null, "用户使用EP兑换斗斗");
         return true;
     }
 
@@ -229,7 +229,7 @@ public class WalletExchangeServiceImpl implements WalletExchangeService {
         record.setRecordTypeDesc(EPRecordType.EP_TO_DOUDOU.getMsg());
         if (ToolUtil.isEmpty(user.getStoreId())) {
             record.setUserType(UserType.COMMON.getCode());
-        }else if(!ToolUtil.isEmpty(user.getStoreId())){
+        } else if (!ToolUtil.isEmpty(user.getStoreId())) {
             record.setUserType(UserType.STORE.getCode());
         }
         ePRecordService.add(record);
