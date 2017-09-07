@@ -73,7 +73,7 @@ public class ComOrderServiceImpl implements ComOderService {
             log.error("加入合伙人回调配置表业务类型错误：订单号为:" + orderNo + "  类型为：" + orderType.getType() + "  " + orderType.getRemark());
         }
         if (model.getSource().intValue() == BankCardType.JOIN_ALIPAY.getCode().intValue()) {
-            //支付宝面对面扫码支付
+            //支付宝加入合伙人支付
             Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
             if (flag) {
                 walletRechargeService.joinPartnerHandler(user, orderNo);
@@ -104,7 +104,6 @@ public class ComOrderServiceImpl implements ComOderService {
         }
         if (model.getSource().intValue() == BankCardType.SCAN_CODE_ALIPAY.getCode().intValue()) {
             //支付宝面对面扫码支付
-
             Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
             if (flag) {
                 walletRechargeService.scanCodeHandler(user, orderNo);

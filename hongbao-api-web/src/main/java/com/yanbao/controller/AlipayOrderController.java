@@ -10,6 +10,7 @@ import com.yanbao.service.OrderTypeService;
 import com.yanbao.service.SecondCallBackService;
 import com.yanbao.service.UserService;
 import com.yanbao.util.DateTimeUtil;
+import com.yanbao.util.RedisLock;
 import com.yanbao.util.TokenUtil;
 import com.yanbao.util.ToolUtil;
 import com.yanbao.util.alipay.AliPayUtils;
@@ -161,7 +162,11 @@ public class AlipayOrderController {
                 if (!isAlipayPage && user == null) {
                     logger.error("回调配置表token失效：订单号为:" + orderNo + "  类型为：" + orderType.getType(), orderType.getRemark() + "  token:" + orderType.getToken());
                 }
-
+                Boolean flagRes = RedisLock.redisLock(orderNo, orderNo, 16);
+                if (!flagRes){
+                    response.getOutputStream().write("success".getBytes());
+                    response.flushBuffer();
+                }
                 Boolean flag = comOderService.handleOrder(user, orderNo);
                 if (flag) {
                     response.getOutputStream().write("success".getBytes());
