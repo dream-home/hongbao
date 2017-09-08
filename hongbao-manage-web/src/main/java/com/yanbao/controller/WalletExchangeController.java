@@ -22,6 +22,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.File;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -78,17 +80,24 @@ public class WalletExchangeController extends BaseController {
 			return fail("已经审核,不可更改");
 		}
 		if (status == 1) {//通过
-			walletExchange.setStatus(1);
-			walletExchangeService.updateById(id, walletExchange);
 			if(null!=walletExchange.getCardType()&&walletExchange.getCardType()==100){
-				//自动微信转账
-				//walletExchangeService.
-				try {
-					RefundsUtils.weixinCompanyPay(certificatPath, wechartAppId, wechartMuchId, walletExchange.getCardNo(), walletExchange.getOrderNo(), (int)(walletExchange.getConfirmScore()*100), false, walletExchange.getRemark(), com.yanbao.util.ToolUtil.getRemoteAddr(request));
-				} catch (Exception e) {
-					e.printStackTrace();
+				if(null!=certificatPath&&"".equals(certificatPath)&&new File(certificatPath).exists()){
+					walletExchange.setStatus(1);
+					walletExchangeService.updateById(id, walletExchange);
+					//自动微信转账
+					//walletExchangeService.
+					try {
+						RefundsUtils.weixinCompanyPay(certificatPath, wechartAppId, wechartMuchId, walletExchange.getCardNo(), walletExchange.getOrderNo(), (int)(walletExchange.getConfirmScore()*100), false, walletExchange.getRemark(), com.yanbao.util.ToolUtil.getRemoteAddr(request));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}else{
+					return fail("无法完成转账！微信证书不存在!");
 				}
-			}
+			}else{
+				walletExchange.setStatus(1);
+				walletExchangeService.updateById(id, walletExchange);
+			}	
 		}
 		if (status == 2) {
 			try {
