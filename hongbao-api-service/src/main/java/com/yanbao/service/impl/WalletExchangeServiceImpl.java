@@ -152,8 +152,8 @@ public class WalletExchangeServiceImpl implements WalletExchangeService {
         record.setUserId(user.getId());
         record.setOrderNo(exchange.getOrderNo());
         record.setScore(-score);
-        record.setRecordType(RecordType.EXCHANGE.getCode());
-        record.setRemark(RecordType.EXCHANGE.getMsg());
+        record.setRecordType(BankCardType.DONATE_WITH_WEIXIN.getCode());
+        record.setRemark(BankCardType.DONATE_WITH_WEIXIN.getMsg());
         walletRecordService.add(record);
         return true;
     }

@@ -66,6 +66,8 @@ public class UserController {
     private String h5page;
     @Value("${user_logo}")
     private String USER_LOGO;
+    @Value("${error_page}")
+    private String ERROR_PAGE;
     @Autowired
     private StoreService storeService;
 
@@ -251,11 +253,11 @@ public class UserController {
         String openid = WechatApiUtil.getJsonByKey(json, "openid");
         String nickName = "";
         String headImgUrl = "";
-        if (json.getInt("subscribe") == 1) {
-            nickName = WechatApiUtil.getJsonByKey(json, "nickname");
-            nickName = nickName.replaceAll("[^\u0000-\uFFFF]", "?"); // 过滤非UTF-8字符集,用"?"代替，如Emoji表情
-            headImgUrl = WechatApiUtil.getJsonByKey(json, "headimgurl");
-        }
+//        if (json.getInt("subscribe") == 1) {
+        nickName = WechatApiUtil.getJsonByKey(json, "nickname");
+        nickName = nickName.replaceAll("[^\u0000-\uFFFF]", "?"); // 过滤非UTF-8字符集,用"?"代替，如Emoji表情
+        headImgUrl = WechatApiUtil.getJsonByKey(json, "headimgurl");
+//        }
         User user = new User();
         user.setWeixin(unionid);
         user = userService.getByCondition(user);
@@ -268,7 +270,7 @@ public class UserController {
             nickName = EmojiUtil.replaceEmoji(nickName);
             user.setNickName(nickName);
             user.setHeadImgUrl(headImgUrl);
-            if(ToolUtil.isEmpty(headImgUrl)){
+            if (ToolUtil.isEmpty(headImgUrl)) {
                 user.setHeadImgUrl(USER_LOGO);
             }
             userService.add(user);
@@ -384,7 +386,7 @@ public class UserController {
     @RequestMapping(value = "/wdtransition", method = RequestMethod.GET)
     public ModelAndView weixinStoreTransition(HttpServletRequest request, HttpServletResponse response, ShareVo vo) throws Exception {
         logger.error("**********************************wdtransition*********************************");
-        logger.error("*******vo *********" +JSON.toJSONString(vo));
+        logger.error("*******vo *********" + JSON.toJSONString(vo));
         logger.error("**********************************wdtransition*********************************");
 
         ModelAndView mv = new ModelAndView();
@@ -399,13 +401,13 @@ public class UserController {
            /* mv.setViewName("error");
             mv.addObject("msg", "店铺已被屏蔽");
             return mv;*/
-            return  new ModelAndView(new RedirectView("http://doupaimall.com/wxpage?index=errorPage"));
+            return new ModelAndView(new RedirectView(ERROR_PAGE));
         }
         if (ToolUtil.isEmpty(store.getMenuUrl())) {
           /*  mv.setViewName("error");
             mv.addObject("msg", "店铺尚未设置链接");
             return mv;*/
-            return  new ModelAndView(new RedirectView("http://doupaimall.com/wxpage?index=errorPage"));
+            return new ModelAndView(new RedirectView(ERROR_PAGE));
         }
         if (vo.getUid() == null) {
             User condition = new User();
@@ -415,7 +417,7 @@ public class UserController {
               /*  mv.setViewName("error");
                 mv.addObject("msg", "创建店铺用户已被屏蔽");
                 return mv;*/
-                return  new ModelAndView(new RedirectView("http://doupaimall.com/wxpage?index=errorPage"));
+                return new ModelAndView(new RedirectView(ERROR_PAGE));
             }
             vo.setUid(storeUser.getUid());
         }
@@ -423,7 +425,7 @@ public class UserController {
             String redirect_uri = wechatCallbackDomain + "/user/wxstorecallback";
             redirect_uri = URLEncoder.encode(redirect_uri, "utf8");
             //state组装uid+grouptype，用符号"_"分割  200828_null_2_FB5937DBB58E45488D38228FC01E4928_
-            String authorize = WechatApiUtil.authorizeH5(redirect_uri, WechatApiUtil.BASE_SCOPE, vo.getUid() + "_" + vo.getGroupType() + "_" + vo.getIndex() + "_" + vo.getStoreId() + "_" + vo.getGoodsId()+"_"+vo.getShareUrl());
+            String authorize = WechatApiUtil.authorizeH5(redirect_uri, WechatApiUtil.BASE_SCOPE, vo.getUid() + "_" + vo.getGroupType() + "_" + vo.getIndex() + "_" + vo.getStoreId() + "_" + vo.getGoodsId() + "_" + vo.getShareUrl());
             logger.error("************00000000**************");
             logger.error(wechatCallbackDomain);
             logger.error(authorize);
@@ -476,7 +478,7 @@ public class UserController {
             nickName = EmojiUtil.replaceEmoji(nickName);
             user.setNickName(nickName);
             user.setHeadImgUrl(headImgUrl);
-            if(ToolUtil.isEmpty(headImgUrl)){
+            if (ToolUtil.isEmpty(headImgUrl)) {
                 user.setHeadImgUrl(USER_LOGO);
             }
             userService.add(user);
@@ -493,7 +495,7 @@ public class UserController {
         String shareUserId = "";
         String storeId = "";
         String goodsId = "";
-        String  shareUrl="";
+        String shareUrl = "";
         String[] strSplit = state.split("_");
         if (strSplit.length > 1) {
             refferUid = strSplit[0];
@@ -501,7 +503,7 @@ public class UserController {
             index = strSplit[2];
             storeId = strSplit[3];
             goodsId = strSplit[4];
-            shareUrl=strSplit[5];
+            shareUrl = strSplit[5];
             if (groupType == null || ("null").equals(groupType) || groupType.equals("undefined") || StringUtils.isEmpty(groupType)) {
                 groupType = "";
             }
@@ -571,7 +573,7 @@ public class UserController {
         String token = TokenUtil.generateToken(user.getId(), user.getUserName(), user.getNickName());
         logger.error("999999999999999999999999999999999999999999999999999999999999999999999999999999");
         logger.error("999999999999999999999999999999999999999999999999999999999999999999999999999999");
-        logger.error("token "+token);
+        logger.error("token " + token);
         logger.error("999999999999999999999999999999999999999999999999999999999999999999999999999999");
         logger.error("999999999999999999999999999999999999999999999999999999999999999999999999999999");
         Strings.setEx(RedisKey.TOKEN_API.getKey() + user.getId(), RedisKey.TOKEN_API.getSeconds(), token);
@@ -586,8 +588,8 @@ public class UserController {
             mv.addObject("msg", "店铺信息尚未完善");
             return mv;
         }
-        if (store.getWeixinStatus()==null || store.getWeixinStatus()!=2){
-            return  new ModelAndView(new RedirectView("http://doupaimall.com/wxpage/?index=errorPage"));
+        if (store.getWeixinStatus() == null || store.getWeixinStatus() != 2) {
+            return new ModelAndView(new RedirectView(ERROR_PAGE));
         }
         /*UserVo vo = new UserVo();
         BeanUtils.copyProperties(vo, user);
@@ -596,11 +598,11 @@ public class UserController {
 		setUserVo(user, vo);*/
 //        Map<String, String> map = (Map<String, String>) ToolUtil.getJavaObject(store.getMenuUrl(), Map.class);
         logger.error("===============================================");
-        logger.error("wxstorecallback state："+state);
-        logger.error("分享的linkurl："+shareUrl);
-        if (ToolUtil.isNotEmpty(shareUrl)){
-            shareUrl+="?"+"storeId="+storeId+"&index="+index+"&uid="+refferUid;
-            return  new ModelAndView(new RedirectView(shareUrl));
+        logger.error("wxstorecallback state：" + state);
+        logger.error("分享的linkurl：" + shareUrl);
+        if (ToolUtil.isNotEmpty(shareUrl)) {
+            shareUrl += "?" + "storeId=" + storeId + "&index=" + index + "&uid=" + refferUid;
+            return new ModelAndView(new RedirectView(shareUrl));
         }
         com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(store.getMenuUrl());
         /*if (!jsonObject.containsKey(index)) {
@@ -616,8 +618,8 @@ public class UserController {
         if (index.indexOf("?") > -1) {
             url = url.substring(0, url.indexOf("?"));
         }
-        String redirectUrl=url + "?uid=" + refferUid + "&token=" + token + "&storeId=" + storeId + "&goodsId=" + goodsId + "&index=" + index + "&newUid=" + user.getUid() + "&newUserId=" + user.getId();
-        return  new ModelAndView(new RedirectView(redirectUrl));
+        String redirectUrl = url + "?uid=" + refferUid + "&token=" + token + "&storeId=" + storeId + "&goodsId=" + goodsId + "&index=" + index + "&newUid=" + user.getUid() + "&newUserId=" + user.getId();
+        return new ModelAndView(new RedirectView(redirectUrl));
     }
 
 

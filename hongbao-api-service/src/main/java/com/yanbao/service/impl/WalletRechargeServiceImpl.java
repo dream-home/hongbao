@@ -705,7 +705,7 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
             //扣减用户积分
             userService.updateScore(user.getId(), -model.getConfirmScore());
         }
-        if (model.getDiscountEP()>0){
+        if (model.getDiscountEP()!=null && model.getDiscountEP()>0){
 
             //处理消费EP精度错误
             model.setDiscountEP(PoundageUtil.getPoundage(model.getDiscountEP(),1d,2));
@@ -777,7 +777,7 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
         exchange.setCardType(JOIN_PAY_FOR_AGENT.getCode());
         exchange.setRemark("加入合伙人现金部分给代理提成");
         exchange.setCardNo(user.getOpenId());
-        exchange.setCardType(99);
+        exchange.setCardType(BankCardType.JOIN_PAY_FOR_AGENT.getCode());
         walletExchangeService.add(exchange);
         // 修改支付订单
         WalletRecharge updateModel = new WalletRecharge();

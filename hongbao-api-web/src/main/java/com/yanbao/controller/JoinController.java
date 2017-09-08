@@ -136,6 +136,7 @@ public class JoinController {
         Map<String, Object> result = new HashMap<String, Object>();
         // 生成预订单   score :EP+现金         discountEP ：ep抵扣金额     confirmScore:扣除三级分销和手续费的金额
         WalletRecharge model = new WalletRecharge();
+        model.setDiscountEP(0d);
         model.setUserId(token.getId());
         model.setStoreUserId(vo.getStoreUserId());
         model.setScore(joinEp);
