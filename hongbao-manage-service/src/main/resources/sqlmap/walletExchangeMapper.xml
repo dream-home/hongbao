@@ -102,7 +102,7 @@
             <if test="model.fromTime != null">and e.createTime>=#{model.fromTime}</if>
             <if test="model.stopTime != null">and #{model.stopTime}>=e.createTime</if>
             <if test="model.status != null">and e.status=#{model.status}</if>
-            and e.cardType!=99
+            and e.cardType!=101
         </where> ORDER BY updateTime DESC
         limit #{pageNo},#{pageSize}
     </select>
@@ -115,7 +115,7 @@
             <if test="model.fromTime != null">and e.createTime>=#{model.fromTime}</if>
             <if test="model.stopTime != null">and #{model.stopTime}>=e.createTime</if>
             <if test="model.status != null">and e.status=#{model.status}</if>
-            and e.cardType!=99
+            and e.cardType!=101
         </where>
     </select>
 
