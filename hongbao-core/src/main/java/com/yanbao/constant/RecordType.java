@@ -160,8 +160,13 @@ public enum RecordType {
     /**
      * 合伙人-支付EP
      */
-    JOIN_PAY_EP(100, "加入合伙人-支付EP");
+    JOIN_PAY_EP(100, "加入合伙人-支付EP"),
 
+	 /**
+     * 微信提现
+     */
+	DONATE_WITH_WEIXIN(101, "微信提现");
+	
     private final Integer code;
 
     private final String msg;
