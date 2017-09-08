@@ -37,6 +37,7 @@ public class RefundsUtils {
             map.put("re_user_name", userName);
         } else {
             map.put("check_name", "NO_CHECK");
+            map.put("check_name", "");
         }
 
         map.put("desc", desc);
@@ -113,7 +114,7 @@ public class RefundsUtils {
                 .build();
         try {
             HttpPost httppost = new HttpPost("https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers");
-            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap(appId, muchId, appOpenId, orderNo, false, userName, money, "test01", "113.74.9.11");
+            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap(appId, muchId, appOpenId, orderNo, isCheckRealName, userName, money, desc, ip);
             String data = XMLUtil.objectToXml(transferInfo);
             System.out.println("00000000000000000000000000000000000000");
             System.out.println("data 微信提现请求数据 " + data);

@@ -1,14 +1,12 @@
 package com.yanbao.controller;
 
-import com.mall.model.Message;
-import com.mall.model.User;
-import com.mall.model.WalletExchange;
-import com.mall.model.WalletRecord;
+import com.mall.model.*;
 import com.yanbao.constant.BankCardType;
 import com.yanbao.constant.MessageType;
 import com.yanbao.constant.RecordType;
 import com.yanbao.core.page.JsonResult;
 import com.yanbao.service.*;
+import com.yanbao.util.ParamUtil;
 import com.yanbao.util.UUIDUtil;
 import com.yanbao.util.refunds.RefundsUtils;
 import com.yanbao.vo.Cash;
@@ -154,7 +152,12 @@ public class WalletExchangeController extends BaseController {
                     if (null == walletExchange.getConfirmScore() || walletExchange.getConfirmScore() <= 0) {
                         return fail("无法完成转账！金额错误");
                     }
-                    map= RefundsUtils.weixinCompanyPay(certificatPath, wechartAppId, wechartMuchId, walletExchange.getCardNo(), walletExchange.getOrderNo(), (int) (walletExchange.getConfirmScore() * 100), true, walletExchange.getRemark(), com.yanbao.util.ToolUtil.getRemoteAddr(request),user.getUserName());
+                    Integer isCheck=com.yanbao.util.ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.ISWXCHECKUSERNAME),1);
+                    Boolean f=false;
+                    if (isCheck==1){
+                        f=true;
+                    }
+                    map= RefundsUtils.weixinCompanyPay(certificatPath, wechartAppId, wechartMuchId, walletExchange.getCardNo(), walletExchange.getOrderNo(), (int) (walletExchange.getConfirmScore() * 100), f, walletExchange.getRemark(), com.yanbao.util.ToolUtil.getRemoteAddr(request),user.getUserName());
                     if (map == null) {
                         return fail("微信企业付款未知异常");
                     }

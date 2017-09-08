@@ -1822,6 +1822,7 @@ public class WalletController {
             if (ToolUtil.isEmpty(user.getAppOpenId())) {
                 return new JsonResult(4, "未绑定微信号");
             }
+//            Integer isCheck=com.yanbao.util.ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.ISWXCHECKUSERNAME),1);
             walletExchangeService.exchangeHandlerForWeiXin(user, vo.getScore());
         }
         // 操作成功返回用户当前积分

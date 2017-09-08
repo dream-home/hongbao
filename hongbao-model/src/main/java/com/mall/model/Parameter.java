@@ -324,6 +324,10 @@ public class Parameter extends SimpleModel implements Comparable<Parameter>{
      * 余额提现方式:1： 民生银行 2：德衫银行 3：微信
      */
     public static final String EXCHANGEWAY = "exchangeWay";
+    /**
+     *  是否要实名认证
+     */
+    public static final String ISWXCHECKUSERNAME = "isWxCheckUserName";
 
 
 
@@ -386,4 +390,6 @@ public class Parameter extends SimpleModel implements Comparable<Parameter>{
     public int compareTo(Parameter arg0) {
         return this.getCreateTime().compareTo(arg0.getCreateTime());
     }
+
+
 }

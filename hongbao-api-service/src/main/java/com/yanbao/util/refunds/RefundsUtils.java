@@ -151,12 +151,28 @@ public class RefundsUtils {
                 .setSSLSocketFactory(sslsf)
                 .build();
         try {
+
+//
+//            <xml>
+//              <sign>A148973BE400704479F6D5F91747716B</sign>
+//              <spbill_create_ip>113.74.9.11</spbill_create_ip>
+//              <desc>微信企业付款</desc>
+//              <amount>190</amount>
+//              <re_user_name>朱仲1威</re_user_name>
+//              <check_name>NO_CHECK</check_name>
+//              <openid>okMk5wmonuTNnfigGLq23hPACZkk</openid>
+//              <partner_trade_no>20170908215631117014</partner_trade_no>
+//              <nonce_str>63513DDFB16E4CC48AAB9B72D9032B2D</nonce_str>
+//              <mchid>1425023102</mchid>
+//              <mch_appid>wx1581a2802e11162d</mch_appid>
+//            </xml>
+
             HttpPost httppost = new HttpPost("https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers");
             String orderNo = OrderNoUtil.get();
 //            wx1581a2802e11162d
-            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx1581a2802e11162d", "1425023102", "okMk5wqnyKzFGNzS7ZszjlH2Pppc", orderNo, false, "", 100, "test001", "113.74.9.11");
+            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx1581a2802e11162d", "1425023102", "okMk5wmonuTNnfigGLq23hPACZkk", orderNo, false, "", 100, "test001", "113.74.9.11");
 
-//            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx32266be91b9e0a8f", "1337799001", "ouH4bs_JG0XvtFfvLQZUDnWHPCl0", orderNo, false, "", 130, "", "113.74.9.11");
+//            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx32266be91b9e0a8f", "1337799001", "okMk5wmonuTNnfigGLq23hPACZkk", orderNo, false, "", 130, "", "113.74.9.11");
             String data = XMLUtil.objectToXml(transferInfo);
             System.out.println(data);
             try {

@@ -143,7 +143,7 @@ public class WalletExchangeServiceImpl implements WalletExchangeService {
         exchange.setConfirmScore(score - poundage);
         exchange.setBankName("微信企业付款");
         exchange.setBankId(user.getAppOpenId());
-        exchange.setCardType(BankCardType.JOIN_WEIXIN.getCode());
+        exchange.setCardType(BankCardType.DONATE_WITH_WEIXIN.getCode());
         exchange.setCardNo(user.getAppOpenId());
         exchange.setRemark("微信企业付款");
         this.add(exchange);
