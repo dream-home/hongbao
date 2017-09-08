@@ -934,7 +934,7 @@ public class UserStoreController {
             return new JsonResult(5, "请填写商铺详细地址");
         }
         //如果已经审核通过
-        if (store.getStatus().equals(StatusType.FALSE.getCode())){
+        if (store.getStatus().equals(StoreType.FAILURE.getCode()) || store.getStatus().equals(StoreType.PENDING.getCode())){
             if (storeVo.getLicenseIcons() != null && storeVo.getLicenseIcons().size() < 3) {
                 return new JsonResult(6, "商铺资质资料不得少于3张");
             }
