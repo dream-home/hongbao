@@ -80,7 +80,10 @@ public class UserVo extends SimpleModel implements Serializable{
 	private String gradeName;
 	private Integer grade;
 	
-	
+	/**
+     * 个人总斗斗数量
+     */
+    private Double doudou;
 	
 	
 	
@@ -323,6 +326,14 @@ public class UserVo extends SimpleModel implements Serializable{
 	public void setGrade(Integer grade) {
 		this.grade = grade;
 		setGradeName(grade);
+	}
+
+	public Double getDoudou() {
+		return doudou;
+	}
+
+	public void setDoudou(Double doudou) {
+		this.doudou = doudou;
 	}
     
     

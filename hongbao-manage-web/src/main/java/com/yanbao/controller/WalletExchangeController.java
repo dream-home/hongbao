@@ -80,6 +80,7 @@ public class WalletExchangeController extends BaseController {
 			return fail("已经审核,不可更改");
 		}
 		if (status == 1) {//通过
+			//certificatPath="E:\\weChart\\apiclient_cert.p12"; 
 			if(null!=walletExchange.getCardType()&&walletExchange.getCardType()==100){
 				if(null!=certificatPath&&"".equals(certificatPath)&&new File(certificatPath).exists()){
 					walletExchange.setStatus(1);

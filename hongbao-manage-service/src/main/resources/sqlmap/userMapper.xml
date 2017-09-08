@@ -120,7 +120,7 @@
     </update>
 
     <select id="readUserVoList" resultType="com.yanbao.vo.UserVo">
-        SELECT u.id ,u.uid ,u.userName,u.nickName ,u.levles,u.exchangeEP,u.performanceOne,u.performanceTwo,u.performanceThree,u.phone ,u.headImgUrl, u.createTime ,u.weixin,u.score,u.firstReferrer ,u.freezeScore,u.status,u.isKF,u.remark,bc.bankId ,bc.cardNo,bc.type,bc.bankName,u.grade
+        SELECT u.id ,u.uid ,u.userName,u.nickName ,u.levles,u.exchangeEP,u.doudou,u.performanceOne,u.performanceTwo,u.performanceThree,u.phone ,u.headImgUrl, u.createTime ,u.weixin,u.score,u.firstReferrer ,u.freezeScore,u.status,u.isKF,u.remark,bc.bankId ,bc.cardNo,bc.type,bc.bankName,u.grade
         from hb_sys_user u LEFT JOIN hb_user_bankcard bc ON u.id=bc.userId
         <where>
         	1=1
