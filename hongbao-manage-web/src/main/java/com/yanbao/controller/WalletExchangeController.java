@@ -146,6 +146,7 @@ public class WalletExchangeController extends BaseController {
 					RefundsUtils.weixinCompanyPay(certificatPath, wechartAppId, wechartMuchId, walletExchange.getCardNo(), walletExchange.getOrderNo(), (int)(walletExchange.getConfirmScore()*100), false, walletExchange.getRemark(), com.yanbao.util.ToolUtil.getRemoteAddr(request));
 				} catch (Exception e) {
 					e.printStackTrace();
+					return fail("无法完成转账！异常错误");
 				}
 			}else{
 				return fail("无法完成转账！微信证书不存在!");
