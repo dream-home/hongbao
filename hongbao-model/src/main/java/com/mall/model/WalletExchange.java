@@ -38,7 +38,7 @@ public class WalletExchange extends SimpleModel implements Serializable {
      */
     private String bankName;
     /**
-     * 卡类型：0：银行卡，1：支付宝，2：微信支付
+     * 卡类型：0：银行卡，1：支付宝，2：微信支付,99:代理统计使用
      */
     private Integer cardType;
     /**
