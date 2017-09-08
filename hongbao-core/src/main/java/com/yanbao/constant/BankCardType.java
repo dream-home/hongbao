@@ -1,7 +1,5 @@
 package com.yanbao.constant;
 
-import org.apache.poi.util.SystemOutLogger;
-
 /**
  * 银行卡类型/充值来源枚举类
  *
@@ -44,11 +42,11 @@ public enum BankCardType {
 
     SHARE_ALIPAY(12, "支付宝分享支付"),
 
-    PURCHASE_ALIPAY(13,"直接购买之支付宝支付"),
+    PURCHASE_ALIPAY(13, "直接购买之支付宝支付"),
 
-    STORE_SCAN_APP_ALIPAY(14,"商家二维码APP支付宝支付"),
+    STORE_SCAN_APP_ALIPAY(14, "商家二维码APP支付宝支付"),
 
-    STORE_SCAN_PAGE_ALIPAY(15,"商家二维码网页支付宝支付"),
+    STORE_SCAN_PAGE_ALIPAY(15, "商家二维码网页支付宝支付"),
 
     JOIN_ALIPAY(16, "支付宝加入合伙人支付"),
 
@@ -56,11 +54,11 @@ public enum BankCardType {
 
     SHARE_WEIXIN(22, "微信分享支付"),
 
-    PURCHASE_WEIXIN(23,"直接购买之微信支付"),
+    PURCHASE_WEIXIN(23, "直接购买之微信支付"),
 
-    STORE_SCAN_APP_WEIXIN(24,"商家二维码APP微信支付"),
+    STORE_SCAN_APP_WEIXIN(24, "商家二维码APP微信支付"),
 
-    STORE_SCAN_PAGE_WEIXIN(25,"商家二维码网页微信支付"),
+    STORE_SCAN_PAGE_WEIXIN(25, "商家二维码网页微信支付"),
 
     JOIN_WEIXIN(26, "微信加入合伙人支付"),
 
@@ -77,7 +75,6 @@ public enum BankCardType {
     DONATE_WITH_WEIXIN(100, "微信提现"),
 
     JOIN_PAY_FOR_AGENT(101, "加入合伙人混合支付计入提现业绩");
-
 
 
     private final Integer code;
@@ -100,8 +97,8 @@ public enum BankCardType {
 
     public static BankCardType fromCode(Integer code) {
         try {
-            for(BankCardType bankCardType :BankCardType.values()){
-                if(bankCardType.getCode().intValue() == code.intValue()){
+            for (BankCardType bankCardType : BankCardType.values()) {
+                if (bankCardType.getCode().intValue() == code.intValue()) {
                     return bankCardType;
                 }
             }
@@ -112,7 +109,7 @@ public enum BankCardType {
     }
 
     public static void main(String[] args) {
-        int source=25;
-        System.out.println( BankCardType.fromCode(source).getMsg());
+        int source = 25;
+        System.out.println(BankCardType.fromCode(source).getMsg());
     }
 }

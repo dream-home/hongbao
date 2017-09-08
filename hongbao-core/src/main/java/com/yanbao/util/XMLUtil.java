@@ -23,10 +23,10 @@ import java.util.Map;
  **/
 public class XMLUtil {
     public static Map doXMLParse(String strxml) throws JDOMException, IOException {
-        strxml = strxml.replaceFirst("encoding=\".*\"", "encoding=\"UTF-8\"");
         if (null == strxml || "".equals(strxml)) {
             return null;
         }
+        strxml = strxml.replaceFirst("encoding=\".*\"", "encoding=\"UTF-8\"");
         Map m = new HashMap();
         InputStream in = new ByteArrayInputStream(strxml.getBytes("UTF-8"));
         SAXBuilder builder = new SAXBuilder();

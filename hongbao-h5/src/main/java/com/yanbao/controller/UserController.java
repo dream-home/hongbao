@@ -38,9 +38,12 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
+
+    @Value("${payPage}")
+    private String PAGE_SHARE;
+
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private static final Integer SYSTEM_USER_UID = 200000;
-    private static final String PAGE_SHARE = "http://doupaimall.com/h5";
 
     public static List<String> group = new ArrayList<>();
 
@@ -461,11 +464,11 @@ public class UserController {
         String openid = WechatApiUtil.getJsonByKey(json, "openid");
         String nickName = "";
         String headImgUrl = "";
-        if (json.getInt("subscribe") == 1) {
+//        if (json.getInt("subscribe") == 1) {
             nickName = WechatApiUtil.getJsonByKey(json, "nickname");
             nickName = nickName.replaceAll("[^\u0000-\uFFFF]", "?"); // 过滤非UTF-8字符集,用"?"代替，如Emoji表情
             headImgUrl = WechatApiUtil.getJsonByKey(json, "headimgurl");
-        }
+//        }
         User user = new User();
         user.setWeixin(unionid);
         user = userService.getByCondition(user);
@@ -605,12 +608,6 @@ public class UserController {
             return new ModelAndView(new RedirectView(shareUrl));
         }
         com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(store.getMenuUrl());
-        /*if (!jsonObject.containsKey(index)) {
-            *//*mv.setViewName("error");
-            mv.addObject("msg", "店铺参数配置错误");
-            return mv;*//*
-            return  new ModelAndView(new RedirectView("http://doupaimall.com/wxpage?index=errorPage"));
-        }*/
         // 进入h5页面
         mv.addObject("info", "微信店铺");
         String url = (String) jsonObject.get(index);

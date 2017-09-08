@@ -1,25 +1,8 @@
 package com.yanbao.util.refunds;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import javax.net.ssl.SSLContext;
-
+import com.yanbao.util.ToolUtil;
+import com.yanbao.util.XMLUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -30,13 +13,17 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.jdom.JDOMException;
 import org.springframework.stereotype.Component;
 
-import com.yanbao.util.ToolUtil;
-import com.yanbao.util.XMLUtil;
+import javax.net.ssl.SSLContext;
+import java.io.*;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.util.*;
 
 @Component
-public class RefundsUtils { 
+public class RefundsUtils {
     public static TransferInfo buildCompanyPayMap(String appId, String mchid, String appopenid, String orderNo, Boolean isCheckUserName, String userName, Integer money, String desc, String ip) {
         String noneStr = ToolUtil.getUUID();
         SortedMap map = new TreeMap();
@@ -103,8 +90,7 @@ public class RefundsUtils {
     }
 
 
-
-    public static void weixinCompanyPay(String certificatPath,String appId,String muchId,String appOpenId,String orderNo,Integer money,Boolean isCheckRealName,String desc,String ip) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+    public static Map weixinCompanyPay(String certificatPath, String appId, String muchId, String appOpenId, String orderNo, Integer money, Boolean isCheckRealName, String desc, String ip,String userName) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         FileInputStream instream = new FileInputStream(new File(certificatPath));
         try {
@@ -127,11 +113,12 @@ public class RefundsUtils {
                 .build();
         try {
             HttpPost httppost = new HttpPost("https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers");
-            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap(appId, muchId, appOpenId, orderNo, false, "", money, "test01", "113.74.9.11");
+            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap(appId, muchId, appOpenId, orderNo, false, userName, money, "test01", "113.74.9.11");
             String data = XMLUtil.objectToXml(transferInfo);
             System.out.println("00000000000000000000000000000000000000");
-            System.out.println("data 微信提现请求数据 "+data );
+            System.out.println("data 微信提现请求数据 " + data);
             System.out.println("00000000000000000000000000000000000000");
+
             try {
                 httppost.setEntity(new StringEntity(data, "utf-8"));
                 CloseableHttpResponse response = httpclient.execute(httppost);
@@ -139,15 +126,25 @@ public class RefundsUtils {
                     HttpEntity entity = response.getEntity();
                     System.out.println("----------------------------------------");
                     System.out.println(response.getStatusLine());
+                    String text = "";
+                    StringBuffer stringBuffer=new StringBuffer();
                     if (entity != null) {
                         System.out.println("Response content length: " + entity.getContentLength());
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(entity.getContent()));
-                        String text;
                         while ((text = bufferedReader.readLine()) != null) {
-                            System.out.println(text);
+                            stringBuffer.append(text);
                         }
                     }
+                    Map map=null;
+                    try {
+                        map  = XMLUtil.doXMLParse(stringBuffer.toString());
+                    } catch (JDOMException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+
                     EntityUtils.consume(entity);
+                    return map;
                 } finally {
                     response.close();
                 }
@@ -158,5 +155,6 @@ public class RefundsUtils {
             httpclient.close();
         }
     }
+
 
 }

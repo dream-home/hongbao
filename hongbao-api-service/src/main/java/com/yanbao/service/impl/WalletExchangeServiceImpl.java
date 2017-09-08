@@ -144,7 +144,7 @@ public class WalletExchangeServiceImpl implements WalletExchangeService {
         exchange.setBankName("微信企业付款");
         exchange.setBankId(user.getAppOpenId());
         exchange.setCardType(BankCardType.JOIN_WEIXIN.getCode());
-        exchange.setCardNo("");
+        exchange.setCardNo(user.getAppOpenId());
         exchange.setRemark("微信企业付款");
         this.add(exchange);
         // 增加积分流水

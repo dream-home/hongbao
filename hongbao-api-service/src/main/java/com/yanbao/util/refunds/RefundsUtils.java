@@ -15,6 +15,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.jdom.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,8 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.security.KeyStore;
 import java.util.*;
+
+import static java.awt.SystemColor.text;
 
 @Component
 public class RefundsUtils {
@@ -151,7 +154,7 @@ public class RefundsUtils {
             HttpPost httppost = new HttpPost("https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers");
             String orderNo = OrderNoUtil.get();
 //            wx1581a2802e11162d
-            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx1581a2802e11162d", "1425023102", "okMk5wuO_x9vfAUd4DEJcDjL7cIs", orderNo, false, "", 100, "test01", "113.74.9.11");
+            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx1581a2802e11162d", "1425023102", "okMk5wqnyKzFGNzS7ZszjlH2Pppc", orderNo, false, "", 100, "test001", "113.74.9.11");
 
 //            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx32266be91b9e0a8f", "1337799001", "ouH4bs_JG0XvtFfvLQZUDnWHPCl0", orderNo, false, "", 130, "", "113.74.9.11");
             String data = XMLUtil.objectToXml(transferInfo);
@@ -159,23 +162,32 @@ public class RefundsUtils {
             try {
                 //设置编码
                 httppost.setEntity(new StringEntity(data, "utf-8"));
-                System.out.println("executing request" + httppost.getRequestLine());
-                System.out.println("000000000000000000000000000000000000000");
-                System.out.println(httppost.getEntity().toString());
-                System.out.println("000000000000000000000000000000000000000");
+                StringBuffer stringBuffer=new StringBuffer();
                 CloseableHttpResponse response = httpclient.execute(httppost);
                 try {
+
                     HttpEntity entity = response.getEntity();
                     System.out.println("----------------------------------------");
                     System.out.println(response.getStatusLine());
                     if (entity != null) {
                         System.out.println("Response content length: " + entity.getContentLength());
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(entity.getContent()));
-                        String text;
+                        String text="";
                         while ((text = bufferedReader.readLine()) != null) {
-                            System.out.println(text);
+                            stringBuffer.append(text);
                         }
                     }
+                    Map map=null;
+                    try {
+                        System.out.println(stringBuffer.toString());
+                        map  = XMLUtil.doXMLParse(stringBuffer.toString());
+                        System.out.println(map);
+
+                    } catch (JDOMException e) {
+                        e.printStackTrace();
+
+                    }
+
                     EntityUtils.consume(entity);
                 } finally {
                     response.close();
