@@ -162,7 +162,7 @@ public class WalletExchangeController extends BaseController {
 			message.setType(MessageType.EXCHANGE.getCode());
 			message.setDetail("本次兑换余额:" + -walletExchange.getScore() + "，实际到账：" + walletExchange.getConfirmScore());
 			message.setRemark(MessageType.EXCHANGE.getMsg());
-			message.setStatus(0);
+			message.setStatus(0); 
 			messageService.create(message);
 			// 提现手续费加到系统用户
 			userService.addScoreByUserId("system", walletExchange.getPoundage());
