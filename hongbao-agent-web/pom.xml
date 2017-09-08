@@ -108,6 +108,13 @@
                 <env>wxpro</env>
             </properties>
         </profile>
+        <profile>
+            <id>ybprotest</id>
+            <properties>
+                <env>ybprotest</env>
+            </properties>
+        </profile>
+
     </profiles>
 
     <build>

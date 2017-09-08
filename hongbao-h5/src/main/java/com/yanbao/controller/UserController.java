@@ -64,6 +64,8 @@ public class UserController {
     private String FILE_ROOT_PATH;
     @Value("${h5page}")
     private String h5page;
+    @Value("${user_logo}")
+    private String USER_LOGO;
     @Autowired
     private StoreService storeService;
 
@@ -267,7 +269,7 @@ public class UserController {
             user.setNickName(nickName);
             user.setHeadImgUrl(headImgUrl);
             if(ToolUtil.isEmpty(headImgUrl)){
-                user.setHeadImgUrl("http://user.doupaimall.com/userDefault.png");
+                user.setHeadImgUrl(USER_LOGO);
             }
             userService.add(user);
         }
@@ -475,7 +477,7 @@ public class UserController {
             user.setNickName(nickName);
             user.setHeadImgUrl(headImgUrl);
             if(ToolUtil.isEmpty(headImgUrl)){
-                user.setHeadImgUrl("http://user.doupaimall.com/userDefault.png");
+                user.setHeadImgUrl(USER_LOGO);
             }
             userService.add(user);
         }

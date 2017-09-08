@@ -60,7 +60,6 @@
 			<properties>
 				<env>dev</env>
 			</properties>
-			
 		</profile>
 		<profile>
 			<id>test</id>
@@ -107,6 +106,12 @@
 			<id>wxpro</id>
 			<properties>
 				<env>wxpro</env>
+			</properties>
+		</profile>
+		<profile>
+			<id>ybprotest</id>
+			<properties>
+				<env>ybprotest</env>
 			</properties>
 		</profile>
 
