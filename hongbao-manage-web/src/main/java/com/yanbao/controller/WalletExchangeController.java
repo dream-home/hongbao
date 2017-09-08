@@ -184,7 +184,7 @@ public class WalletExchangeController extends BaseController {
 		if (!StringUtils.isEmpty(walletExchange.getBankId())) {
 			cashMoneyVo.setUnionPayNumber(walletExchange.getBankId());
 		} else {
-			return fail("提现失败，提现联行号不能为空!");
+			return fail("提现失败，提现联行号不能为空!"); 
 		}
 
 		JSONObject json = JSONObject.fromObject(cashMoneyVo);
