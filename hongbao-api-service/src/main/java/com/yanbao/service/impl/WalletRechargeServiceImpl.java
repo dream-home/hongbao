@@ -719,14 +719,14 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
             //增加系统EP消息
             String storeDetail = "用户" + user.getUid() + "加入合伙人，现金支付"+PoundageUtil.getPoundage(model.getScore()-model.getDiscountEP(),1d,2)+",EP支付" + model.getDiscountEP();
             addUserScoreAndEpMessage(user.getId(), model.getOrderNo(), MessageType.JOIN_PAY.getMsg(), MessageType.JOIN_PAY.getCode(), storeDetail, MessageType.JOIN_PAY.getMsg());
+        }else {
+            String userDetail = "加入合伙人，支出金额" + model.getConfirmScore();
+            addUserScoreAndEpMessage(user.getId(), model.getOrderNo(), MessageType.JOIN_PAY.getMsg(), MessageType.JOIN_PAY.getCode(), userDetail, MessageType.JOIN_PAY.getMsg());
         }
         //扣减用户积分流水
         addUserScoreRecord(user.getId(), model.getOrderNo(), -model.getConfirmScore(), RecordType.JOIN_PAY.getCode(), RecordType.JOIN_PAY.getMsg());
         //扣减用户积分消息(如果全部是用ep支付，不需要记录)
-        if(model.getConfirmScore() <= 0){
-            String userDetail = "加入合伙人，支出金额" + model.getConfirmScore();
-            addUserScoreAndEpMessage(user.getId(), model.getOrderNo(), MessageType.JOIN_PAY.getMsg(), MessageType.JOIN_PAY.getCode(), userDetail, MessageType.JOIN_PAY.getMsg());
-        }
+
         //处理分销
         double sumScore = this.dealJoinDistribution(user, model);
 

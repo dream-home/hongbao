@@ -39,7 +39,8 @@ public class ScanController {
     private String wechatCallbackDomain;
     @Value("${payPage}")
     private String payPage;
-    private static final String PAGE_SHARE ="http://doupaimall.com/h5";
+    @Value("${user_logo}")
+    private String USER_LOGO;
 
     /**
      * 微信分享过渡页
@@ -108,11 +109,11 @@ public class ScanController {
         String openid = WechatApiUtil.getJsonByKey(json, "openid");
         String nickName = "";
         String headImgUrl = "";
-        if (json.getInt("subscribe") == 1) {
+//        if (json.getInt("subscribe") == 1) {
             nickName = WechatApiUtil.getJsonByKey(json, "nickname");
             nickName = nickName.replaceAll("[^\u0000-\uFFFF]", "?"); // 过滤非UTF-8字符集,用"?"代替，如Emoji表情
             headImgUrl = WechatApiUtil.getJsonByKey(json, "headimgurl");
-        }
+//        }
         User user = new User();
         user.setWeixin(unionid);
         user = userService.getByCondition(user);
@@ -125,7 +126,7 @@ public class ScanController {
             user.setNickName(nickName);
             user.setHeadImgUrl(headImgUrl);
             if(ToolUtil.isEmpty(headImgUrl)){
-                user.setHeadImgUrl("http://user.doupaimall.com/userDefault.png");
+                user.setHeadImgUrl(USER_LOGO);
             }
             userService.add(user);
         }

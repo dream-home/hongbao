@@ -72,6 +72,12 @@ public class UserController {
     private String wechatCallbackDomain;
     @Value("${file_root_path}")
     private String FILE_ROOT_PATH;
+    @Value("${error_page}")
+    private String ERROR_PAGE;
+    @Value("${wx_store_prefix}")
+    private String WX_STORE_PREFIX;
+    @Value("${user_logo}")
+    private String USER_LOGO;
     @Autowired
     private GradeService gradeService;
     @Autowired
@@ -263,7 +269,7 @@ public class UserController {
         addUser.setLevles(referrer.getLevles() + 1);
         addUser.setUpdateTime(new Date());
         addUser.setLoginTime(new Date());
-        addUser.setHeadImgUrl("http://user.doupaimall.com/logo.png");
+        addUser.setHeadImgUrl(USER_LOGO);
         addUser.setStatus(StatusType.TRUE.getCode());
         addUser.setNickName(vo.getNickName());
         // 每次都会保存极光推送生成ID
@@ -816,7 +822,7 @@ public class UserController {
         }
 //        String content = wechatCallbackDomain + "/user/share?uid=" + uid + "&groupType=" + groupType + "&storeId=" + storeId + "&storeUserUid=" + storeUser.getUid();
         //微信店铺邀请有惊喜url
-        String content = "http://doupaimall.com/wxstore" + "/user/wdtransition?uid=" + uid + "&groupType=" + groupType + "&storeId=" + storeId + "&storeUserUid=" + storeUser.getUid() + "&shareUrl=http://doupaimall.com/wxpage" + "_" + "&index=shareCode";
+        String content = WX_STORE_PREFIX + "/user/wdtransition?uid=" + uid + "&groupType=" + groupType + "&storeId=" + storeId + "&storeUserUid=" + storeUser.getUid() + "&shareUrl="+WX_STORE_PREFIX + "_" + "&index=shareCode";
         String imgPath = store.getShareUrl();
         if (ToolUtil.isEmpty(imgPath)) {
             return new JsonResult(0, "本店铺尚未完善信息");
@@ -848,7 +854,7 @@ public class UserController {
                 return mv;
             }
             if (store.getWeixinStatus() == null || store.getWeixinStatus() != 2) {
-                return new ModelAndView(new RedirectView("http://doupaimall.com/wxpage/?index=errorPage"));
+                return new ModelAndView(new RedirectView(ERROR_PAGE));
             }
             User condition1 = new User();
             condition1.setStoreId(storeId);
@@ -919,11 +925,11 @@ public class UserController {
         String openid = WechatApiUtil.getJsonByKey(json, "unionid");
         String nickName = "";
         String headImgUrl = "";
-        if (json.getInt("subscribe") == 1) {
+//        if (json.getInt("subscribe") == 1) {
             nickName = WechatApiUtil.getJsonByKey(json, "nickname");
             nickName = nickName.replaceAll("[^\u0000-\uFFFF]", "?"); // 过滤非UTF-8字符集,用"?"代替，如Emoji表情
             headImgUrl = WechatApiUtil.getJsonByKey(json, "headimgurl");
-        }
+//        }
 
 
         User user = new User();
@@ -936,7 +942,7 @@ public class UserController {
             user.setNickName(nickName);
             user.setHeadImgUrl(headImgUrl);
             if (ToolUtil.isEmpty(headImgUrl)) {
-                user.setHeadImgUrl("http://user.doupaimall.com/userDefault.png");
+                user.setHeadImgUrl(USER_LOGO);
             }
             userService.add(user);
         }
@@ -1015,7 +1021,7 @@ public class UserController {
             }
             Store store = storeService.getById(storeId);
             if (store == null || store.getWeixinStatus() == null || store.getWeixinStatus() != 2) {
-                return new ModelAndView(new RedirectView("http://doupaimall.com/wxpage/?index=errorPage"));
+                return new ModelAndView(new RedirectView(ERROR_PAGE));
             }
             if (ToolUtil.isNotEmpty(store.getShareUrl())) {
 //                mv.setViewName("redirect:" + store.getQrcodeUrl()+"?token="+token+"&storeId="+storeId);
@@ -1024,7 +1030,8 @@ public class UserController {
                 /*mv.setViewName("error");
                 mv.addObject("msg", "该企业尚未完善公众号信息");
                 return mv;*/
-                return new ModelAndView(new RedirectView("http://doupaimall.com/wxpage?index=errorPage"));
+
+                return new ModelAndView(new RedirectView(ERROR_PAGE));
             }
         } else {
             // 进入下载页
@@ -1515,7 +1522,7 @@ public class UserController {
         if (ToolUtil.isEmpty(user.getPhone()) && ToolUtil.isEmpty(vo.getPhone())) {
             return new JsonResult(4, "手机号不能为空");
         }
-        if (ToolUtil.isEmpty(user.getPhone()) && ToolUtil.isNotEmpty(vo.getPhone()) && ToolUtil.isEmpty(vo.getSmsCode())) {
+        if (ToolUtil.isNotEmpty(vo.getPhone()) && ToolUtil.isNotEmpty(vo.getSmsCode())) {
             if (ToolUtil.isEmpty(vo.getSmsCode())){
                 return new JsonResult(6, "验证码不能为空");
             }
@@ -1527,7 +1534,7 @@ public class UserController {
                 Strings.del(RedisKey.SMS_CODE.getKey() + vo.getPhone());
                 return new JsonResult(6, "验证码错误,请重新获取");
             }
-
+            Strings.del(RedisKey.SMS_CODE.getKey() + vo.getPhone());
         }
 
         if (ToolUtil.isEmpty(user.getPayPwd()) && ToolUtil.isEmpty(vo.getPayPwd())) {
