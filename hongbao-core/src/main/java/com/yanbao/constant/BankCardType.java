@@ -74,9 +74,9 @@ public enum BankCardType {
 
     ADMIN_RECHARGE(99, "管理员后台充值"),
 
-    JOIN_PAY_FOR_AGENT(99, "加入合伙人混合支付计入提现业绩"),
+    DONATE_WITH_WEIXIN(100, "微信提现"),
 
-    DONATE_WITH_WEIXIN(100, "微信提现"),;
+    JOIN_PAY_FOR_AGENT(101, "加入合伙人混合支付计入提现业绩");
 
 
 
