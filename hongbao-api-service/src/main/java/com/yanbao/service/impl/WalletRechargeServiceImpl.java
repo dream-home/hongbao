@@ -676,7 +676,7 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
         Double joinEp = ToolUtil.parseDouble(util.get(Parameter.JOINEP), 0d);
         Double joinRmbScale = ToolUtil.parseDouble(util.get(Parameter.JOINRMBSCALE), 0d);
         //如果百分比是50%,数据库存的是50
-        joinRmbScale=PoundageUtil.getPoundage(joinRmbScale,0.01d,2);
+        joinRmbScale=PoundageUtil.getPoundage(joinRmbScale,0.01d,4);
         Double exchangeEp = user.getExchangeEP();
         Double needEP = joinEp - joinEp * joinRmbScale;
         Double realMoney = 0d;
@@ -722,9 +722,11 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
         }
         //扣减用户积分流水
         addUserScoreRecord(user.getId(), model.getOrderNo(), -model.getConfirmScore(), RecordType.JOIN_PAY.getCode(), RecordType.JOIN_PAY.getMsg());
-        //扣减用户积分消息
-        String userDetail = "加入合伙人，支出金额" + model.getConfirmScore();
-        addUserScoreAndEpMessage(user.getId(), model.getOrderNo(), MessageType.JOIN_PAY.getMsg(), MessageType.JOIN_PAY.getCode(), userDetail, MessageType.JOIN_PAY.getMsg());
+        //扣减用户积分消息(如果全部是用ep支付，不需要记录)
+        if(model.getConfirmScore() <= 0){
+            String userDetail = "加入合伙人，支出金额" + model.getConfirmScore();
+            addUserScoreAndEpMessage(user.getId(), model.getOrderNo(), MessageType.JOIN_PAY.getMsg(), MessageType.JOIN_PAY.getCode(), userDetail, MessageType.JOIN_PAY.getMsg());
+        }
         //处理分销
         double sumScore = this.dealJoinDistribution(user, model);
 
