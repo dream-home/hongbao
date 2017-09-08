@@ -1515,7 +1515,7 @@ public class UserController {
         if (ToolUtil.isEmpty(user.getPhone()) && ToolUtil.isEmpty(vo.getPhone())) {
             return new JsonResult(4, "手机号不能为空");
         }
-        if (ToolUtil.isEmpty(user.getPhone()) && ToolUtil.isNotEmpty(vo.getPhone()) && ToolUtil.isEmpty(vo.getSmsCode())) {
+        if (ToolUtil.isNotEmpty(vo.getPhone()) && ToolUtil.isNotEmpty(vo.getSmsCode())) {
             if (ToolUtil.isEmpty(vo.getSmsCode())){
                 return new JsonResult(6, "验证码不能为空");
             }
@@ -1527,7 +1527,7 @@ public class UserController {
                 Strings.del(RedisKey.SMS_CODE.getKey() + vo.getPhone());
                 return new JsonResult(6, "验证码错误,请重新获取");
             }
-
+            Strings.del(RedisKey.SMS_CODE.getKey() + vo.getPhone());
         }
 
         if (ToolUtil.isEmpty(user.getPayPwd()) && ToolUtil.isEmpty(vo.getPayPwd())) {
