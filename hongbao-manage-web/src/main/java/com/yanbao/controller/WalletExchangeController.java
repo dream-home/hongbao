@@ -143,6 +143,15 @@ public class WalletExchangeController extends BaseController {
 			if(null!=certificatPath&&"".equals(certificatPath)&&new File(certificatPath).exists()){
 				//自动微信转账
 				try {
+					if(StringUtils.isEmpty(walletExchange.getCardNo())){
+						return fail("无法完成转账！无微信openID");
+					}
+					if(StringUtils.isEmpty(walletExchange.getOrderNo())){
+						return fail("无法完成转账！无订单号");
+					}
+					if(null==walletExchange.getConfirmScore()||walletExchange.getConfirmScore()<=0){
+						return fail("无法完成转账！金额错误");
+					}
 					RefundsUtils.weixinCompanyPay(certificatPath, wechartAppId, wechartMuchId, walletExchange.getCardNo(), walletExchange.getOrderNo(), (int)(walletExchange.getConfirmScore()*100), false, walletExchange.getRemark(), com.yanbao.util.ToolUtil.getRemoteAddr(request));
 				} catch (Exception e) {
 					e.printStackTrace();
