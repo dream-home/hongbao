@@ -80,25 +80,8 @@ public class WalletExchangeController extends BaseController {
 			return fail("已经审核,不可更改");
 		}
 		if (status == 1) {//通过
-			//certificatPath="E:\\weChart\\apiclient_cert.p12"; 
-			if(null!=walletExchange.getCardType()&&walletExchange.getCardType()==100){
-				if(null!=certificatPath&&"".equals(certificatPath)&&new File(certificatPath).exists()){
-					walletExchange.setStatus(1);
-					walletExchangeService.updateById(id, walletExchange);
-					//自动微信转账
-					//walletExchangeService.
-					try {
-						RefundsUtils.weixinCompanyPay(certificatPath, wechartAppId, wechartMuchId, walletExchange.getCardNo(), walletExchange.getOrderNo(), (int)(walletExchange.getConfirmScore()*100), false, walletExchange.getRemark(), com.yanbao.util.ToolUtil.getRemoteAddr(request));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}else{
-					return fail("无法完成转账！微信证书不存在!");
-				}
-			}else{
-				walletExchange.setStatus(1);
-				walletExchangeService.updateById(id, walletExchange);
-			}	
+			walletExchange.setStatus(1);
+			walletExchangeService.updateById(id, walletExchange);
 		}
 		if (status == 2) {
 			try {
@@ -155,7 +138,41 @@ public class WalletExchangeController extends BaseController {
 		if (ToolUtil.isEmpty(user)) {
 			return fail("提现用户不能为空");
 		}
-
+		//certificatPath="E:\\weChart\\apiclient_cert.p12"; 
+		if(null!=walletExchange.getCardType()&&walletExchange.getCardType()==100){
+			if(null!=certificatPath&&"".equals(certificatPath)&&new File(certificatPath).exists()){
+				//自动微信转账
+				try {
+					RefundsUtils.weixinCompanyPay(certificatPath, wechartAppId, wechartMuchId, walletExchange.getCardNo(), walletExchange.getOrderNo(), (int)(walletExchange.getConfirmScore()*100), false, walletExchange.getRemark(), com.yanbao.util.ToolUtil.getRemoteAddr(request));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}else{
+				return fail("无法完成转账！微信证书不存在!");
+			}
+			// 设置兑现成功
+			walletExchange.setStatus(3);
+			walletExchangeService.updateById(exchangeId, walletExchange);
+			// 发送兑换成功消息
+			Message message = new Message();
+			message.setId(UUIDUtil.getUUID());
+			message.setUserId(walletExchange.getUserId());
+			message.setOrderNo(walletExchange.getOrderNo());
+			message.setTitle("兑换成功");
+			message.setType(MessageType.EXCHANGE.getCode());
+			message.setDetail("本次兑换余额:" + -walletExchange.getScore() + "，实际到账：" + walletExchange.getConfirmScore());
+			message.setRemark(MessageType.EXCHANGE.getMsg());
+			message.setStatus(0);
+			messageService.create(message);
+			// 提现手续费加到系统用户
+			userService.addScoreByUserId("system", walletExchange.getPoundage());
+			//提现成功，新增合伙人推荐商家业绩明细记录
+			if(!com.yanbao.util.ToolUtil.isEmpty(user.getStoreId())){
+				//判断是否是商家提现，如果是，就进入合伙人推荐商家业绩结算
+				partnerBillDetailService.createPartnerBillDetail(user.getStoreId(),walletExchange.getOrderNo(),walletExchange.getScore());
+			}
+			return success();						
+		}	
 		CashMoneyVo cashMoneyVo = new CashMoneyVo();
 		cashMoneyVo.setCashId(walletExchange.getId());
 		cashMoneyVo.setCashMoney(String.valueOf(walletExchange.getConfirmScore()));
