@@ -1,6 +1,7 @@
 package com.yanbao.util.refunds;
 
 
+import com.alibaba.fastjson.JSON;
 import com.yanbao.util.OrderNoUtil;
 import com.yanbao.util.ToolUtil;
 import com.yanbao.util.XMLUtil;
@@ -170,7 +171,7 @@ public class RefundsUtils {
             HttpPost httppost = new HttpPost("https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers");
             String orderNo = OrderNoUtil.get();
 //            wx1581a2802e11162d
-            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx1581a2802e11162d", "1425023102", "okMk5wmonuTNnfigGLq23hPACZkk", orderNo, false, "", 100, "test001", "113.74.9.11");
+            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx1581a2802e11162d", "1425023102", "okMk5wmonuTNnfigGLq23hPACZkk", orderNo, false, "", 100, "斗拍企业付款", "113.74.9.11");
 
 //            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx32266be91b9e0a8f", "1337799001", "okMk5wmonuTNnfigGLq23hPACZkk", orderNo, false, "", 130, "", "113.74.9.11");
             String data = XMLUtil.objectToXml(transferInfo);
@@ -197,7 +198,7 @@ public class RefundsUtils {
                     try {
                         System.out.println(stringBuffer.toString());
                         map  = XMLUtil.doXMLParse(stringBuffer.toString());
-                        System.out.println(map);
+                        System.out.println(JSON.toJSONString(map));
 
                     } catch (JDOMException e) {
                         e.printStackTrace();
