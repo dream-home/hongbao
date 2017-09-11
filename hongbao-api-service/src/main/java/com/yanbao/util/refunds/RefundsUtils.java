@@ -131,7 +131,7 @@ public class RefundsUtils {
 
     public final static void main(String[] args) throws Exception {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        FileInputStream instream = new FileInputStream(new File("E:\\项目\\微信支付\\炎宝斗拍商户平台证书\\apiclient_cert.p12"));
+        FileInputStream instream = new FileInputStream(new File("E:\\weChart\\apiclient_cert.p12"));
 //        FileInputStream instream = new FileInputStream(new File("E:\\项目\\微信支付\\炎宝商户平台证书\\apiclient_cert.p12"));
         try {
             keyStore.load(instream, "1425023102".toCharArray());
@@ -171,7 +171,7 @@ public class RefundsUtils {
             HttpPost httppost = new HttpPost("https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers");
             String orderNo = OrderNoUtil.get();
 //            wx1581a2802e11162d
-            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx1581a2802e11162d", "1425023102", "okMk5wmonuTNnfigGLq23hPACZkk", orderNo, false, "", 100, "斗拍企业付款", "113.74.9.11");
+            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx1581a2802e11162d", "1425023102", "okMk5wmonuTNnfigGLq23hPACZkk", orderNo, true, "朱仲威1", 100, "斗拍企业付款", "113.74.9.11");
 
 //            TransferInfo transferInfo = RefundsUtils.buildCompanyPayMap("wx32266be91b9e0a8f", "1337799001", "okMk5wmonuTNnfigGLq23hPACZkk", orderNo, false, "", 130, "", "113.74.9.11");
             String data = XMLUtil.objectToXml(transferInfo);
