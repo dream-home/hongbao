@@ -29,12 +29,13 @@ public class InPartnerStaticsTask extends BaseScheduleTask {
 
     @Override
     protected void doSpecificTask() {
-        log.error("doSpecificTask  START");
+        log.error("----------------------------------------------InPartnerStaticsTask  START---------------------------");
         try {
             int nowDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
             int partnerDate = ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.BILLDAY,"15"));
             if(nowDate != partnerDate){
                 log.info("当前不是合伙人结算日期！！！");
+                log.error("----------------------------------------------当前不是合伙人结算日期------------------------------------------");
                 return;
             }
             //获取上月时间
@@ -55,7 +56,7 @@ public class InPartnerStaticsTask extends BaseScheduleTask {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        log.error("doSpecificTask STOP");
+        log.error("----------------------------------------------InPartnerStaticsTask STOP------------------------------------------");
     }
 
     public static void main(String[] args) {

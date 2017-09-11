@@ -1787,11 +1787,11 @@ public class WalletController {
         if (hasExchange != null && hasExchange >= times) {
             return new JsonResult(0, "每天最多提现" + times + "笔");
         }
-
+        if (!user.getPayPwd().equals(Md5Util.MD5Encode(vo.getPayPwd(), user.getSalt()))) {
+            return new JsonResult(4, "支付密码不正确");
+        }
         if (vo.getSource() == 1 || vo.getSource() == 2) {
-            if (!user.getPayPwd().equals(Md5Util.MD5Encode(vo.getPayPwd(), user.getSalt()))) {
-                return new JsonResult(4, "支付密码不正确");
-            }
+
             List<UserBankcard> bankList = userBankcardService.getList(user.getId());
             UserBankcard bankcard = new UserBankcard();
             if (CollectionUtils.isEmpty(bankList)) {
@@ -1821,6 +1821,14 @@ public class WalletController {
         if (vo.getSource() == 3) {
             if (ToolUtil.isEmpty(user.getAppOpenId())) {
                 return new JsonResult(4, "未绑定微信号");
+            }
+            if (ToolUtil.isEmpty(user.getUserName()) && ToolUtil.isEmpty(vo.getUserName())) {
+                return new JsonResult(4, "微信提现必须填写实名");
+            }
+            if (ToolUtil.isEmpty(user.getUserName()) && ToolUtil.isNotEmpty(vo.getUserName())){
+                User updateUser = new User();
+                updateUser.setUserName(vo.getUserName());
+                userService.update(user.getId(), updateUser);
             }
 //            Integer isCheck=com.yanbao.util.ToolUtil.parseInt(ParamUtil.getIstance().get(Parameter.ISWXCHECKUSERNAME),1);
             walletExchangeService.exchangeHandlerForWeiXin(user, vo.getScore());
