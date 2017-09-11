@@ -163,8 +163,7 @@ public class WalletExchangeController extends BaseController {
                     }
                     if (map.containsKey("result_code") && "FAIL".equals(map.get("result_code"))) {
                     	//真实姓名不正确或无法给非实名用户付款
-                    	if((map.containsKey("err_code") && "NAME_MISMATCH".equals(map.get("err_code")))
-                    			||(map.containsKey("err_code") && "V2_ACCOUNT_SIMPLE_BAN".equals(map.get("err_code")))){
+                    	if(map.containsKey("err_code") && ("NAME_MISMATCH".equals(map.get("err_code"))||"V2_ACCOUNT_SIMPLE_BAN".equals(map.get("err_code")))){
                     		 // 设置兑现失败
                             walletExchange.setStatus(4);
                             walletExchangeService.updateById(exchangeId, walletExchange);
