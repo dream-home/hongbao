@@ -8,7 +8,7 @@ import com.mall.model.PartnerBill;
 import com.yanbao.core.dao.CommonDao;
 import com.yanbao.core.page.Page;
 import com.yanbao.core.service.impl.CommonServiceImpl;
-import com.yanbao.mapper.PartnerBillMapper;
+import com.yanbao.mapper.PartnerBillMappers;
 import com.yanbao.service.PartnerBillService;
 /**
  * @author Pay - 1091945691@qq.com
@@ -17,7 +17,7 @@ import com.yanbao.service.PartnerBillService;
 public class PartnerBillServiceImpl extends CommonServiceImpl<PartnerBill> implements PartnerBillService  {
 	/**注入合伙人业绩表DAO接口类*/
 	@Autowired
-    private PartnerBillMapper dao;
+    private PartnerBillMappers dao;
 
 	@Override
 	protected CommonDao<PartnerBill> getDao() {

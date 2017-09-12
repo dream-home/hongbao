@@ -21,4 +21,6 @@ public interface UserService extends CommonService<User> {
     User readByUid(String uid) throws Exception;
     
     List<User> getByStoreIds(List<String> storeIds) throws Exception;
+
+    public Integer updateScore(String id, Double score) throws Exception;
 }

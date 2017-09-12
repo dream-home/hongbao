@@ -31,7 +31,7 @@ public class PartnerBillServiceImpl implements PartnerBillService {
     private static final String SYSTEM_USER_USERID = "system";
 
     @Autowired
-    private PartnerBillDao dao;
+    private PartnerBillDao partnerBillDao;
     @Autowired
     private UserService userService;
     @Autowired
@@ -45,7 +45,7 @@ public class PartnerBillServiceImpl implements PartnerBillService {
             return null;
         }
         setDefault(model);
-        return dao.create(model);
+        return partnerBillDao.create(model);
     }
 
     private void setDefault(PartnerBill model) throws Exception {
@@ -62,7 +62,15 @@ public class PartnerBillServiceImpl implements PartnerBillService {
         if (ToolUtil.isEmpty(startTime) || ToolUtil.isEmpty(endTime)) {
             return null;
         }
-        return dao.getAllPartner(startTime, endTime);
+        return partnerBillDao.getAllPartners(startTime, endTime);
+    }
+
+    @Override
+    public List<PartnerBill> getPartners(String startTime, String endTime) {
+        if (ToolUtil.isEmpty(startTime) || ToolUtil.isEmpty(endTime)) {
+            return null;
+        }
+        return partnerBillDao.getPartners(startTime, endTime);
     }
 
     /**
@@ -75,7 +83,7 @@ public class PartnerBillServiceImpl implements PartnerBillService {
     @Override
     public void inPartnerStatistics(String startTime, String endTime) throws Exception {
         //1.查找上月所有合伙人获得的业绩提成
-        List<PartnerBill> list = this.getAllPartner(startTime, endTime);
+        List<PartnerBill> list = this.getPartners(startTime, endTime);
         double epScale = PoundageUtil.divide(ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.EPSCALE), 0d), 100, 4);
         double balanceScale = PoundageUtil.divide(ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.BALANCESCALE), 0d), 100, 4);
         if (epScale <= 0 && balanceScale <= 0) {

@@ -13,6 +13,6 @@ import com.yanbao.core.page.Page;
  * @author Pay - 1091945691@qq.com
  */
 @Repository
-public interface PartnerBillMapper  extends CommonDao<PartnerBill> {
+public interface PartnerBillMappers extends CommonDao<PartnerBill> {
 	List<PartnerBill> getBySearch(@Param("page")Page page,@Param("model")PartnerBill pb)throws Exception;
 }

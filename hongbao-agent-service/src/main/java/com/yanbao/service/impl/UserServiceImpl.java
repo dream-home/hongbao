@@ -42,4 +42,12 @@ public class UserServiceImpl extends CommonServiceImpl<User> implements UserServ
 	public List<User> getByStoreIds(List<String> storeIds) throws Exception {
 		return userMapper.getByStoreIds(storeIds);
 	}
+
+    @Override
+    public Integer updateScore(String id, Double score) throws Exception {
+        if (StringUtils.isEmpty(id) || score == null || score == 0) {
+            return 0;
+        }
+        return userMapper.updateScore(id, score);
+    }
 }

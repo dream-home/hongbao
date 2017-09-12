@@ -92,6 +92,7 @@
 	<url>/sysCity/getCityByField</url>
 	<url>/mall/store/search</url>
 	<url>/alipay/notify</url>
+	<url>/test/partener</url>
 </no_authorized>
 
 

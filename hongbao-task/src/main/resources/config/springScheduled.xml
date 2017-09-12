@@ -35,7 +35,7 @@
     <bean id="inPartnerStaticsTask" class="com.yanbao.task.InPartnerStaticsTask"></bean>
     <task:scheduled-tasks>
         <!--<task:scheduled ref="inPartnerStaticsTask" method="doTask" cron="59 59 23 * * ?"/>-->
-        <task:scheduled ref="inPartnerStaticsTask" method="doTask" cron="59 25 11 * * ?"/>
+        <task:scheduled ref="inPartnerStaticsTask" method="doTask" cron="0/30 * * * * ?"/>
     </task:scheduled-tasks>
     <context:component-scan base-package="com.yanbao.task"/>
 </beans>

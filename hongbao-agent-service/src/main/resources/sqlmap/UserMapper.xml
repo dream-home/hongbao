@@ -193,7 +193,14 @@
             #{storeId}
         </foreach>
     </select>
-	
+
+    <update id="updateScore">
+        UPDATE
+        <include refid="table" />
+        SET score = IFNULL(score,0) + #{score}
+        WHERE id = #{id}
+    </update>
+
 </mapper>
 
 

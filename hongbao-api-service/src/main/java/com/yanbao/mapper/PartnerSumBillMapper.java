@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PartnerBillMapper {
+public interface PartnerSumBillMapper {
 	Integer create(@Param("model") PartnerBill model);
 
 	PartnerBill readById(@Param("id") String id);
@@ -22,5 +22,7 @@ public interface PartnerBillMapper {
 
 	Integer deleteById(@Param("id") String id);
 
-	List<PartnerBill> getAllPartner(@Param("startTime") String startTime, @Param("endTime") String endTime);
+	List<PartnerBill> getAllPartners(@Param("startTime") String startTime, @Param("endTime") String endTime);
+
+	List<PartnerBill> getPartners(@Param("startTime") String startTime, @Param("endTime") String endTime);
 }

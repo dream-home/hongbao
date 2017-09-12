@@ -12,17 +12,7 @@ public interface PartnerBillDao {
 
     Integer create(PartnerBill model);
 
-    PartnerBill readById(String id);
+    List<PartnerBill> getAllPartners(String startTime, String endTime);
 
-    List<PartnerBill> readList(PartnerBill model, Integer startRow, Integer pageSize);
-
-    PartnerBill readOne(PartnerBill model);
-
-    Integer readCount(PartnerBill model);
-
-    Integer updateById(PartnerBill model, String id);
-
-    Integer deleteById(String id);
-
-    List<PartnerBill> getAllPartner(String startTime, String endTime);
+    List<PartnerBill> getPartners(String startTime, String endTime);
 }

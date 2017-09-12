@@ -1,7 +1,6 @@
 package com.yanbao.service;
 
 import com.mall.model.PartnerBill;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +15,7 @@ public interface PartnerBillService {
     List<PartnerBill> getAllPartner(String startTime, String endTime);
 
     //结算业绩（提现+商家赠送EP）
-    @Transactional
     void inPartnerStatistics(String startTime, String endTime) throws Exception;
+
+    public List<PartnerBill> getPartners(String startTime, String endTime);
 }

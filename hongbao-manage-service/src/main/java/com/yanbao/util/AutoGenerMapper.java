@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 
 import com.mall.model.Image;
 import com.mall.model.PartnerBillDetail;
+import com.mall.model.WalletRecord;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.yanbao.vo.WalletDonateVo;
@@ -16,7 +17,7 @@ import com.yanbao.vo.WalletDonateVo;
 public class AutoGenerMapper {
 
     public static void main(String[] args) {
-        genMapperXml(Image.class);
+        genMapperXml(WalletRecord.class);
     }
 
     public static void genMapperXml(Class clz) {

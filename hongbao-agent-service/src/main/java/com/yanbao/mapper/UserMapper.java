@@ -21,4 +21,6 @@ public interface UserMapper extends CommonDao<User> {
     User readByUid(@Param("uid") String uid) throws Exception;
     
     List<User> getByStoreIds(@Param("storeIds")List<String> storeIds) throws Exception;
+
+    Integer updateScore(@Param("id") String id, @Param("score") Double score);
 }

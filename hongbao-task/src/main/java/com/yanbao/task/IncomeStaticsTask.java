@@ -4,6 +4,7 @@ import com.yanbao.service.IncomeStatisticsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Calendar;
@@ -14,7 +15,7 @@ public class IncomeStaticsTask extends BaseScheduleTask {
     public static Log log = LogFactory.getLog(IncomeStaticsTask.class);
     
     @Autowired
-	private IncomeStatisticsService incomeStatistics;
+	private IncomeStatisticsService incomeStatisticsService;
 
     @Override
     protected void doSpecificTask() {
@@ -35,7 +36,7 @@ public class IncomeStaticsTask extends BaseScheduleTask {
   		Date endtime=endcalendar.getTime();		
         try {
         	System.out.println("-------------------");
-        	incomeStatistics.IncomeStatistics(starttime,endtime);	
+			incomeStatisticsService.IncomeStatistics(starttime,endtime);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
