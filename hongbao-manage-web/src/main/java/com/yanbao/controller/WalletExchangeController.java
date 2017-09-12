@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -139,6 +140,19 @@ public class WalletExchangeController extends BaseController {
         }
         //certificatPath="E:\\weChart\\apiclient_cert.p12";
         if (null != walletExchange.getCardType() && walletExchange.getCardType() == BankCardType.DONATE_WITH_WEIXIN.getCode()) {
+        	Map<String,String> resultMap=new HashMap<String, String>();
+        	resultMap.put("NOAUTH", "没有权限");
+        	resultMap.put("AMOUNT_LIMIT", "付款金额不能小于最低限额，每次付款金额必须大于1元");
+        	resultMap.put("PARAM_ERROR", "参数错误");
+        	resultMap.put("OPENID_ERROR", "Openid错误");
+        	resultMap.put("NOTENOUGH", "余额不足");
+        	resultMap.put("SYSTEMERROR", "系统繁忙，请稍后再试。");
+        	resultMap.put("NAME_MISMATCH", "姓名校验出错");
+        	resultMap.put("SIGN_ERROR", "签名错误");
+        	resultMap.put("XML_ERROR", "Post内容出错");
+        	resultMap.put("FATAL_ERROR", "两次请求参数不一致");
+        	resultMap.put("CA_ERROR", "证书出错");
+        	resultMap.put("V2_ACCOUNT_SIMPLE_BAN", "无法给非实名用户付款");
             if (null != certificatPath && !"".equals(certificatPath) && new File(certificatPath).exists()) {
                 //自动微信转账
                 Map map=null;
@@ -157,12 +171,42 @@ public class WalletExchangeController extends BaseController {
                     if (isCheck==1){
                         f=true;
                     }
-                    map= RefundsUtils.weixinCompanyPay(certificatPath, wechartAppId, wechartMuchId, walletExchange.getCardNo(), walletExchange.getOrderNo(), (int) (walletExchange.getConfirmScore() * 100), f, walletExchange.getRemark(), com.yanbao.util.ToolUtil.getRemoteAddr(request),user.getUserName());
+                    map= RefundsUtils.weixinCompanyPay(certificatPath, wechartAppId, wechartMuchId, walletExchange.getCardNo(), walletExchange.getOrderNo(), (int) (walletExchange.getConfirmScore() * 100), f, walletExchange.getRemark(),com.yanbao.util.ToolUtil.getRemoteAddr(request),user.getUserName());
                     if (map == null) {
                         return fail("微信企业付款未知异常");
                     }
                     if (map.containsKey("result_code") && "FAIL".equals(map.get("result_code"))) {
-                        return fail(map.get("err_code_des").toString());
+                    	//真实姓名不正确或无法给非实名用户付款
+                    	if(map.containsKey("err_code") && ("NAME_MISMATCH".equals(map.get("err_code"))||"V2_ACCOUNT_SIMPLE_BAN".equals(map.get("err_code")))){
+                    		 // 设置兑现失败
+                            walletExchange.setStatus(4);
+                            walletExchangeService.updateById(exchangeId, walletExchange);
+                            // 插入流水表
+                            WalletRecord walletRecord = new WalletRecord();
+                            walletRecord.setUserId(walletExchange.getUserId());
+                            walletRecord.setOrderNo(walletExchange.getOrderNo());
+                            walletRecord.setScore(-walletExchange.getScore());
+
+                            walletRecord.setRemark("兑换失败，余额退回");
+                            walletRecord.setRecordType(RecordType.ROLLBACK.getCode());
+                            walletRecordService.createWithUUID(walletRecord);
+                            // 退回用户积分
+                            userService.addScoreByUserId(walletExchange.getUserId(), -walletExchange.getScore());
+                            // 发送兑换失败消息
+                            Message message = new Message();
+                            message.setId(UUIDUtil.getUUID());
+                            message.setUserId(walletExchange.getUserId());
+                            message.setOrderNo(walletExchange.getOrderNo());
+                            message.setTitle("兑换失败");
+                            message.setType(MessageType.EXCHANGE.getCode());
+                            message.setDetail("兑换失败,微信提示:"+resultMap.get(map.get("err_code").toString())+",余额已退回用户钱包");
+                            message.setRemark("兑换失败,微信提示:"+resultMap.get(map.get("err_code").toString())+",余额已退回用户钱包");
+                            message.setStatus(0);
+                            messageService.create(message);
+                            return fail("兑换失败:"+resultMap.get(map.get("err_code").toString())+",余额已退回用户钱包");
+                    	}else{
+                    		return fail(resultMap.get(map.get("err_code").toString()));
+                    	}
                     }
                 } catch (Exception e) {
 
@@ -171,7 +215,7 @@ public class WalletExchangeController extends BaseController {
                         return fail("微信企业付款未知异常");
                     }
                     if (map.containsKey("result_code") && "FAIL".equals(map.get("result_code"))) {
-                        return fail(map.get("err_code_des").toString());
+                        return fail(resultMap.get(map.get("err_code").toString()));
                     }
                 }
             } else {
