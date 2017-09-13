@@ -192,6 +192,10 @@ public class Parameter extends SimpleModel implements Comparable<Parameter>{
      */
     public static final String BILLDAY = "billDay";
     /**
+     * 执行合伙人结算的日期
+     */
+    public static final String UPDATEBILLDAY = "updateBillDay";
+    /**
      * 加入合伙人的金额
      */
     public static final String JOINEP = "joinEp";

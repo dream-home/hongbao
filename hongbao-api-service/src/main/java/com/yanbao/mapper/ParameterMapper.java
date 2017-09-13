@@ -2,6 +2,7 @@ package com.yanbao.mapper;
 
 import com.mall.model.Parameter;
 import com.yanbao.core.dao.CommonDao;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,4 +21,7 @@ public interface ParameterMapper extends CommonDao<Parameter> {
      */
     List<Parameter> getList() throws Exception;
 
+    int updateValue(@Param("name") String name, @Param("value") String value);
+
+    Parameter readByKey(@Param("name") String name);
 }

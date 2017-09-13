@@ -22,4 +22,14 @@ public class ParameterServiceImpl implements ParameterService {
     public List<Parameter> getList() throws Exception {
         return parameterMapper.getList();
     }
+
+    @Override
+    public Parameter readByKey(String key) throws Exception {
+        return parameterMapper.readByKey(key);
+    }
+
+    @Override
+    public int updateValue(String key, String value) {
+         return parameterMapper.updateValue(key,value);
+    }
 }

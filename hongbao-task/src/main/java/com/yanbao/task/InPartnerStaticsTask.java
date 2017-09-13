@@ -1,7 +1,6 @@
 package com.yanbao.task;
 
 import com.mall.model.Parameter;
-import com.yanbao.service.InAgentStaticsService;
 import com.yanbao.service.PartnerBillService;
 import com.yanbao.util.DateTimeUtil;
 import com.yanbao.util.ParamUtil;
@@ -11,9 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * 合伙人业绩结算

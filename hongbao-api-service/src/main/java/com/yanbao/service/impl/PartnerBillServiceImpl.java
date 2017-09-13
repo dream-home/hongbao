@@ -5,10 +5,7 @@ import com.yanbao.constant.MessageType;
 import com.yanbao.constant.RecordType;
 import com.yanbao.constant.StatusType;
 import com.yanbao.dao.PartnerBillDao;
-import com.yanbao.service.MessageService;
-import com.yanbao.service.PartnerBillService;
-import com.yanbao.service.UserService;
-import com.yanbao.service.WalletRecordService;
+import com.yanbao.service.*;
 import com.yanbao.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +35,8 @@ public class PartnerBillServiceImpl implements PartnerBillService {
     private MessageService messageService;
     @Autowired
     private WalletRecordService walletRecordService;
+    @Autowired
+    private ParameterService parameterService;
 
     @Override
     public Integer create(PartnerBill model) throws Exception {
@@ -79,9 +78,15 @@ public class PartnerBillServiceImpl implements PartnerBillService {
      * @param startTime 开始时间（YYYY-MM-DD）
      * @param endTime   结束时间（YYYY-MM-DD）
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void inPartnerStatistics(String startTime, String endTime) throws Exception {
+        //执行合伙人时间
+        Parameter parameter = parameterService.readByKey(Parameter.UPDATEBILLDAY);
+        if(parameter != null && startTime.equals(parameter.getValue())){
+            logger.info("已经执行过合伙人业绩结算，请不要重复执行");
+            return;
+        }
         //1.查找上月所有合伙人获得的业绩提成
         List<PartnerBill> list = this.getAllPartner(startTime, endTime);
         double epScale = PoundageUtil.divide(ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.EPSCALE), 0d), 100, 4);
@@ -146,5 +151,7 @@ public class PartnerBillServiceImpl implements PartnerBillService {
                 this.create(bill);
             }
         }
+        //更新执行合伙人时间
+        parameterService.updateValue(Parameter.UPDATEBILLDAY,startTime);
     }
 }

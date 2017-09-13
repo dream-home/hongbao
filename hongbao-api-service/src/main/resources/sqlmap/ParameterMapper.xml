@@ -35,11 +35,22 @@
         where id=#{id} limit 1;
     </select>
 
+    <select id="readByKey" resultType="com.mall.model.Parameter">
+        <include refid="selector"/>
+        where name=#{name} limit 1;
+    </select>
+
 	<!-- 查询商家提现记录，根据userId进行分类 -->
 	<select id="getList" resultType="com.mall.model.Parameter">
 		<include refid="selector"/>
 	</select>
-	
+
+    <update id="updateValue">
+        UPDATE
+        <include refid="table" />
+        SET value = #{value}
+        WHERE name = #{name}
+    </update>
 </mapper>
 
 
