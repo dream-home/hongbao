@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PartnerSumBillMapper {
+public interface PartnerBillMapper {
 	Integer create(@Param("model") PartnerBill model);
 
 	PartnerBill readById(@Param("id") String id);

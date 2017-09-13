@@ -69,6 +69,7 @@
 	<url>/mall/store/storeinfo</url>
 	<url>/mall/store/icons</url>
 	<url>/wallet/storeBuildPayOrder</url>
+	<url>/wallet/storeBuildPayPagerder</url>
 	<url>/wallet/storeAlipayByAlipay/callback</url>
 	<url>/wallet/storeWxScanCallback</url>
 	<url>/wallet/query/storealipayscanorderbyaliapay</url>

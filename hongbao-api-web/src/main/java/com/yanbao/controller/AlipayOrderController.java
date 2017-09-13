@@ -150,21 +150,24 @@ public class AlipayOrderController {
                 }
                 Token token = null;
                 User user = null;
-                Boolean isAlipayPage = BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode() == orderType.getType();
+                Boolean isAlipayPage = BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode().intValue() == orderType.getType();
                 if (!isAlipayPage && ToolUtil.isEmpty(orderType.getToken())) {
                     logger.error("回调配置表token为空：订单号为:" + orderNo + "  类型为：" + orderType.getType(), orderType.getRemark());
                 }
-                token = (Token) TokenUtil.getTokenObject(orderType.getToken());
+                if (!isAlipayPage && ToolUtil.isNotEmpty(orderType.getToken())) {
+                    token = (Token) TokenUtil.getTokenObject(orderType.getToken());
+                    user = userService.getById(token.getId());
+                }
                 if (!isAlipayPage && token == null) {
                     logger.error("回调配置表token失效：订单号为:" + orderNo + "  类型为：" + orderType.getType(), orderType.getRemark() + "  token:" + orderType.getToken());
                 }
-                user = userService.getById(token.getId());
+
                 if (!isAlipayPage && user == null) {
                     logger.error("回调配置表token失效：订单号为:" + orderNo + "  类型为：" + orderType.getType(), orderType.getRemark() + "  token:" + orderType.getToken());
                 }
-                Boolean flagRes = RedisLock.redisLock(orderNo, orderNo, 16);
+                Boolean flagRes = RedisLock.redisLock(orderNo, orderNo, 15);
                 if (!flagRes){
-                    response.getOutputStream().write("success".getBytes());
+                    response.getOutputStream().write("failure".getBytes());
                     response.flushBuffer();
                 }
                 Boolean flag = comOderService.handleOrder(user, orderNo);

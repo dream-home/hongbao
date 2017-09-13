@@ -14,6 +14,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.logging.Logger;
+
 /**
  * @date 2018年08月29日
  */
@@ -38,30 +40,31 @@ public class ComOrderServiceImpl implements ComOderService {
         if (ToolUtil.isEmpty(orderType.getType())) {
             log.error("回调配置表业务类型错误：订单号为:" + orderNo + "  类型为：" + orderType.getType() + "  " + orderType.getRemark());
         }
+        log.error("****************** " + orderType);
         switch (orderType.getType()) {
             case 1:
                 rechargeHandle(user, orderNo, orderType);
-                log.error("支付宝充值回调成功，订单号："+orderNo);
+                log.error("支付宝充值回调成功，订单号：" + orderNo);
                 return true;
             case 11:
                 faceScanHandle(user, orderNo, orderType);
-                log.error("000000000000000000000000000000000  支付宝面对面扫码回调成功，订单号："+orderNo);
+                log.error("000000000000000000000000000000000  支付宝面对面扫码回调成功，订单号：" + orderNo);
                 return true;
             case 13:
                 purchaseHandle(user, orderNo, orderType);
-                log.error("000000000000000000000000000000000  支付宝直接购买回调成功，订单号："+orderNo);
+                log.error("000000000000000000000000000000000  支付宝直接购买回调成功，订单号：" + orderNo);
                 return true;
             case 14:
                 storeAppScanHandle(user, orderNo, orderType);
-                log.error("000000000000000000000000000000000  支付宝斗拍APP内商家扫码回调成功，订单号："+orderNo);
+                log.error("000000000000000000000000000000000  支付宝斗拍APP内商家扫码回调成功，订单号：" + orderNo);
                 return true;
             case 15:
                 storePageWithZFBScanHandle(orderNo, orderType);
-                log.error("000000000000000000000000000000000  支付宝客户端发起网页商家扫码回调成功，订单号："+orderNo);
+                log.error("000000000000000000000000000000000  支付宝客户端发起网页商家扫码回调成功，订单号：" + orderNo);
                 return true;
             case 16:
                 joinParternHandle(user, orderNo, orderType);
-                log.error("000000000000000000000000000000000  支付宝加入合伙人回调成功，订单号："+orderNo);
+                log.error("000000000000000000000000000000000  支付宝加入合伙人回调成功，订单号：" + orderNo);
                 return true;
         }
         return false;
@@ -74,10 +77,11 @@ public class ComOrderServiceImpl implements ComOderService {
         }
         if (model.getSource().intValue() == BankCardType.JOIN_ALIPAY.getCode().intValue()) {
             //支付宝加入合伙人支付
-            Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
-            if (flag) {
-                walletRechargeService.joinPartnerHandler(user, orderNo);
-            }
+//            Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
+//            if (flag) {
+//                walletRechargeService.joinPartnerHandler(user, orderNo);
+//            }
+            walletRechargeService.joinPartnerHandler(user, orderNo);
         }
     }
 
@@ -90,10 +94,11 @@ public class ComOrderServiceImpl implements ComOderService {
         if (flag1) {
             log.error("直接购买回调配置表业务类型错误：订单号为:" + orderNo + "  类型为：" + orderType.getType() + "  " + orderType.getRemark() + " 购买订单类型为：scenes:" + goodsWin.getScenes() + "    orderType :" + goodsWin.getOrderType());
         } else {
-            Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
-            if (flag) {
-                orderService.purchaseHandlerByApp(user, orderNo);
-            }
+//            Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
+//            if (flag) {
+//                orderService.purchaseHandlerByApp(user, orderNo);
+//            }
+            orderService.purchaseHandlerByApp(user, orderNo);
         }
     }
 
@@ -104,10 +109,11 @@ public class ComOrderServiceImpl implements ComOderService {
         }
         if (model.getSource().intValue() == BankCardType.SCAN_CODE_ALIPAY.getCode().intValue()) {
             //支付宝面对面扫码支付
-            Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
-            if (flag) {
-                walletRechargeService.scanCodeHandler(user, orderNo);
-            }
+//            Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
+//            if (flag) {
+//                walletRechargeService.scanCodeHandler(user, orderNo);
+//            }
+            walletRechargeService.scanCodeHandler(user, orderNo);
         }
     }
 
@@ -119,10 +125,11 @@ public class ComOrderServiceImpl implements ComOderService {
         }
         //支付宝充值
 
-        Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
-        if (flag) {
-            walletRechargeService.rechargeHandler(user, orderNo);
-        }
+//        Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
+//        if (flag) {
+//            walletRechargeService.rechargeHandler(user, orderNo);
+//        }
+        walletRechargeService.rechargeHandler(user, orderNo);
         return;
     }
 
@@ -134,10 +141,11 @@ public class ComOrderServiceImpl implements ComOderService {
         if (model.getSource().intValue() == BankCardType.SCAN_CODE_ALIPAY.getCode().intValue()) {
             //支付宝面对面扫码支付
 
-            Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
-            if (flag) {
-                walletRechargeService.storeScanCodeHandler(user, orderNo);
-            }
+//            Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
+//            if (flag) {
+//                walletRechargeService.storeScanCodeHandler(user, orderNo);
+//            }
+            walletRechargeService.storeScanCodeHandler(user, orderNo);
         }
     }
 
@@ -146,13 +154,14 @@ public class ComOrderServiceImpl implements ComOderService {
         if (model == null) {
             log.error("商家扫码网页支付宝客户端直接发起的支付，回调配置表业务类型错误：订单号为:" + orderNo + "  类型为：" + orderType.getType() + "  " + orderType.getRemark());
         }
-        if (model.getSource().intValue() == BankCardType.SCAN_CODE_ALIPAY.getCode().intValue()) {
+        if (model.getSource().intValue() == BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode().intValue()) {
             //支付宝面对面扫码支付
 
-            Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
-            if (flag) {
-                walletRechargeService.storeScanCodeHandler(null, orderNo);
-            }
+//            Boolean flag = RedisLock.redisLock(orderNo, orderNo, 16);
+//            if (flag) {
+//                walletRechargeService.storeScanCodeHandler(null, orderNo);
+//            }
+            walletRechargeService.storeScanCodeHandler(null, orderNo);
         }
     }
 }

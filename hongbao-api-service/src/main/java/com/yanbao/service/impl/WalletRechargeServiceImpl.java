@@ -778,6 +778,7 @@ public class WalletRechargeServiceImpl implements WalletRechargeService {
         exchange.setRemark("加入合伙人现金部分给代理提成");
         exchange.setCardNo(user.getOpenId());
         exchange.setCardType(BankCardType.JOIN_PAY_FOR_AGENT.getCode());
+        exchange.setStatus(3);
         walletExchangeService.add(exchange);
         // 修改支付订单
         WalletRecharge updateModel = new WalletRecharge();

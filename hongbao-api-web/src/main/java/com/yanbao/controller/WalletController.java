@@ -883,6 +883,9 @@ public class WalletController {
     public JsonResult storeBuildPayOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody WalletVo vo) throws Exception {
         Token token = TokenUtil.getSessionUser(request);
         String tokens = TokenUtil.getToken(request);
+        logger.error("9999999999999999999999999999999999 storeBuildPayOrder 99999999999999999999999999999999999999999999");
+        logger.error(JSON.toJSONString(vo));
+        logger.error("999999999999999999999999999999999999999999999999999999999999999999999999999999");
         //支付来源
         int source = vo.getSource().intValue();
         //二维码类型
@@ -1062,10 +1065,13 @@ public class WalletController {
             result.put("returnUrl", environment);
             result.put("orderNo", model.getOrderNo());
             result.put("userId", null);
+            response.reset();
             response.setContentType("text/html;charset=utf-8");
-            response.getWriter().write(orderInfo);
+            PrintWriter writer = response.getWriter();
+            writer.write(orderInfo);
             //直接将完整的表单html输出到页面
-            response.getWriter().flush();
+            writer.flush();
+//            return new JsonResult(result);
         } else if (source == BankCardType.WECHATPAY_STORE_SCAN.getCode().intValue()) {
             //商家固定二维码发起微信扫码(公众号支付)
             if (StringUtils.isEmpty(user.getOpenId())) {
@@ -1101,6 +1107,149 @@ public class WalletController {
         logger.error("result : " + result);
         logger.error("00000000000000000000000000000000000");
         return new JsonResult(result);
+    }
+
+
+
+    /**
+     * 商家收款码-确认生成支付单 支付宝网页支付
+     */
+    @ResponseBody
+    @RequestMapping(value = "/storeBuildPayPagerder", method = RequestMethod.GET)
+    public void storeBuildPayPagerder(HttpServletRequest request, HttpServletResponse response,  WalletVo vo) throws Exception {
+        Token token = TokenUtil.getSessionUser(request);
+        String tokens = TokenUtil.getToken(request);
+        logger.error("9999999999999999999999999999999999 storeBuildPayOrder 99999999999999999999999999999999999999999999");
+        logger.error(JSON.toJSONString(vo));
+        logger.error("999999999999999999999999999999999999999999999999999999999999999999999999999999");
+        //支付来源
+        int source = vo.getSource().intValue();
+        //二维码类型
+        int codeType = vo.getCodeType().intValue();
+        //支付来源是否合法有效
+        boolean isVaildPay = source == BankCardType.ALIPAY.getCode().intValue() || source == BankCardType.WECHATPAY.getCode().intValue() || source == BankCardType.BALANCE.getCode().intValue() ||
+                source == BankCardType.ALIPAY_STORE_SCAN.getCode().intValue() || source == BankCardType.WECHATPAY_STORE_SCAN.getCode().intValue();
+        if (!isVaildPay) {
+           logger.error("目前仅支持支付宝、微信支付、余额付款");
+        }
+
+        //判断是否是商家扫码支付宝支付，如果是，user就默认为空
+        User user = null;
+        if (source != BankCardType.ALIPAY_STORE_SCAN.getCode().intValue()) {
+            user = userService.getById(token.getId());
+            if (null == user) {
+                logger.error(String.format("Illegal user id[%s]", token.getId()));
+                throw new IllegalArgumentException();
+            }
+        }
+
+        //获取支付的三级分销比例和ep比例(根据codeType类型来判断)
+        PayDistribution payDistribution = null;
+        if (codeType == PayDistributionType.store.getCode().intValue()) {
+            //商家固定二维码扫码发起支付
+            payDistribution = payDistributionService.getByUserId(vo.getStoreUserId(), PayDistributionType.store.getCode());
+        }
+        if (payDistribution == null) {
+            logger.error( "商家未设置付款参数");
+        }
+        Map<String, Object> result = new HashMap<String, Object>();
+        // 生成预订单
+        WalletRecharge model = new WalletRecharge();
+        if (source == BankCardType.ALIPAY_STORE_SCAN.getCode().intValue()) {
+            model.setUserId(null);
+        } else {
+            model.setUserId(token.getId());
+        }
+        model.setStoreUserId(vo.getStoreUserId());
+        model.setScore(vo.getScore());
+
+        //保存ep折扣优惠
+        Double totalDiscountEP = 0d;
+        //定义实付金额
+        Double countMoney = 0d;
+        //判断是否使用ep折扣优惠，如果使用，不会进行分销
+        if (vo.getDiscountEP() == null || vo.getDiscountEP() == 0) {
+            //未使用ep折扣优惠，有分销进行分成
+            model.setFirstReferrerScale(payDistribution.getFirstReferrerScale());
+            model.setSecondReferrerScale(payDistribution.getSecondReferrerScale());
+            model.setThirdReferrerScale(payDistribution.getThirdReferrerScale());
+            model.setBusinessSendEp(payDistribution.getBusinessSendEp());
+            model.setDiscountEP(0d);
+            model.setDoudou(payDistribution.getBusinessSendEp());
+            model.setRemark("无EP抵扣");
+            countMoney = vo.getScore();
+        } else {
+            //使用ep折扣优惠,没有分销分成
+            Map<String, Double> countMap = walletRechargeService.countWalletMoney(user, vo.getStoreUserId(), PayDistributionType.store.getCode(), vo.getScore());
+            totalDiscountEP = countMap.get("totalDiscountEP");
+            countMoney = countMap.get("countMoney");
+            model.setFirstReferrerScale(0d);
+            model.setSecondReferrerScale(0d);
+            model.setThirdReferrerScale(0d);
+            model.setBusinessSendEp(0d);
+            model.setDoudou(0d);
+            model.setRemark("有EP抵扣");
+            model.setDiscountEP(totalDiscountEP);
+        }
+
+        //设置实付金额
+        model.setConfirmScore(countMoney);
+        countMoney = PoundageUtil.getPoundage(countMoney, 1d, 2);
+        /*余额支付时先进行一些基本判断*/
+        if (source == BankCardType.BALANCE.getCode().intValue()) {
+            if (StringUtils.isBlank(user.getPayPwd())) {
+                logger.error( "请先设置支付密码");
+            }
+            if (!user.getPayPwd().equals(Md5Util.MD5Encode(vo.getPayPwd(), user.getSalt()))) {
+                logger.error( "支付密码不正确");
+            }
+            if (vo.getScore() < 0) {
+                logger.error( "请输入合法有效的付款金额");
+            }
+            if (user.getScore() == null || user.getScore().intValue() < vo.getScore().intValue()) {
+                logger.error( "您的积分不足");
+            }
+        }
+
+        //获取设置参数
+        ParamUtil util = ParamUtil.getIstance();
+        double tradeRate = PoundageUtil.divide(ToolUtil.parseDouble(util.get(Parameter.TRADERATE), 0d), 100, 4);
+        //手续费 = 三级分销+ep赠送+平台抽佣
+        double poundage = PoundageUtil.getPoundage(model.getScore() * (model.getBusinessSendEp() + model.getFirstReferrerScale() + model.getSecondReferrerScale() + model.getThirdReferrerScale()) / 100d, 1d);
+        poundage = poundage + (model.getConfirmScore() - poundage) * tradeRate;
+        poundage = PoundageUtil.getPoundage(poundage, 1d);
+        model.setPoundage(poundage);
+        if (source == BankCardType.ALIPAY_STORE_SCAN.getCode().intValue()) {
+            //支付宝客户端商家固定二维码发起支付宝支付
+            model.setSource(BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode());
+            model.setRemark("支付宝客户端商家固定二维码发起支付宝支付");
+            walletRechargeService.add(model);
+
+            //支付宝网页支付
+            String notifyUrl = "";
+            SecondCallBack secondCallBack = secondCallBackService.getById(BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode() + "");
+            if (secondCallBack == null || ToolUtil.isEmpty(secondCallBack.getReturnUrl())) {
+                logger.error( "支付回调参数设置不合法");
+            }
+            if ("test".equals(environment)) {
+                notifyUrl = secondCallBack.getTestReturnUrl();
+            } else if ("online".equals(environment)) {
+                notifyUrl = secondCallBack.getReturnUrl();
+            }
+            orderTypeService.add(model.getOrderNo(), BankCardType.STORE_SCAN_PAGE_ALIPAY.getCode(), "支付宝支付宝客户端直接发起商家二维码扫码网页支付", tokens);
+            String orderInfo = AliPayUtils.alipayPreOrderForWap(model.getOrderNo(), notifyUrl, model.getScore(), "斗拍商城支付");
+            result.put("orderInfo", orderInfo);
+
+            result.put("returnUrl", environment);
+            result.put("orderNo", model.getOrderNo());
+            result.put("userId", null);
+            response.reset();
+            response.setContentType("text/html;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            writer.write(orderInfo);
+            //直接将完整的表单html输出到页面
+            writer.flush();
+        }
     }
 
 

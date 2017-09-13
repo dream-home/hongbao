@@ -71,7 +71,7 @@ public class ScanController {
             String redirect_uri = wechatCallbackDomain + "/scan/callback";
             redirect_uri = URLEncoder.encode(redirect_uri, "utf8");
             //state组装uid_index，用符号"_"分割  200828_index
-            String authorize = WechatApiUtil.authorizeH5(redirect_uri, WechatApiUtil.BASE_SCOPE, vo.getUid() + "_"+ vo.getIndex()+"_"+vo.getStoreUserId()+"_"+vo.getStoreId()+"_"+vo.getType());
+            String authorize = WechatApiUtil.authorizeH5(redirect_uri, WechatApiUtil.USERINFO_SCOPE, vo.getUid() + "_"+ vo.getIndex()+"_"+vo.getStoreUserId()+"_"+vo.getStoreId()+"_"+vo.getType());
             logger.error("**************************");
             logger.error(authorize);
             logger.error("**************************");

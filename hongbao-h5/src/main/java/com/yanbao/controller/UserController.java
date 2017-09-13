@@ -218,7 +218,7 @@ public class UserController {
             String redirect_uri = wechatCallbackDomain + "/user/callback";
             redirect_uri = URLEncoder.encode(redirect_uri, "utf8");
             //state组装uid+grouptype，用符号"_"分割  200828_null_2_B33BC81F04134B2EBAB6910B704CAA44_FB5937DBB58E45488D38228FC01E4928_
-            String authorize = WechatApiUtil.authorizeH5(redirect_uri, WechatApiUtil.BASE_SCOPE, vo.getUid() + "_" + vo.getGroupType() + "_" + vo.getIndex() + "_" + vo.getShareUserId() + "_" + vo.getStoreId() + "_" + vo.getGoodsId());
+            String authorize = WechatApiUtil.authorizeH5(redirect_uri, WechatApiUtil.USERINFO_SCOPE, vo.getUid() + "_" + vo.getGroupType() + "_" + vo.getIndex() + "_" + vo.getShareUserId() + "_" + vo.getStoreId() + "_" + vo.getGoodsId());
             logger.error("**************************");
             logger.error(authorize);
             logger.error("**************************");
@@ -428,7 +428,7 @@ public class UserController {
             String redirect_uri = wechatCallbackDomain + "/user/wxstorecallback";
             redirect_uri = URLEncoder.encode(redirect_uri, "utf8");
             //state组装uid+grouptype，用符号"_"分割  200828_null_2_FB5937DBB58E45488D38228FC01E4928_
-            String authorize = WechatApiUtil.authorizeH5(redirect_uri, WechatApiUtil.BASE_SCOPE, vo.getUid() + "_" + vo.getGroupType() + "_" + vo.getIndex() + "_" + vo.getStoreId() + "_" + vo.getGoodsId() + "_" + vo.getShareUrl());
+            String authorize = WechatApiUtil.authorizeH5(redirect_uri, WechatApiUtil.USERINFO_SCOPE, vo.getUid() + "_" + vo.getGroupType() + "_" + vo.getIndex() + "_" + vo.getStoreId() + "_" + vo.getGoodsId() + "_" + vo.getShareUrl());
             logger.error("************00000000**************");
             logger.error(wechatCallbackDomain);
             logger.error(authorize);

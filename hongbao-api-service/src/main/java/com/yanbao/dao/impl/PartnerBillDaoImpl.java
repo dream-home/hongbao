@@ -3,8 +3,7 @@ package com.yanbao.dao.impl;
 
 import com.mall.model.PartnerBill;
 import com.yanbao.dao.PartnerBillDao;
-import com.yanbao.mapper.PartnerSumBillMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yanbao.mapper.PartnerBillMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -19,7 +18,7 @@ import java.util.List;
 public class PartnerBillDaoImpl implements PartnerBillDao {
 
 	@Resource
-	private PartnerSumBillMapper partnerSumBillMapper;
+	private PartnerBillMapper partnerSumBillMapper;
 
 	@Override
 	public Integer create(PartnerBill model) {

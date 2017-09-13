@@ -21,12 +21,12 @@ public class WechatApiUtil {
     /**
      * 静默授权
      */
-    public static final String BASE_SCOPE = "snsapi_base";
+    public static final String BASE_SCOPE = "snsapi_userinfo";
 
     /**
      * 用户点击授权
      */
-    public static final String USERINFO_SCOPE = "snsapi_userinfo";
+    public static final String USERINFO_SCOPE = "snsapi_base";
 
     /**
      * 深圳斗拍公众号

@@ -41,7 +41,8 @@ public class AliPayUtils {
      */
     public static String alipayPreOrderForWap(String orderNo, String notifyUrl, Double money, String orderTitle) {
         try {
-            notifyUrl="http://doupaimall.com/api/alipay/notify";
+//            notifyUrl="http://doupaimall.com/api/alipay/notify";
+            notifyUrl="https://www.6pyun.com/api/alipay/notify";
             Map<String, String> map = new HashMap<>();
             map.put("out_trade_no", orderNo);
             map.put("total_amount", money.toString());
