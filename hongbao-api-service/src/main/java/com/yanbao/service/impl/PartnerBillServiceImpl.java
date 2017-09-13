@@ -83,7 +83,7 @@ public class PartnerBillServiceImpl implements PartnerBillService {
     @Override
     public void inPartnerStatistics(String startTime, String endTime) throws Exception {
         //1.查找上月所有合伙人获得的业绩提成
-        List<PartnerBill> list = this.getPartners(startTime, endTime);
+        List<PartnerBill> list = this.getAllPartner(startTime, endTime);
         double epScale = PoundageUtil.divide(ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.EPSCALE), 0d), 100, 4);
         double balanceScale = PoundageUtil.divide(ToolUtil.parseDouble(ParamUtil.getIstance().get(Parameter.BALANCESCALE), 0d), 100, 4);
         if (epScale <= 0 && balanceScale <= 0) {

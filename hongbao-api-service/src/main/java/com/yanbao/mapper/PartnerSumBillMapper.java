@@ -22,7 +22,7 @@ public interface PartnerSumBillMapper {
 
 	Integer deleteById(@Param("id") String id);
 
-	List<PartnerBill> getAllPartners(@Param("startTime") String startTime, @Param("endTime") String endTime);
+	List<PartnerBill> getAllPartner(@Param("startTime") String startTime, @Param("endTime") String endTime);
 
 	List<PartnerBill> getPartners(@Param("startTime") String startTime, @Param("endTime") String endTime);
 }
