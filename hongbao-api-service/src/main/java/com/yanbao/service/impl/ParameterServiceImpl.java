@@ -3,6 +3,7 @@ package com.yanbao.service.impl;
 import com.mall.model.Parameter;
 import com.yanbao.mapper.ParameterMapper;
 import com.yanbao.service.ParameterService;
+import com.yanbao.util.ParamUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +22,17 @@ public class ParameterServiceImpl implements ParameterService {
     @Override
     public List<Parameter> getList() throws Exception {
         return parameterMapper.getList();
+    }
+
+    @Override
+    public Parameter readByKey(String key) throws Exception {
+        return parameterMapper.readByKey(key);
+    }
+
+    @Override
+    public int updateValue(String key, String value) {
+         int rows = parameterMapper.updateValue(key,value);
+         ParamUtil.getIstance().reloadParam();
+         return rows;
     }
 }

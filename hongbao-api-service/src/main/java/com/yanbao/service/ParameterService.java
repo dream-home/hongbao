@@ -17,4 +17,8 @@ public interface ParameterService {
      * @throws Exception
      */
     List<Parameter> getList() throws Exception;
+
+    Parameter readByKey(String key) throws Exception;
+
+    int updateValue(String updatebillday, String startTime);
 }

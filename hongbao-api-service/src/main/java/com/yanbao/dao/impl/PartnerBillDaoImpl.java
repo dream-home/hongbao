@@ -29,7 +29,7 @@ public class PartnerBillDaoImpl implements PartnerBillDao {
 	public List<PartnerBill> getAllPartners(String startTime, String endTime) {
 		System.out.println(startTime);
 		System.out.println(endTime);
-		return partnerSumBillMapper.getAllPartners(startTime,endTime);
+		return partnerSumBillMapper.getAllPartner(startTime,endTime);
 	}
 
 	@Override

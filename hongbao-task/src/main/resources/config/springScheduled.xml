@@ -27,15 +27,13 @@
     <bean id="inAgentStaticsTask" class="com.yanbao.task.InAgentStaticsTask"></bean>
     <task:scheduled-tasks>
         <task:scheduled ref="inAgentStaticsTask" method="doTask" cron="0 10 0 * * ?"/>
-        <!--<task:scheduled ref="inAgentStaticsTask" method="doTask" cron="0/4 * * * * ?"/>-->
     </task:scheduled-tasks>
 
 
     <!-- 合伙人业绩结算   每日凌晨触发  -->
     <bean id="inPartnerStaticsTask" class="com.yanbao.task.InPartnerStaticsTask"></bean>
     <task:scheduled-tasks>
-        <!--<task:scheduled ref="inPartnerStaticsTask" method="doTask" cron="59 59 23 * * ?"/>-->
-        <task:scheduled ref="inPartnerStaticsTask" method="doTask" cron="0/30 * * * * ?"/>
+        <task:scheduled ref="inPartnerStaticsTask" method="doTask" cron="59 59 23 * * ?"/>
     </task:scheduled-tasks>
     <context:component-scan base-package="com.yanbao.task"/>
 </beans>

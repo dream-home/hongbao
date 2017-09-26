@@ -102,6 +102,12 @@ public class ParamUtil {
     }
 
 
+
+    //管理端更新系统参数
+    public synchronized void reloadParam() {
+        Strings.set(RedisKey.SYS_PARAM_UPDTOKEN.getKey(), UUIDUtil.getUUID());
+        reload();
+    }
     /**
      * 范例: prop.getInstance().getAllModel();
      * <p>
