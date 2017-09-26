@@ -437,6 +437,7 @@ public class MallStoreServiceImpl implements MallStoreService {
 	public GoodsWin addOrderByH5(User user, Goods goods, PurchaseVo vo) throws Exception {
 		// 新增购买记录
 		GoodsWin goodsWin = new GoodsWin();
+		goodsWin.setScenes(ScenesType.WEIXIN_STORE.getCode());
 		Goods g=goodsService.getById(goods.getId());
 		goodsWin.setFirstReferrerScale(g.getFirstReferrerScale());
 		goodsWin.setSecondReferrerScale(g.getSecondReferrerScale());

@@ -21,7 +21,7 @@ public class OrderPurchaseVo implements Serializable {
 	/** 支付类型 */
 	private Integer payType;
 	/**商品列表*/
-	private List<CartVo> cartList;;
+	private List<CartVo> cartList;
 	/**
 	 * 使用场景 1：微店
 	 */

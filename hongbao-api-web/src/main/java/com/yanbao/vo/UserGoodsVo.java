@@ -130,6 +130,11 @@ public class UserGoodsVo implements Serializable {
      */
     private String bucket;
 
+    /**
+     * 累计销售商品数量
+     */
+    private Integer sumSaleCount;
+
     public List<String> getDelIcons() {
         return delIcons;
     }
@@ -354,4 +359,11 @@ public class UserGoodsVo implements Serializable {
         this.discountEP = discountEP;
     }
 
+    public Integer getSumSaleCount() {
+        return sumSaleCount;
+    }
+
+    public void setSumSaleCount(Integer sumSaleCount) {
+        this.sumSaleCount = sumSaleCount;
+    }
 }

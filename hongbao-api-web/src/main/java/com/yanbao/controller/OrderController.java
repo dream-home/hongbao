@@ -643,7 +643,7 @@ public class OrderController {
             return new JsonResult(ResultCode.SUCCESS.getCode(), "微信直接购买订单已支付成功");
         }
         Boolean isSucess = false;
-        if (goodsWin.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()) {
+        if (ToolUtil.isNotEmpty(goodsWin.getScenes()) || goodsWin.getScenes().intValue() == ScenesType.WEIXIN_STORE.getCode().intValue()) {
             isSucess = WechatUtil.isH5PaySucess(vo.getOrderNo());
         } else {
             isSucess = WechatUtil.isAppPaySucess(vo.getOrderNo());
