@@ -911,6 +911,7 @@ public class WalletController {
         //获取支付的三级分销比例和ep比例(根据codeType类型来判断)
         PayDistribution payDistribution = null;
         if (codeType == PayDistributionType.store.getCode().intValue()) {
+
             //商家固定二维码扫码发起支付
             payDistribution = payDistributionService.getByUserId(vo.getStoreUserId(), PayDistributionType.store.getCode());
         }
