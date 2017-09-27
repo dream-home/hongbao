@@ -904,7 +904,7 @@ public class WalletController {
             if (null == user) {
 //                logger.error(String.format("Illegal user id[%s]", token.getId()));
 //                throw new IllegalArgumentException();
-                return new JsonResult(1, "用户登录失效");
+                return new JsonResult(1,  "用户登录失效");
             }
         }
 
