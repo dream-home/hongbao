@@ -902,8 +902,9 @@ public class WalletController {
         if (source != BankCardType.ALIPAY_STORE_SCAN.getCode().intValue()) {
             user = userService.getById(token.getId());
             if (null == user) {
-                logger.error(String.format("Illegal user id[%s]", token.getId()));
-                throw new IllegalArgumentException();
+//                logger.error(String.format("Illegal user id[%s]", token.getId()));
+//                throw new IllegalArgumentException();
+                return new JsonResult(1, "用户登录失效");
             }
         }
 
