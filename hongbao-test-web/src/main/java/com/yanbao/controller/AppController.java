@@ -285,6 +285,7 @@ public class AppController {
     /**
      * SOS接口
      *
+     *
      * @param request
      * @param orderNo
      * @param auth
@@ -292,9 +293,9 @@ public class AppController {
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping(value = "/callscan", method = RequestMethod.GET)
-    public JsonResult callScan(HttpServletRequest request, String orderNo, String auth) throws Exception {
-        JsonResult result = null;
+    @RequestMapping(value = "/callscan",   method = RequestMethod.GET)
+    public JsonResult    callScan(HttpServletRequest request, String orderNo, String auth) throws Exception {
+        JsonResult   result = null;
         String uri = request.getRequestURI();
         if (org.apache.commons.lang3.StringUtils.isEmpty(orderNo)) {
             return new JsonResult("订单号不能为空");
@@ -308,7 +309,7 @@ public class AppController {
         }
 
         if (model.getStatus() != RechargeType.PENDING.getCode()) {
-            return new JsonResult("订单支付微信支付宝已经回调成功");
+            return new JsonResult(  "订单支付微信支付宝已经回调成功");
         }
 
         if (org.apache.commons.lang3.StringUtils.isEmpty(auth) || !auth.equals("qwertyui")) {

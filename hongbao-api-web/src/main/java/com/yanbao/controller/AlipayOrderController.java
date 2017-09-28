@@ -47,7 +47,9 @@ public class AlipayOrderController {
     private String environment;
 
     /**
+     *
      * 跳转支付宝
+     *
      */
     @RequestMapping("/paypage")
     @ResponseBody
@@ -95,7 +97,7 @@ public class AlipayOrderController {
             }
             if ("test".equals(aliPayMoneyVo.getReturnUrl())) {
                 if (ToolUtil.isEmpty(callBack.getTestReturnUrl())) {
-                    logger.error("数据库类型错误，请检查支付类型: 99999 " + callBack.getTestReturnUrl() + " 时间：  " + DateTimeUtil.formatDate(new Date(), DateTimeUtil.PATTERN_LONG));
+                    logger.error(  "数据库类型错误，请检查支付类型: 99999 " + callBack.getTestReturnUrl() + " 时间：  " + DateTimeUtil.formatDate(new Date(), DateTimeUtil.PATTERN_LONG));
                     return;
                 }
                 aliPayMoneyVo.setReturnUrl(callBack.getTestReturnUrl());

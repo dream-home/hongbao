@@ -24,8 +24,7 @@ public class AgreementController {
 	@ResponseBody
 	@RequestMapping(value = "/about", method = RequestMethod.GET)
 	public JsonResult about(HttpServletRequest request) throws Exception {
-		Agreement agreement = agreementService.get();
-
+		Agreement agreement  =   agreementService.get();
 		return new JsonResult(agreement);
 	}
 
