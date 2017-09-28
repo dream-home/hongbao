@@ -266,6 +266,7 @@ public class UserController {
         user = userService.getByCondition(user);
 
         if (null == user) {
+
             user = new User();
             user.setOpenId(openid);
             user.setLoginTime(new Date());
