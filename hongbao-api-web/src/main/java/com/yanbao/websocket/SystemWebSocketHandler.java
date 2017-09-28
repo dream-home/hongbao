@@ -28,8 +28,6 @@ import com.yanbao.util.TokenUtil;
 
 /**
  * TODO
- * 
- * @author zzwei
  * @version v1.0
  * @date 2017年2月14日
  */
